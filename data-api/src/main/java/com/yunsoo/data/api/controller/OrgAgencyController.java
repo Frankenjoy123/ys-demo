@@ -47,6 +47,8 @@ public class OrgAgencyController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<OrgAgencyObject> getByFilter(@RequestParam(value = "org_id") String orgId,
                                              @RequestParam(value = "search_text", required = false) String searchText,
+                                             @RequestParam(value = "parent_id", required = false) String parentId,
+                                             @RequestParam(value = "ids", required = false) List<String> idList,
                                              @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startDateTime,
                                              @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endDateTime,
                                              Pageable pageable,
@@ -61,15 +63,22 @@ public class OrgAgencyController {
 
         if (endDateTime != null && !StringUtils.isEmpty(endDateTime.toString()))
             createdDateTimeEndTo = endDateTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+        if(idList!=null) {
+            Page<OrgAgencyEntity> entityPage = orgAgencyRepository.query(orgId, searchText, parentId, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+            if (pageable != null) {
+                response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+            }
 
-        Page<OrgAgencyEntity> entityPage = orgAgencyRepository.query(orgId, searchText, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
-        if (pageable != null) {
-            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
+            return entityPage.getContent().stream()
+                    .map(this::toOrgAgencyObject)
+                    .collect(Collectors.toList());
         }
+        else{
 
-        return entityPage.getContent().stream()
-                .map(this::toOrgAgencyObject)
-                .collect(Collectors.toList());
+            return  orgAgencyRepository.findByOrgIdAndIdInAndStatusCodeNotIn(orgId, idList, LookupCodes.OrgAgencyStatus.DELETED).stream()
+                    .map(this::toOrgAgencyObject)
+                    .collect(Collectors.toList());
+        }
     }
 
     //create

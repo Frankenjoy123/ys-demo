@@ -74,5 +74,6 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
 
     List<ProductKeyBatchEntity> findByMarketingId(String marketingId);
 
-
+  //  @Query("select distinct partitionId from ProductKeyBatchEntity where OrgId= ?1 order by createdDateTime desc")
+   // List<String> findDistinctPartitionId(String orgId);
 }

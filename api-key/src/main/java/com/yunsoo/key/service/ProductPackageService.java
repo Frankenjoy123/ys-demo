@@ -16,6 +16,10 @@ public interface ProductPackageService {
 
     Set<String> getAllChildKeySetByKey(String key);
 
+    List<String> getAllParentKeysByKey(String key);
+
+    Set<String> getAllChildProductKeySetByKey(String key);
+
     void disable(String key);
 
     void save(ProductPackage productPackage);

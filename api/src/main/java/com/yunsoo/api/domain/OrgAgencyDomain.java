@@ -36,10 +36,14 @@ public class OrgAgencyDomain {
         }
     }
 
-    public Page<OrgAgencyObject> getOrgAgencyByOrgId(String orgId, String searchText, org.joda.time.LocalDate start, org.joda.time.LocalDate end, Pageable pageable) {
+    public Page<OrgAgencyObject> getOrgAgencyByOrgId(String orgId, String searchText, String parentId, List<String> idList, org.joda.time.LocalDate start, org.joda.time.LocalDate end, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId).append("search_text", searchText)
-                .append("start_datetime", start).append("end_datetime", end)
+                .append("org_id", orgId)
+                .append("parent_id", parentId)
+                .append("search_text", searchText)
+                .append("ids", idList)
+                .append("start_datetime", start)
+                .append("end_datetime", end)
                 .append(pageable)
                 .build();
 
