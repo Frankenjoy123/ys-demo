@@ -57,6 +57,7 @@ public class TaskFileController {
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "app_id", required = false) String appId,
             @RequestParam(value = "device_id", required = false) String deviceId,
+            @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "type_code", required = false) String typeCode,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
             @RequestParam(value = "created_account_id", required = false) String createdAccountId,
@@ -65,7 +66,7 @@ public class TaskFileController {
             Pageable pageable,
             HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<TaskFileEntryObject> page = taskFileDomain.getTaskFileEntryByFilter(orgId, appId, deviceId, typeCode, statusCodeIn, createdAccountId, createdDateTimeGE, createdDateTimeLE, pageable);
+        Page<TaskFileEntryObject> page = taskFileDomain.getTaskFileEntryByFilter(orgId, appId, deviceId, name, typeCode, statusCodeIn, createdAccountId, createdDateTimeGE, createdDateTimeLE, pageable);
 
         return PageUtils.response(response, page.map(TaskFileEntry::new), pageable != null);
     }
@@ -92,8 +93,7 @@ public class TaskFileController {
 
 
     @RequestMapping(value = "form", method = RequestMethod.POST)
-    public TaskFileEntry uploadInForm(@RequestParam("file") MultipartFile file,
-                                      @RequestParam("ignored") Boolean ignored) throws IOException {
+    public TaskFileEntry uploadInForm(@RequestParam("file") MultipartFile file) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new BadRequestException();
         }
@@ -103,14 +103,29 @@ public class TaskFileController {
 
         log.info("received file in form " + StringFormatter.formatMap("size", file.getSize(), "appId", appId, "deviceId", deviceId));
         YSFile ysFile = readYSFile(file.getInputStream());
+        String fileName = FileNameUtils.shorten(file.getOriginalFilename(), FILENAME_LENGTH_LIMIT);
 
-        TaskFileEntryObject obj = taskFileDomain.saveYSFile(FileNameUtils.shorten(file.getOriginalFilename(), FILENAME_LENGTH_LIMIT), ysFile, appId, deviceId, ignored);
+        TaskFileEntryObject obj = taskFileDomain.saveYSFile(fileName, ysFile, appId, deviceId, null, null);
         return new TaskFileEntry(obj);
     }
 
+    /**
+     * @param fileName  String of file name， nullable
+     * @param committed 指定本次上传是否完成，或可被后续同名文件上传所覆盖。
+     *                  true: 如果存在之前的同名uploading状态的文件，就覆盖它，如果不存在就创建新的TaskFileEntry，最后完成上传；
+     *                  false：如果存在之前的同名uploading状态的文件，就覆盖它，如果不存在就创建新的TaskFileEntry，最后保持uploading状态；
+     *                  null: 始终创建新的TaskFileEntry，并完成上传。
+     * @param ignored   指定是否处理本文件
+     *                  true：完成上传后切换状态为uploaded，后续job不会处理
+     *                  false|null：完成上传后切换状态为pending，后续job会处理
+     * @param request   HttpServletRequest
+     * @return 新创建的或被覆盖的TaskFileEntry
+     * @throws IOException
+     */
     @RequestMapping(value = "", method = RequestMethod.POST)
     public TaskFileEntry uploadInBody(@RequestParam(value = "file_name", required = false) String fileName,
-                                      @RequestParam("ignored") Boolean ignored,
+                                      @RequestParam(value = "committed", required = false) Boolean committed,
+                                      @RequestParam(value = "ignored", required = false) Boolean ignored,
                                       HttpServletRequest request) throws IOException {
         AuthDetails authDetails = AuthUtils.getAuthDetails();
         String appId = authDetails.getAppId();
@@ -119,8 +134,9 @@ public class TaskFileController {
         log.info("received file in request body "
                 + StringFormatter.formatMap("size", request.getContentLengthLong(), "appId", appId, "deviceId", deviceId));
         YSFile ysFile = readYSFile(request.getInputStream());
+        fileName = FileNameUtils.shorten(fileName, FILENAME_LENGTH_LIMIT);
 
-        TaskFileEntryObject obj = taskFileDomain.saveYSFile(FileNameUtils.shorten(fileName, FILENAME_LENGTH_LIMIT), ysFile, appId, deviceId, ignored);
+        TaskFileEntryObject obj = taskFileDomain.saveYSFile(fileName, ysFile, appId, deviceId, committed, ignored);
         return new TaskFileEntry(obj);
     }
 

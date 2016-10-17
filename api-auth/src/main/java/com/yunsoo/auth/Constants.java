@@ -25,6 +25,16 @@ public final class Constants {
         public static final List<String> ALL = Arrays.asList(CREATED, AVAILABLE, DISABLED);
     }
 
+    public static class ApplicationType {
+        private ApplicationType() {
+        }
+
+        public static final String WEB = "web";
+        public static final String PACKAGE = "package";
+        public static final String TRACE = "trace";
+
+    }
+
     public static class OrgType {
         private OrgType() {
         }
