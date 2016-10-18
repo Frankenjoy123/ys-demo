@@ -10,4 +10,8 @@ import org.springframework.data.repository.Repository;
  * Descriptions:
  */
 public interface MarketingTemplateRepository extends Repository<MarketingTemplateEntity, String> {
+    MarketingTemplateEntity findOne(String id);
+
+    MarketingTemplateEntity save(MarketingTemplateEntity entity);
+
 }
