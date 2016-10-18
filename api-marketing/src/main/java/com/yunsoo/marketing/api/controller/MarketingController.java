@@ -5,10 +5,11 @@ import com.yunsoo.marketing.dto.Marketing;
 import com.yunsoo.marketing.service.MarketingRightService;
 import com.yunsoo.marketing.service.MarketingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * Created by:   Haitao
@@ -29,6 +30,20 @@ public class MarketingController {
     public Marketing getMarketingById(@PathVariable("id") String marketingId) {
         return findMarketingById(marketingId);
     }
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission(#request, 'marketing:create')")
+    public Marketing create(@RequestBody @Valid Marketing marketing) {
+        return marketingService.createMarketing(marketing);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public void patchUpdateMarketing(@PathVariable("id") String id, @RequestBody Marketing marketing) {
+        marketing.setId(id);
+        marketingService.patchUpdate(marketing);
+    }
+
 
     private Marketing findMarketingById(String marketingId) {
         Marketing marketing = marketingService.getMarketingById(marketingId);
