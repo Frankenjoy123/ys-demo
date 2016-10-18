@@ -53,12 +53,13 @@ public class OrgAgencyController {
     @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
     public List<OrgAgency> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                        @RequestParam(value = "search_text", required = false) String searchText,
+                                       @RequestParam(value = "parent_id", required = false) String parentId,
                                        @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
                                        @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
                                        Pageable pageable,
                                        HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, searchText, startTime, endTime, pageable);
+        Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, searchText, parentId, null, startTime, endTime, pageable);
 
         return PageUtils.response(response, orgAgencyPage.map(OrgAgency::new), pageable != null);
     }

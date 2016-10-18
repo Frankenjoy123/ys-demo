@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -55,6 +56,7 @@ public class TaskFileDomain {
             String orgId,
             String appId,
             String deviceId,
+            String name,
             String typeCode,
             List<String> statusCodeIn,
             String createdAccountId,
@@ -65,6 +67,7 @@ public class TaskFileDomain {
                 .append("org_id", orgId)
                 .append("app_id", appId)
                 .append("device_id", deviceId)
+                .append("name", name)
                 .append("type_code", typeCode)
                 .append("status_code_in", statusCodeIn)
                 .append("created_account_id", createdAccountId)
@@ -79,43 +82,58 @@ public class TaskFileDomain {
     /**
      * file_type should be [package|trace]
      *
-     * @param fileName not required
-     * @param ysFile   must contains file_type in header
-     * @param appId    required
-     * @param deviceId not required
+     * @param fileName  not required
+     * @param ysFile    must contains file_type in header
+     * @param appId     required
+     * @param deviceId  not required
+     * @param committed true: try override exists TaskFileEntry with the same name and status_code of uploading, or create new one, then change the status_code to uploaded or pending.
+     *                  false: try override exists TaskFileEntry with the same name and status_code of uploading, or create new one, keep the status_code uploading.
+     *                  null: always create new TaskFileEntry, then change the status_code to uploaded or pending.
+     * @param ignored   true: change status_code to uploaded, job service will ignore the TaskFileEntry.
+     *                  false|null: change status_code to pending, job service will process the TaskFileEntry.
      * @return new created file entry object
      */
-    public TaskFileEntryObject saveYSFile(String fileName, YSFile ysFile, String appId, String deviceId, Boolean ignored) {
+    public TaskFileEntryObject saveYSFile(String fileName, YSFile ysFile, String appId, String deviceId, Boolean committed, Boolean ignored) {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
         String fileType = ysFile.getHeader("file_type");
         if (!validateFileType(fileType)) {
             throw new BadRequestException("file_type invalid. [file_type: " + fileType + "]");
         }
 
-        TaskFileEntryObject obj = new TaskFileEntryObject();
-        obj.setOrgId(orgId);
-        obj.setAppId(appId);
-        obj.setDeviceId(deviceId);
-        obj.setName(fileName);
-        obj.setTypeCode(fileType);
-        obj.setProductBaseId(ysFile.getHeader("product_base_id"));
-        obj.setPackageCount(tryParseInt(ysFile.getHeader("package_count")));
-        obj.setPackageSize(tryParseInt(ysFile.getHeader("package_size")));
-        obj.setProductCount(tryParseInt(ysFile.getHeader("product_count")));
-        //create file entry
-        obj = this.createTaskFileEntry(obj);
+        TaskFileEntryObject obj = null;
+        if (committed != null) {
+            //try override file with the same name in status of uploading
+            obj = getLastUploadingByFileName(fileName);
+        }
+        if (obj == null || !LookupCodes.TaskFileStatus.UPLOADING.equals(obj.getStatusCode())) {
+            obj = new TaskFileEntryObject();
+            obj.setOrgId(orgId);
+            obj.setAppId(appId);
+            obj.setDeviceId(deviceId);
+            obj.setName(fileName);
+            obj.setTypeCode(fileType);
+            obj.setProductBaseId(ysFile.getHeader("product_base_id"));
+            obj.setPackageCount(tryParseInt(ysFile.getHeader("package_count")));
+            obj.setPackageSize(tryParseInt(ysFile.getHeader("package_size")));
+            obj.setProductCount(tryParseInt(ysFile.getHeader("product_count")));
+            //create file entry
+            obj = this.createTaskFileEntry(obj);
+        }
 
+        //save file
         String path = String.format("organization/%s/task_file/%s", orgId, obj.getFileId());
         byte[] data = ysFile.toBytes();
-        //save file
         fileService.putFile(path, new ResourceInputStream(new ByteArrayInputStream(data), data.length, "text/plain"));
 
         //update status of the file entry
-        if (ignored != null && ignored) {
-            this.updateTaskFileEntryStatus(obj.getFileId(), LookupCodes.TaskFileStatus.UPLOADED);
-        } else {
-            this.updateTaskFileEntryStatus(obj.getFileId(), LookupCodes.TaskFileStatus.PENDING);
+        if (committed == null || committed) {
+            if (ignored != null && ignored) {
+                this.updateTaskFileEntryStatus(obj.getFileId(), LookupCodes.TaskFileStatus.UPLOADED);
+            } else {
+                this.updateTaskFileEntryStatus(obj.getFileId(), LookupCodes.TaskFileStatus.PENDING);
+            }
         }
+
         return this.getTaskFileEntryById(obj.getFileId());
     }
 
@@ -197,6 +215,22 @@ public class TaskFileDomain {
         obj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         obj.setCreatedDateTime(DateTime.now());
         return dataApiClient.post("taskFileEntry", obj, TaskFileEntryObject.class);
+    }
+
+    private TaskFileEntryObject getLastUploadingByFileName(String name) {
+        if (StringUtils.isEmpty(name)) {
+            return null;
+        }
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("name", name)
+                .append("status_code_in", Collections.singletonList(LookupCodes.TaskFileStatus.UPLOADING))
+                .build();
+        List<TaskFileEntryObject> list = dataApiClient.getPaged("taskFileEntry" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
+        }).getContent();
+        if (list.size() == 0) {
+            return null;
+        }
+        return list.get(list.size() - 1);
     }
 
     private void updateTaskFileEntryStatus(String fileId, String statusCode) {

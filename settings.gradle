@@ -2,14 +2,17 @@ rootProject.name = 'yunsoo'
 include 'common'
 include 'common-web'
 include 'common-data'
-include 'data-service'
-include 'data-api'
-include 'processor'
-include 'api'
-include 'api-auth'
-include 'api-file'
-include 'api-key'
-include 'api-rabbit'
-include 'api-di'
-include 'api-marketing'
 
+include 'data-service'
+include 'data-api'      //3080
+
+include 'processor'     //4080
+include 'api-file'      //4180
+include 'api-key'       //4280
+include 'api-di'        //4380
+
+include 'api-rabbit'    //5080
+
+include 'api'           //6080
+include 'api-auth'      //6180
+include 'api-marketing' //6280

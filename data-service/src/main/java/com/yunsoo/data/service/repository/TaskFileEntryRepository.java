@@ -21,6 +21,7 @@ public interface TaskFileEntryRepository extends FindOneAndSaveRepository<TaskFi
             "where (:orgId is null or e.orgId = :orgId) " +
             "and (:appId is null or e.appId = :appId) " +
             "and (:deviceId is null or e.deviceId = :deviceId) " +
+            "and (:name is null or e.name = :name) " +
             "and (:typeCode is null or e.typeCode = :typeCode) " +
             "and (e.statusCode in (:statusCodeIn) or :statusCodeInIgnored = true) " +
             "and (:productBaseId is null or e.productBaseId = :productBaseId) " +
@@ -30,6 +31,7 @@ public interface TaskFileEntryRepository extends FindOneAndSaveRepository<TaskFi
     Page<TaskFileEntryEntity> query(@Param("orgId") String orgId,
                                     @Param("appId") String appId,
                                     @Param("deviceId") String deviceId,
+                                    @Param("name") String name,
                                     @Param("typeCode") String typeCode,
                                     @Param("statusCodeIn") List<String> statusCodeIn,
                                     @Param("statusCodeInIgnored") boolean statusCodeInIgnored,
@@ -39,7 +41,7 @@ public interface TaskFileEntryRepository extends FindOneAndSaveRepository<TaskFi
                                     @Param("createdDateTimeLE") DateTime createdDateTimeLE,
                                     Pageable pageable);
 
-    @Query("select sum(e.packageCount) as package, sum(e.productCount) as product from TaskFileEntryEntity e " +
+    @Query("select sum(e.packageCount) as package, sum(e.productCount) as product from #{#entityName} e " +
             "where e.orgId = :orgId " +
             "and (:appId is null or e.appId = :appId) " +
             "and (:deviceId is null or e.deviceId = :deviceId) " +
@@ -56,7 +58,7 @@ public interface TaskFileEntryRepository extends FindOneAndSaveRepository<TaskFi
                     @Param("statusCodeInIgnored") boolean statusCodeInIgnored);
 
 
-    @Query("select e.deviceId, sum(e.packageCount) as package, sum(e.productCount) as product from TaskFileEntryEntity e " +
+    @Query("select e.deviceId, sum(e.packageCount) as package, sum(e.productCount) as product from #{#entityName} e " +
             "where e.deviceId in :deviceId " +
             "and (:typeCode is null or e.typeCode = :typeCode) " +
             "and (e.statusCode in (:statusCodeIn) or :statusCodeInIgnored = true) " +
@@ -83,16 +85,16 @@ public interface TaskFileEntryRepository extends FindOneAndSaveRepository<TaskFi
                                 @Param("statusCodeInIgnored") boolean statusCodeInIgnored);
 
 
-    @Query("select count(e.fileId) from TaskFileEntryEntity e " +
+    @Query("select count(e.fileId) from #{#entityName} e " +
             "where e.deviceId in :deviceId " +
             "and (:typeCode is null or e.typeCode = :typeCode) " +
             "and (e.statusCode in (:statusCodeIn) or :statusCodeInIgnored = true) " +
             "and (:createdDateTimeGE is null or e.createdDateTime >= :createdDateTimeGE) " +
             "and (:createdDateTimeLE is null or e.createdDateTime <= :createdDateTimeLE)")
     int count(@Param("deviceId") List<String> deviceId,
-                                  @Param("typeCode") String typeCode,
-                                  @Param("createdDateTimeGE") DateTime start,
-                                  @Param("createdDateTimeLE") DateTime end, @Param("statusCodeIn") List<String> statusCodeIn,
-                                  @Param("statusCodeInIgnored") boolean statusCodeInIgnored);
+              @Param("typeCode") String typeCode,
+              @Param("createdDateTimeGE") DateTime start,
+              @Param("createdDateTimeLE") DateTime end, @Param("statusCodeIn") List<String> statusCodeIn,
+              @Param("statusCodeInIgnored") boolean statusCodeInIgnored);
 
 }

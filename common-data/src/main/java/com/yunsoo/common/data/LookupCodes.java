@@ -375,6 +375,15 @@ public class LookupCodes {
         public static final String SENDPRIZE = "send_prize";
     }
 
+    public static class TraceStatus{
+        private TraceStatus(){}
+
+        public static final String  PENDING = "pending";
+        public static final String  SYNCHRONIZED = "synchronized";
+    }
+
+
+
     public enum LookupType {
 
         ProductStatus("product_status"),
