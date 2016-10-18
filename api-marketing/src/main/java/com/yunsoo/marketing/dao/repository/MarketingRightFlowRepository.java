@@ -10,4 +10,8 @@ import org.springframework.data.repository.Repository;
  * Descriptions:
  */
 public interface MarketingRightFlowRepository extends Repository<MarketingRightFlowEntity, String> {
+    MarketingRightFlowEntity findOne(String id);
+
+    MarketingRightFlowEntity save(MarketingRightFlowEntity entity);
+
 }

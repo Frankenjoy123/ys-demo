@@ -39,13 +39,17 @@ public class MarketingRightController {
         return marketingRightService.createMarketingRight(marketingRight);
     }
 
-    @RequestMapping(value = "id", method = RequestMethod.PATCH)
+    @RequestMapping(value = "list", method = RequestMethod.PATCH)
+    public void createMarketing(@PathVariable("marketing_id") String marketingId, @RequestBody List<MarketingRight> marketingRightList) {
+        marketingRightService.putMarketingRightsByMarketingId(marketingId, marketingRightList);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
     public void patchUpdateMarketing(@PathVariable("marketing_id") String marketingId, @PathVariable("id") String id, @RequestBody MarketingRight marketingRight) {
         marketingRight.setId(id);
         marketingRight.setMarketingId(marketingId);
         marketingRightService.patchUpdate(marketingRight);
     }
-
 
     private MarketingRight findMarketingRightById(String marketingRightId) {
         MarketingRight marketingRight = marketingRightService.getById(marketingRightId);
