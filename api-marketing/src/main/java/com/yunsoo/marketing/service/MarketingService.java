@@ -6,6 +6,7 @@ import com.yunsoo.marketing.dto.Marketing;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 /**
@@ -19,6 +20,9 @@ public class MarketingService {
     @Autowired
     private MarketingRepository marketingRepository;
 
+    @Autowired
+    private MarketingRightService marketingRightService;
+
     public Marketing getMarketingById(String id) {
         if (StringUtils.isEmpty(id)) {
             return null;
@@ -27,6 +31,7 @@ public class MarketingService {
         return toMarketing(entity);
     }
 
+    @Transactional
     public Marketing createMarketing(Marketing marketing) {
         MarketingEntity entity = new MarketingEntity();
         entity.setOrgId(marketing.getOrgId());
@@ -41,6 +46,25 @@ public class MarketingService {
         entity.setCreatedDateTime(DateTime.now());
         return toMarketing(marketingRepository.save(entity));
     }
+
+    @Transactional
+    public void patchUpdate(Marketing marketing) {
+        if (StringUtils.isEmpty(marketing.getId())) {
+            return;
+        }
+        MarketingEntity entity = marketingRepository.findOne(marketing.getId());
+        if (entity != null) {
+            if (marketing.getName() != null) entity.setName(marketing.getName());
+            if (marketing.getTypeCode() != null) entity.setTypeCode(marketing.getTypeCode());
+            if (marketing.getTemplateId() != null) entity.setTemplateId(marketing.getTemplateId());
+            if (marketing.getBudget() != null) entity.setBudget(marketing.getBudget());
+            if (marketing.getBalance() != null) entity.setBalance(marketing.getBalance());
+            if (marketing.getComments() != null) entity.setComments(marketing.getComments());
+            entity.setModifiedDateTime(DateTime.now());
+            marketingRepository.save(entity);
+        }
+    }
+
 
     private Marketing toMarketing(MarketingEntity entity) {
         if (entity == null) {
