@@ -26,7 +26,7 @@ public class MarketingRightFlow {
     private Integer cuccFlowId;
 
     @JsonProperty("ctcc_flow_id")
-    private Integer ctcc_flow_id;
+    private Integer ctccFlowId;
 
     @JsonProperty("comments")
     private String comments;
@@ -71,12 +71,12 @@ public class MarketingRightFlow {
         this.cuccFlowId = cuccFlowId;
     }
 
-    public Integer getCtcc_flow_id() {
-        return ctcc_flow_id;
+    public Integer getCtccFlowId() {
+        return ctccFlowId;
     }
 
-    public void setCtcc_flow_id(Integer ctcc_flow_id) {
-        this.ctcc_flow_id = ctcc_flow_id;
+    public void setCtccFlowId(Integer ctccFlowId) {
+        this.ctccFlowId = ctccFlowId;
     }
 
     public String getComments() {
