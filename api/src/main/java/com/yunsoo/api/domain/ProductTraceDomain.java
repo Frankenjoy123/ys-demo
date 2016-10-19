@@ -41,14 +41,14 @@ public class ProductTraceDomain {
         });
 
         sourceMap.keySet().forEach(key -> {
-            if (TraceSourceType.AGENCY.equals(key)) {
+            if (LookupCodes.TraceSourceType.AGENCY.equals(key)) {
                 agencyList.addAll(agencyDomain.getOrgAgencyByOrgId(orgId, null, null, sourceMap.get(key), null, null, null).getContent());
             }
 
         });
 
         list.forEach(item -> {
-            if (item.getSourceType().equals(TraceSourceType.AGENCY)) {
+            if (item.getSourceType().equals(LookupCodes.TraceSourceType.AGENCY)) {
                 for (int i = 0; i < agencyList.size(); i++) {
                     OrgAgencyObject agency = agencyList.get(i);
                     if (agency.getId().equals(item.getSourceId())) {
@@ -64,9 +64,9 @@ public class ProductTraceDomain {
 
     public ProductTrace save(String partitionId, ProductTrace trace) {
         if (trace.getSourceType() == null)
-            trace.setSourceType(TraceSourceType.AGENCY);
+            trace.setSourceType(LookupCodes.TraceSourceType.AGENCY);
         if (trace.getAction() == null)
-            trace.setAction(TraceAction.DELIVERY);
+            trace.setAction(LookupCodes.TraceAction.DELIVERY);
 
         trace.setStatusCode(LookupCodes.TraceStatus.PENDING);
         return keyApiClient.post("/producttrace/external/{partitionId}", trace, ProductTrace.class, partitionId);
@@ -74,9 +74,9 @@ public class ProductTraceDomain {
 
     public int getSum(String sourceType, String sourceId, String action, DateTime start, DateTime end) {
         if (sourceType == null)
-            sourceType = TraceSourceType.AGENCY;
+            sourceType = LookupCodes.TraceSourceType.AGENCY;
         if (action == null)
-            action = TraceAction.DELIVERY;
+            action = LookupCodes.TraceAction.DELIVERY;
 
         QueryStringBuilder sb = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("source_type", sourceType)
@@ -87,14 +87,6 @@ public class ProductTraceDomain {
         if (end != null)
             sb.append("created_datetime_end", end);
         return keyApiClient.get("/producttrace/sum" + sb.build(), Integer.class);
-    }
-
-    private static class TraceSourceType {
-        public static String AGENCY = "agency";
-    }
-
-    private static class TraceAction {
-        public static String DELIVERY = "delivery";
     }
 
 }

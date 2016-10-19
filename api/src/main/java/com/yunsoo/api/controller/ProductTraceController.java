@@ -5,6 +5,7 @@ import com.yunsoo.api.domain.ProductTraceDomain;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductTrace;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
@@ -47,7 +48,13 @@ public class ProductTraceController {
     public ProductTrace save(@PathVariable("partitionId") String partitionId,@PathVariable("externalKey") String externalKey, @RequestBody ProductTrace trace){
         if(trace == null)
             throw new BadRequestException("product trace could not be null");
+
+        String orgId = AuthUtils.fixOrgId(null);
         trace.setProductKey(externalKey);
+        trace.setOrgId(orgId);
+        trace.setCreatedSourceType(LookupCodes.TraceSourceType.ORGANIZATION);
+        trace.setCreatedSourceId(orgId);
+        //todo: get created_source_id and created_source_type from token if have
         return domain.save(partitionId, trace);
     }
 
@@ -56,11 +63,10 @@ public class ProductTraceController {
     public ProductTrace save(@PathVariable("externalKey") String externalKey, @RequestBody ProductTrace trace){
         if(trace == null)
             throw new BadRequestException("product trace could not be null");
-        trace.setProductKey(externalKey);
+
         String orgId = AuthUtils.fixOrgId(null);
         String partitionId = keyDomain.getKeyBatchPartitionId(orgId);
-
-        return domain.save(partitionId, trace);
+        return save(partitionId, externalKey, trace);
     }
 
     @RequestMapping(value = "/sum", method = RequestMethod.GET)

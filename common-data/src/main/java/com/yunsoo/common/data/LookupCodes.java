@@ -382,6 +382,15 @@ public class LookupCodes {
         public static final String  SYNCHRONIZED = "synchronized";
     }
 
+    public static class TraceSourceType {
+        public static String AGENCY = "agency";
+        public static String ORGANIZATION="organization";
+    }
+
+    public static class TraceAction {
+        public static String DELIVERY = "delivery";
+    }
+
 
 
     public enum LookupType {

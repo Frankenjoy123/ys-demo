@@ -62,6 +62,8 @@ public class DynamodbProductKeyTraceServiceImpl implements ProductKeyTraceServic
                 traceModel.getDateTimeList().add(trace.getCreatedDateTime().getMillis());
                 traceModel.getSourceIdList().add(trace.getSourceId());
                 traceModel.getSourceTypeList().add(trace.getSourceType());
+                traceModel.getCreatedSourceIdList().add(trace.getCreatedSourceId());
+                traceModel.getCreatedSourceTypeList().add(trace.getCreatedSourceType());
             }
             else{
                 ProductTraceModel traceModel = new ProductTraceModel(trace);
@@ -71,15 +73,36 @@ public class DynamodbProductKeyTraceServiceImpl implements ProductKeyTraceServic
 
         modelMap.keySet().forEach(key->{
             ProductTraceModel model = modelMap.get(key);
+
             ProductTraceModel traceModel = productTraceDao.getByKey(key);
             if(traceModel == null){
                 modelList.add(model);
             }
             else{
+
+                int length = traceModel.getActionList().size();
+                String latestCreatedSourceId = traceModel.getCreatedSourceIdList().get(length-1);
+                String latestCreatedSourceType = traceModel.getSourceTypeList().get(length-1);
+
+                String firstCreatedSourceId = model.getCreatedSourceIdList().get(0);
+                String firstCreatedSourceType = model.getCreatedSourceTypeList().get(0);
+
+                if(latestCreatedSourceId.equals(firstCreatedSourceId) && latestCreatedSourceType.equals(firstCreatedSourceType)){
+                    traceModel.getActionList().remove(length-1);
+                    traceModel.getDateTimeList().remove(length - 1);
+                    traceModel.getSourceIdList().remove(length - 1);
+                    traceModel.getSourceTypeList().remove(length - 1);
+                    traceModel.getCreatedSourceIdList().remove(length - 1);
+                    traceModel.getCreatedSourceTypeList().remove(length-1);
+                }
+
+
                 traceModel.getActionList().addAll(model.getActionList());
                 traceModel.getDateTimeList().addAll(model.getDateTimeList());
                 traceModel.getSourceIdList().addAll(model.getSourceIdList());
                 traceModel.getSourceTypeList().addAll(model.getSourceTypeList());
+                traceModel.getCreatedSourceIdList().addAll(model.getCreatedSourceIdList());
+                traceModel.getCreatedSourceTypeList().addAll(model.getCreatedSourceTypeList());
                 modelList.add(traceModel);
             }
 
@@ -105,6 +128,8 @@ public class DynamodbProductKeyTraceServiceImpl implements ProductKeyTraceServic
             trace.setSourceId(traceModel.getSourceIdList().get(i));
             trace.setSourceType(traceModel.getSourceTypeList().get(i));
             trace.setCreatedDateTime(new DateTime(traceModel.getDateTimeList().get(i)));
+            trace.setCreatedSourceId(traceModel.getCreatedSourceIdList().get(i));
+            trace.setCreatedSourceType(traceModel.getCreatedSourceTypeList().get(i));
             traceList.add(trace);
         }
 
@@ -121,6 +146,8 @@ public class DynamodbProductKeyTraceServiceImpl implements ProductKeyTraceServic
             traceModel.getDateTimeList().add(trace.getCreatedDateTime().getMillis());
             traceModel.getSourceIdList().add(trace.getSourceId());
             traceModel.getSourceTypeList().add(trace.getSourceType());
+            traceModel.getCreatedSourceIdList().add(trace.getCreatedSourceId());
+            traceModel.getCreatedSourceTypeList().add(trace.getCreatedSourceType());
         }
 
         return traceModel;
