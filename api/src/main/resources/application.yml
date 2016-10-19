@@ -41,7 +41,9 @@ yunsoo:
     direct_notify_url: http://dev.yunsu.co:6080/payment/brand/alipay/notify
   tinify:
     key: VE7EeYz5AdEmDXXabOj3oHm7Kt_ioDQY
-
+  wechat:
+     app_id: wx89c1685a0c14e8bf
+     app_secret: c1e1d31fac7e0e31a64417ecef3b3682
 ---
 spring:
   profiles: local

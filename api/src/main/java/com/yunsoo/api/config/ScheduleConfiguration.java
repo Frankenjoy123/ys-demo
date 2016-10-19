@@ -1,5 +1,7 @@
 package com.yunsoo.api.config;
 
+import com.yunsoo.api.Constants;
+import com.yunsoo.api.domain.WeChatAPIDomain;
 import com.yunsoo.api.thread.OperationThread;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,6 +25,15 @@ public class ScheduleConfiguration {
     @Autowired
     OperationThread thread;
 
+    @Autowired
+    WeChatAPIDomain weChatAPIDomain;
+
+    @Value("${yunsoo.wechat.app_id}")
+    private String weChatAppId;
+
+    @Value("${yunsoo.wechat.app_secret}")
+    private String weChatAppSecret;
+
     @Scheduled(initialDelay = 10 * 1000, fixedRate = 300 * 1000)
     public void daemon() {
         try {
@@ -30,6 +41,13 @@ public class ScheduleConfiguration {
         } catch (Exception ex) {
             log.error("exception thrown from OperationThread", ex);
         }
+    }
+
+    @Scheduled(initialDelay = 10 * 1000, fixedRate = 110 * 60 * 1000)
+    public void weChatTokenRefresh(){
+        log.info("start to refresh wechat token");
+        //todo: uncomment below sentence after the dev account is approved by wechat
+       // weChatAPIDomain.getWechatAccessToken(Constants.Ids.YUNSU_ORGID, weChatAppId, weChatAppSecret);
     }
 
 }
