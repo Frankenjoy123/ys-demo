@@ -1,6 +1,5 @@
-package com.yunsoo.auth.api.security.authentication;
+package com.yunsoo.common.web.security.authentication;
 
-import com.yunsoo.auth.api.security.AuthAccount;
 import com.yunsoo.common.util.HashUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
@@ -10,10 +9,9 @@ import org.joda.time.DateTime;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-
 /**
- * Created by  : Lijian
- * Created on  : 2015/6/10
+ * Created by:   Lijian
+ * Created on:   2016-10-18
  * Descriptions:
  */
 public final class TokenHandler {
@@ -30,40 +28,37 @@ public final class TokenHandler {
     }
 
 
-    public AuthAccount parseToken(String token) {
+    public String createToken(DateTime expires, String... values) {
+        String expiresMillis = expires != null ? Long.toString(expires.getMillis(), 36) : "";
+        StringBuilder sb = new StringBuilder(expiresMillis);
+        for (String value : values) {
+            sb.append(SPLITTER);
+            if (value != null) {
+                sb.append(value);
+            }
+        }
+        return encodeToken(sb.toString());
+    }
+
+    public String[] parseToken(String token) {
         String src = decodeToken(token);
         if (src == null) {
-            log.error(String.format("Token invalid [token: %s]", token));
+            log.warn(String.format("token invalid [token: %s]", token));
             return null;
         }
         final String[] parts = src.split(SPLITTER);
         if (parts.length < 2) {
-            log.error(String.format("Token invalid [token: %s]", token));
+            log.warn(String.format("token invalid [token: %s]", token));
             return null;
         }
-        DateTime expires = new DateTime(Long.parseLong(parts[0]));
-        String accountId = parts[1];
-        String orgId = parts.length >= 3 ? parts[2] : null; //orgId is nullable
-
+        DateTime expires = new DateTime(Long.parseLong(parts[0], 36));
         if (expires.isBeforeNow()) {
             if (log.isDebugEnabled()) {
-                log.debug(String.format("Token expired [token: %s, expires: %s]", token, expires.toString()));
+                log.debug(String.format("token expired [token: %s, expires: %s]", token, expires.toString()));
             }
             return null;
         }
-
-        AuthAccount account = new AuthAccount();
-        account.setId(accountId);
-        account.setOrgId(orgId);
-        return account;
-    }
-
-    public String createToken(DateTime expires, String accountId, String orgId) {
-        return encodeToken(expires.getMillis() + SPLITTER + accountId + SPLITTER + orgId);
-    }
-
-    public String createToken(DateTime expires, String accountId) {
-        return encodeToken(expires.getMillis() + SPLITTER + accountId);
+        return Arrays.copyOfRange(parts, 1, parts.length);
     }
 
 

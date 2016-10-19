@@ -13,6 +13,7 @@ public class AuthAccount implements Serializable {
 
     private String orgId;
 
+    private String oAuthAccountId;
 
     public String getId() {
         return id;
@@ -28,6 +29,14 @@ public class AuthAccount implements Serializable {
 
     public void setOrgId(String orgId) {
         this.orgId = orgId;
+    }
+
+    public String getOAuthAccountId() {
+        return oAuthAccountId;
+    }
+
+    public void setOAuthAccountId(String oAuthAccountId) {
+        this.oAuthAccountId = oAuthAccountId;
     }
 
 }
