@@ -42,6 +42,11 @@ public class OrgAgencyController {
         }
         return toOrgAgencyObject(entity);
     }
+    @RequestMapping(value = "count", method = RequestMethod.GET)
+    public int count( @RequestParam(value = "parent_id") String parentId){
+        return orgAgencyRepository.countByParentIdAndStatusCode(parentId, LookupCodes.OrgAgencyStatus.ACTIVATED);
+    }
+
 
     //query
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -63,7 +68,7 @@ public class OrgAgencyController {
 
         if (endDateTime != null && !StringUtils.isEmpty(endDateTime.toString()))
             createdDateTimeEndTo = endDateTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
-        if(idList!=null) {
+        if(idList == null) {
             Page<OrgAgencyEntity> entityPage = orgAgencyRepository.query(orgId, searchText, parentId, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
             if (pageable != null) {
                 response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages()));
@@ -74,8 +79,7 @@ public class OrgAgencyController {
                     .collect(Collectors.toList());
         }
         else{
-
-            return  orgAgencyRepository.findByOrgIdAndIdInAndStatusCodeNotIn(orgId, idList, LookupCodes.OrgAgencyStatus.DELETED).stream()
+            return  orgAgencyRepository.findByOrgIdAndIdInAndStatusCode(orgId, idList, LookupCodes.OrgAgencyStatus.ACTIVATED).stream()
                     .map(this::toOrgAgencyObject)
                     .collect(Collectors.toList());
         }

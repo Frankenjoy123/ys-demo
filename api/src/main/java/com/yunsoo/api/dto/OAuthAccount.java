@@ -1,9 +1,8 @@
-package com.yunsoo.auth.dto;
+package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.auth.dao.entity.OAuthAccountEntity;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
@@ -139,9 +138,4 @@ public class OAuthAccount {
         this.createdDateTime = createdDateTime;
     }
 
-    public OAuthAccount(){}
-
-    public OAuthAccount(OAuthAccountEntity entity){
-        BeanUtils.copyProperties(entity, this);
-    }
 }

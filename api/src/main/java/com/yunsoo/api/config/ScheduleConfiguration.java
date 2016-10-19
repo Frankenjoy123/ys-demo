@@ -7,6 +7,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -46,8 +49,7 @@ public class ScheduleConfiguration {
     @Scheduled(initialDelay = 10 * 1000, fixedRate = 110 * 60 * 1000)
     public void weChatTokenRefresh(){
         log.info("start to refresh wechat token");
-        //todo: uncomment below sentence after the dev account is approved by wechat
-       // weChatAPIDomain.getWechatAccessToken(Constants.Ids.YUNSU_ORGID, weChatAppId, weChatAppSecret);
+        weChatAPIDomain.getWechatAccessToken(Constants.Ids.YUNSU_ORGID, weChatAppId, weChatAppSecret);
     }
 
 }

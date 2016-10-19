@@ -28,6 +28,8 @@ public interface OrgAgencyRepository extends FindOneAndSaveRepository<OrgAgencyE
                                 @Param("startTime") DateTime start, @Param("endTime") DateTime end, Pageable pageable);
 
 
-    List<OrgAgencyEntity> findByOrgIdAndIdInAndStatusCodeNotIn(String orgId, List<String> idList, String statusCode);
+    List<OrgAgencyEntity> findByOrgIdAndIdInAndStatusCode(String orgId, List<String> idList, String statusCode);
+
+    int countByParentIdAndStatusCode(String parentId, String status);
 
 }

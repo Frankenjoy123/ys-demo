@@ -67,6 +67,9 @@ public class OrgAgency implements OrgIdDetectable {
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
 
+    @JsonProperty("authorized")
+    private Boolean authorized;
+
     public String getId() {
         return id;
     }
@@ -185,6 +188,14 @@ public class OrgAgency implements OrgIdDetectable {
 
     public void setAgencyPhone(String agencyPhone) {
         this.agencyPhone = agencyPhone;
+    }
+
+    public Boolean getAuthorized() {
+        return authorized;
+    }
+
+    public void setAuthorized(Boolean authorized) {
+        this.authorized = authorized;
     }
 
     public OrgAgency() {

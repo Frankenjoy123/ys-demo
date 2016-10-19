@@ -48,6 +48,12 @@ public class OrgAgencyController {
         return orgAgency;
     }
 
+    @RequestMapping(value = "count", method= RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
+    public int count(@RequestParam("parent_id")String parentId){
+        return orgAgencyDomain.count(parentId);
+    }
+
     //query by org id
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
@@ -61,7 +67,13 @@ public class OrgAgencyController {
         orgId = AuthUtils.fixOrgId(orgId);
         Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, searchText, parentId, null, startTime, endTime, pageable);
 
-        return PageUtils.response(response, orgAgencyPage.map(OrgAgency::new), pageable != null);
+        List<OrgAgency> agencyList = PageUtils.response(response, orgAgencyPage.map(OrgAgency::new), pageable != null);
+
+        if(parentId != null){
+            orgAgencyDomain.checkAuthroized(agencyList);
+        }
+
+        return agencyList;
     }
 
     //query locations

@@ -1,6 +1,10 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.client.AuthApiClient;
+import com.yunsoo.api.dto.OAuthAccount;
+import com.yunsoo.api.dto.OrgAgency;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.LocationObject;
 import com.yunsoo.common.data.object.OrgAgencyObject;
 import com.yunsoo.common.web.client.Page;
@@ -15,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Haitao
@@ -26,6 +31,9 @@ public class OrgAgencyDomain {
 
     @Autowired
     private RestClient dataApiClient;
+
+    @Autowired
+    private AuthApiClient authApiClient;
 
 
     public OrgAgencyObject getOrgAgencyById(String id) {
@@ -85,5 +93,27 @@ public class OrgAgencyDomain {
         dataApiClient.delete("organizationagency/{id}", id);
     }
 
+    public void checkAuthroized(List<OrgAgency> agencyList){
+        List<String> ids = agencyList.stream().map(agency-> agency.getId()).collect(Collectors.toList());
+        String queryString = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("source_list",ids).append("source_type", LookupCodes.TraceSourceType.AGENCY)
+                .build();
 
+        List<OAuthAccount> oauthList = authApiClient.get("oauth" + queryString, new ParameterizedTypeReference<List<OAuthAccount>>() {
+        });
+
+        agencyList.forEach(orgAgency -> {
+            int length=oauthList.size();
+            for(int i=0; i<length; i++){
+                if(orgAgency.getId().equals(oauthList.get(i).getSource())){
+                    orgAgency.setAuthorized(true);
+                    break;
+                }
+            }
+        });
+    }
+
+    public int count(String parentId){
+        return dataApiClient.get("organizationagency/count?parent_id={id}", Integer.class, parentId);
+    }
 }

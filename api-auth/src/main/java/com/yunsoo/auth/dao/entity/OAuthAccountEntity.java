@@ -1,54 +1,54 @@
-package com.yunsoo.auth.dto;
+package com.yunsoo.auth.dao.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.auth.dao.entity.OAuthAccountEntity;
-import com.yunsoo.common.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import com.yunsoo.auth.dao.util.IdGenerator;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
-import org.springframework.beans.BeanUtils;
+
+import javax.persistence.*;
 
 /**
- * Created by:   Lijian
- * Created on:   2016-10-19
- * Descriptions:
+ * Created by yan on 10/19/2016.
  */
-public class OAuthAccount {
+@Entity
+@Table(name = "oauth_account")
+public class OAuthAccountEntity {
 
-    @JsonProperty(value = "id")
+    @Id
+    @GeneratedValue(generator = "idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = IdGenerator.CLASS)
+    @Column(name = "id")
     private String id;
 
-    @JsonProperty(value = "oauth_type_code")
+    @Column(name = "oauth_type_code")
     private String oAuthTypeCode;
 
-    @JsonProperty(value = "oauth_openid")
+    @Column(name = "oauth_openid")
     private String oAuthOpenId;
 
-    @JsonProperty(value = "name")
+    @Column(name = "name")
     private String name;
 
-    @JsonProperty(value = "account_id")
+    @Column(name = "account_id")
     private String accountId;
 
-    @JsonProperty(value = "token")
+    @Column(name = "token")
     private String token;
 
-    @JsonProperty(value = "disabled")
+    @Column(name = "disabled")
     private Boolean disabled;
 
-    @JsonProperty(value = "source_type_code")
+    @Column(name = "source_type_code")
     private String sourceTypeCode;
 
-    @JsonProperty(value = "source")
+    @Column(name = "source")
     private String source;
 
-    @JsonProperty(value = "gravatar_url")
+    @Column(name = "gravatar_url")
     private String gravatarUrl;
 
-    @JsonProperty(value = "created_datetime")
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    @Column(name = "created_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
     public String getId() {
@@ -137,11 +137,5 @@ public class OAuthAccount {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
-    }
-
-    public OAuthAccount(){}
-
-    public OAuthAccount(OAuthAccountEntity entity){
-        BeanUtils.copyProperties(entity, this);
     }
 }

@@ -1,9 +1,12 @@
 package com.yunsoo.key.service.impl;
 
 import com.yunsoo.key.dao.dao.ProductTraceDao;
+import com.yunsoo.key.dao.entity.ProductTraceEntity;
 import com.yunsoo.key.dao.model.ProductTraceModel;
+import com.yunsoo.key.dao.repository.ProductTraceRepository;
 import com.yunsoo.key.dto.ProductTrace;
 import com.yunsoo.key.service.ProductKeyTraceService;
+import com.yunsoo.key.service.ProductPackageService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +18,13 @@ import java.util.stream.Collectors;
  * Created by yan on 10/11/2016.
  */
 @Service
-public class DynamodbProductKeyTraceServiceImpl implements ProductKeyTraceService {
+public class ProductTraceServiceImpl implements ProductKeyTraceService {
 
     @Autowired
     ProductTraceDao productTraceDao;
+
+    @Autowired
+    ProductTraceRepository repository;
 
     @Override
     public List<ProductTrace> getByKey(String key) {
@@ -110,6 +116,57 @@ public class DynamodbProductKeyTraceServiceImpl implements ProductKeyTraceServic
 
         productTraceDao.batchSave(modelList);
 
+    }
+
+    @Override
+    public void batchSaveInMySql(List<ProductTrace> traceList) {
+        //save in db
+        int length = traceList.size();
+        List<String> idList = traceList.stream().map(trace -> trace.getId()).collect(Collectors.toList());
+        List<ProductTraceEntity> entities = repository.findByIdIn(idList);
+        entities.forEach(entity->{
+            for(int i=0; i<length; i++){
+                ProductTrace trace = traceList.get(i);
+                if(trace.getId().equals(entity.getId())){
+                    if(trace.getProductCount() != null) {
+                         entity.setProductCount(trace.getProductCount());
+                    }
+                    if(trace.getStatusCode()!=null)
+                        entity.setStatusCode(trace.getStatusCode());
+
+                    break;
+                }
+            }
+
+        });
+
+        repository.save(entities);
+    }
+
+
+
+    @Override
+    public ProductTrace saveInMySql(ProductTrace trace) {
+        ProductTraceEntity entity = new ProductTraceEntity(trace);
+
+        ProductTraceEntity existEntity = repository.findByProductKeyAndCreatedSourceIdAndCreatedSourceType(trace.getProductKey(), trace.getCreatedSourceId(), trace.getCreatedSourceType());
+        if(existEntity != null)
+            repository.delete(existEntity);
+
+        repository.save(entity);
+        return new ProductTrace(entity);
+    }
+
+    @Override
+    public List<ProductTrace> search(String status) {
+        return repository.findTop500ByStatusCode(status).stream()
+                .map(ProductTrace::new).collect(Collectors.toList());
+
+    }
+
+    @Override
+    public int getTotalProductCount(String sourceId, String sourceType, String action, DateTime start, DateTime end) {
+        return repository.sumProduct(sourceId, sourceType, action, start, end);
     }
 
     private List<ProductTrace> convertToTraceList(ProductTraceModel traceModel){
