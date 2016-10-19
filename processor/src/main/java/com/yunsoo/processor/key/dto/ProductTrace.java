@@ -41,6 +41,40 @@ public class ProductTrace implements Comparable {
     @JsonProperty("status_code")
     private String statusCode;
 
+
+    @JsonProperty("created_source_type")
+    private String createdSourceType;
+
+    @JsonProperty("created_source_id")
+    private String createdSourceId;
+
+    @JsonProperty("org_id")
+    private String orgId;
+
+    public String getCreatedSourceType() {
+        return createdSourceType;
+    }
+
+    public void setCreatedSourceType(String createdSourceType) {
+        this.createdSourceType = createdSourceType;
+    }
+
+    public String getCreatedSourceId() {
+        return createdSourceId;
+    }
+
+    public void setCreatedSourceId(String createdSourceId) {
+        this.createdSourceId = createdSourceId;
+    }
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
     public String getStatusCode() {
         return statusCode;
     }

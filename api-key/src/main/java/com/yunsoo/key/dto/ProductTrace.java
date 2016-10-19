@@ -26,6 +26,12 @@ public class ProductTrace implements Comparable {
     @JsonProperty("source_id")
     private String sourceId;
 
+    @JsonProperty("created_source_type")
+    private String createdSourceType;
+
+    @JsonProperty("created_source_id")
+    private String createdSourceId;
+
     @JsonProperty("action")
     private String action;
 
@@ -39,6 +45,17 @@ public class ProductTrace implements Comparable {
 
     @JsonProperty("status_code")
     private String statusCode;
+
+    @JsonProperty("org_id")
+    private String orgId;
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
 
     public String getStatusCode() {
         return statusCode;
@@ -102,6 +119,22 @@ public class ProductTrace implements Comparable {
 
     public void setProductCount(Integer productCount) {
         this.productCount = productCount;
+    }
+
+    public String getCreatedSourceType() {
+        return createdSourceType;
+    }
+
+    public void setCreatedSourceType(String createdSourceType) {
+        this.createdSourceType = createdSourceType;
+    }
+
+    public String getCreatedSourceId() {
+        return createdSourceId;
+    }
+
+    public void setCreatedSourceId(String createdSourceId) {
+        this.createdSourceId = createdSourceId;
     }
 
     public ProductTrace() {

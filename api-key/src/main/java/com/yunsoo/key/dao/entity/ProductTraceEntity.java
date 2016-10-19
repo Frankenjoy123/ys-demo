@@ -41,9 +41,18 @@ public class ProductTraceEntity {
     @Column(name = "status_code")
     private String statusCode;
 
+    @Column(name = "org_id")
+    private String orgId;
+
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
+
+    @Column(name = "created_source_id")
+    private String createdSourceId;
+
+    @Column(name = "created_source_type")
+    private String createdSourceType;
 
     public String getProductKey() {
         return productKey;
@@ -101,11 +110,35 @@ public class ProductTraceEntity {
         this.statusCode = statusCode;
     }
 
+
+
     public ProductTraceEntity(){
 
     }
 
+    public String getCreatedSourceId() {
+        return createdSourceId;
+    }
 
+    public void setCreatedSourceId(String createdSourceId) {
+        this.createdSourceId = createdSourceId;
+    }
+
+    public String getCreatedSourceType() {
+        return createdSourceType;
+    }
+
+    public void setCreatedSourceType(String createdSourceType) {
+        this.createdSourceType = createdSourceType;
+    }
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
 
     public String getId() {
         return id;

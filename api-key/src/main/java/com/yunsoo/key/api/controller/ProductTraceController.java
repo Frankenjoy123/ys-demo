@@ -72,6 +72,11 @@ public class ProductTraceController {
             trace.setCreatedDateTime(DateTime.now());
         trace.setProductCount(1);
         ProductTraceEntity entity = new ProductTraceEntity(trace);
+
+        ProductTraceEntity existEntity = repository.findByProductKeyAndCreatedSourceIdAndCreatedSourceType(trace.getProductKey(), trace.getCreatedSourceId(), trace.getCreatedSourceType());
+        if(existEntity != null)
+            repository.delete(existEntity);
+
         repository.save(entity);
         return new ProductTrace(entity);
     }

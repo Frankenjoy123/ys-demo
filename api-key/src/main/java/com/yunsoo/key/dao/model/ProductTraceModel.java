@@ -24,6 +24,12 @@ public class ProductTraceModel {
     @DynamoDBAttribute(attributeName = "source_id")
     private List<String> sourceIdList;
 
+    @DynamoDBAttribute(attributeName = "created_source_id")
+    private List<String> createdSourceIdList;
+
+    @DynamoDBAttribute(attributeName = "created_source_type")
+    private List<String> createdSourceTypeList;
+
     @DynamoDBAttribute(attributeName = "action")
     private List<String> actionList;
 
@@ -70,6 +76,22 @@ public class ProductTraceModel {
         this.sourceTypeList = sourceTypeList;
     }
 
+    public List<String> getCreatedSourceIdList() {
+        return createdSourceIdList;
+    }
+
+    public void setCreatedSourceIdList(List<String> createdSourceIdList) {
+        this.createdSourceIdList = createdSourceIdList;
+    }
+
+    public List<String> getCreatedSourceTypeList() {
+        return createdSourceTypeList;
+    }
+
+    public void setCreatedSourceTypeList(List<String> createdSourceTypeList) {
+        this.createdSourceTypeList = createdSourceTypeList;
+    }
+
     public ProductTraceModel(){}
 
     public ProductTraceModel(ProductTrace trace){
@@ -78,5 +100,7 @@ public class ProductTraceModel {
         this.setDateTimeList(new ArrayList<>(Arrays.asList(trace.getCreatedDateTime().getMillis())));
         this.setSourceIdList(new ArrayList<>(Arrays.asList(trace.getSourceId())));
         this.setSourceTypeList(new ArrayList<>(Arrays.asList(trace.getSourceType())));
+        this.setCreatedSourceIdList(new ArrayList<>(Arrays.asList(trace.getCreatedSourceId())));
+        this.setCreatedSourceTypeList(new ArrayList<>(Arrays.asList(trace.getCreatedSourceType())));
     }
 }

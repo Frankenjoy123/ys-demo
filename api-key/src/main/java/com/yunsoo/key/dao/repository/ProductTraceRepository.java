@@ -25,4 +25,6 @@ public interface ProductTraceRepository extends CrudRepository<ProductTraceEntit
 
     List<ProductTraceEntity> findByIdIn(List<String> ids);
 
+    ProductTraceEntity findByProductKeyAndCreatedSourceIdAndCreatedSourceType(String key, String sourceId, String type);
+
 }
