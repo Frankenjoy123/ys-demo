@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.transaction.Transactional;
+
 /**
  * Created by:   Haitao
  * Created on:   2016/10/14
@@ -23,6 +25,21 @@ public class MarketingTemplateService {
         }
         MarketingTemplateEntity entity = marketingTemplateRepository.findOne(id);
         return toMarketingTemplate(entity);
+    }
+
+    @Transactional
+    public void patchUpdate(MarketingTemplate marketingTemplate) {
+        if (StringUtils.isEmpty(marketingTemplate.getId())) {
+            return;
+        }
+        MarketingTemplateEntity entity = marketingTemplateRepository.findOne(marketingTemplate.getId());
+        if (entity != null) {
+            if (marketingTemplate.getName() != null) entity.setName(marketingTemplate.getName());
+            if (marketingTemplate.getTypeCode() != null) entity.setTypeCode(marketingTemplate.getTypeCode());
+            if (marketingTemplate.getStatusCode() != null) entity.setStatusCode(marketingTemplate.getStatusCode());
+            if (marketingTemplate.getDescription() != null) entity.setDescription(marketingTemplate.getDescription());
+            marketingTemplateRepository.save(entity);
+        }
     }
 
     private MarketingTemplate toMarketingTemplate(MarketingTemplateEntity entity) {

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +37,18 @@ public class MarketingRightRedeemCodeService {
         return marketingRightRedeemCodeRepository.findByMarketingRightId(marketingRightId).stream().map(this::toMarketingRightRedeemCode).collect(Collectors.toList());
     }
 
+    @Transactional
+    public void patchUpdate(MarketingRightRedeemCode marketingRightRedeemCode) {
+        if (StringUtils.isEmpty(marketingRightRedeemCode.getId())) {
+            return;
+        }
+        MarketingRightRedeemCodeEntity entity = marketingRightRedeemCodeRepository.findOne(marketingRightRedeemCode.getId());
+        if (entity != null) {
+            if (marketingRightRedeemCode.getValue() != null) entity.setValue(marketingRightRedeemCode.getValue());
+            if (marketingRightRedeemCode.getUsed() != null) entity.setUsed(marketingRightRedeemCode.getUsed());
+            marketingRightRedeemCodeRepository.save(entity);
+        }
+    }
 
     private MarketingRightRedeemCode toMarketingRightRedeemCode(MarketingRightRedeemCodeEntity entity) {
         if (entity == null) {
