@@ -21,4 +21,7 @@ public interface MarketingRightRepository extends Repository<MarketingRightEntit
 
 
     List<MarketingRightEntity> findByMarketingId(String marketingId);
+
+    void delete(MarketingRightEntity entity);
+
 }

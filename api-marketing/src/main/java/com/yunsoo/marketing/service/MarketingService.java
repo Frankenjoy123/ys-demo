@@ -1,6 +1,7 @@
 package com.yunsoo.marketing.service;
 
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.marketing.api.util.AuthUtils;
 import com.yunsoo.marketing.api.util.PageUtils;
 import com.yunsoo.marketing.dao.entity.MarketingEntity;
 import com.yunsoo.marketing.dao.repository.MarketingRepository;
@@ -45,7 +46,7 @@ public class MarketingService {
         entity.setBudget(marketing.getBudget());
         entity.setBalance(marketing.getBalance());
         entity.setComments(marketing.getComments());
-        entity.setCreatedAccountId(marketing.getCreatedAccountId());
+        entity.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         entity.setCreatedDateTime(DateTime.now());
         return toMarketing(marketingRepository.save(entity));
     }
@@ -63,6 +64,7 @@ public class MarketingService {
             if (marketing.getBudget() != null) entity.setBudget(marketing.getBudget());
             if (marketing.getBalance() != null) entity.setBalance(marketing.getBalance());
             if (marketing.getComments() != null) entity.setComments(marketing.getComments());
+            entity.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
             entity.setModifiedDateTime(DateTime.now());
             marketingRepository.save(entity);
         }
