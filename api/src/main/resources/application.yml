@@ -36,9 +36,9 @@ yunsoo:
     account_name: 广州云溯科技有限公司
     email: zhe@yunsu.co
     amount: 0.01
-    notify_url: http://dev.yunsu.co:6080/marketing/alipay/notify
+    notify_url: http://dev.yunsu.co:9080/api/marketing/alipay/notify
     direct_return_url: http://dev.yunsu.co:9080/enterprise/brandapplication.html
-    direct_notify_url: http://dev.yunsu.co:6080/payment/brand/alipay/notify
+    direct_notify_url: http://dev.yunsu.co:9080/api/payment/brand/alipay/notify
   tinify:
     key: VE7EeYz5AdEmDXXabOj3oHm7Kt_ioDQY
   wechat:
@@ -58,15 +58,15 @@ yunsoo:
   environment: local
   client:
     auth_api:
-      base_url: http://dev.yunsu.co:6180/
+      base_url: http://dev-api.yunsu.co:6180/
     data_api:
       base_url: http://localhost:3080/
     processor:
-      base_url: http://dev.yunsu.co:4080/
+      base_url: http://dev-api.yunsu.co:4080/
     file_api:
-      base_url: http://dev.yunsu.co:4180/
+      base_url: http://dev-api.yunsu.co:4180/
     key_api:
-      base_url: http://dev.yunsu.co:4280/
+      base_url: http://dev-api.yunsu.co:4280/
   cache:
     type: local
   alipay:
@@ -91,6 +91,6 @@ yunsoo:
     redis:
       host: dev-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn
   alipay:
-    notify_url: http://dev.yunsu.co:6080/marketing/alipay/notify
+    notify_url: http://dev.yunsu.co:9080/api/marketing/alipay/notify
     direct_return_url: http://dev.yunsu.co:9080/enterprise/brandapplication.html
-    direct_notify_url: http://dev.yunsu.co:6080/payment/brand/alipay/notify
+    direct_notify_url: http://dev.yunsu.co:9080/api/payment/brand/alipay/notify

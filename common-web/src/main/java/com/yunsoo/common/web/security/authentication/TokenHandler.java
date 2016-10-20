@@ -51,12 +51,15 @@ public final class TokenHandler {
             log.warn(String.format("token invalid [token: %s]", token));
             return null;
         }
-        DateTime expires = new DateTime(Long.parseLong(parts[0], 36));
-        if (expires.isBeforeNow()) {
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("token expired [token: %s, expires: %s]", token, expires.toString()));
+        if (parts[0].length() > 0) {
+            long millis = Long.parseLong(parts[0], 36);
+            DateTime expires = new DateTime(millis);
+            if (expires.isBeforeNow()) {
+                if (log.isDebugEnabled()) {
+                    log.debug(String.format("token expired [token: %s, expires: %s]", token, expires.toString()));
+                }
+                return null;
             }
-            return null;
         }
         return Arrays.copyOfRange(parts, 1, parts.length);
     }
