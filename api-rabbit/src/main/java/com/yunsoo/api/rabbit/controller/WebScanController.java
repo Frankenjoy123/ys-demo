@@ -4,7 +4,10 @@ import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.auth.dto.Organization;
 import com.yunsoo.api.rabbit.auth.service.AuthOrganizationService;
 import com.yunsoo.api.rabbit.domain.*;
-import com.yunsoo.api.rabbit.dto.*;
+import com.yunsoo.api.rabbit.dto.ProductCategory;
+import com.yunsoo.api.rabbit.dto.UserAccessToken;
+import com.yunsoo.api.rabbit.dto.WebScanRequest;
+import com.yunsoo.api.rabbit.dto.WebScanResponse;
 import com.yunsoo.api.rabbit.util.IpUtils;
 import com.yunsoo.api.rabbit.util.YSIDGenerator;
 import com.yunsoo.common.data.LookupCodes;
@@ -92,7 +95,7 @@ public class WebScanController {
         String appId = "wx89c1685a0c14e8bf"; //todo: put in to config
         String secret = "c1e1d31f" + "ac7e0e31" + "a64417ec" + "ef3b3682"; //todo: put in to config
 
-        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject(productKeyBatchObject.getOrgId(), appId, secret);
+        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject("2k0r1l55i2rs5544wz5", appId, secret);
         UserAccessToken userAccessToken = new UserAccessToken(userAccessTokenObject);
         userAccessToken.setAppId(appId);
 
@@ -148,7 +151,7 @@ public class WebScanController {
 
 
         WebScanResponse.ScanRecord result = toScanRecord(userScanRecordObject);
-        if(StringUtils.hasText(productBaseObject.getWebTemplateName()) && productBaseObject.getWebTemplateName().indexOf(":") >0)
+        if (StringUtils.hasText(productBaseObject.getWebTemplateName()) && productBaseObject.getWebTemplateName().indexOf(":") > 0)
             result.setIsTemplate(true);
         else
             result.setIsTemplate(false);
@@ -191,7 +194,7 @@ public class WebScanController {
         String appId = "wx89c1685a0c14e8bf"; //todo: put in to config
         String secret = "c1e1d31f" + "ac7e0e31" + "a64417ec" + "ef3b3682"; //todo: put in to config
 
-        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject(productKeyBatchObject.getOrgId(), appId, secret);
+        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject("2k0r1l55i2rs5544wz5", appId, secret);
         UserAccessToken userAccessToken = new UserAccessToken(userAccessTokenObject);
         userAccessToken.setAppId(appId);
 
@@ -202,9 +205,6 @@ public class WebScanController {
 
 
     //endregion
-
-
-
 
 
     //region 产品码
@@ -225,7 +225,7 @@ public class WebScanController {
         String appId = "wx89c1685a0c14e8bf"; //todo: put in to config
         String secret = "c1e1d31f" + "ac7e0e31" + "a64417ec" + "ef3b3682"; //todo: put in to config
 
-        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject(webScanResponse.getOrganization().getId(), appId, secret);
+        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject("2k0r1l55i2rs5544wz5", appId, secret);
         UserAccessToken userAccessToken = new UserAccessToken(userAccessTokenObject);
         userAccessToken.setAppId(appId);
 
