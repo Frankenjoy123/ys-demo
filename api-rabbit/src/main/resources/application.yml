@@ -20,7 +20,7 @@ yunsoo:
   client:
     auth_api:
       base_url: http://localhost:6180/
-      system_account_access_token: IMdaKJHWZRmyopWEsXPB8PzuKG0oEFgfA2WUQS6WE6GXMjEwMjAzNjM1MjAxNiwwMDEwMDAwMDAwMDAwMDAwMDAwLDJrMHIxbDU1aTJyczU1NDR3ejU
+      system_account_access_token: IGHXxgXYIO3yaWb3zvWgZW1smloFu42snAB0lG9KRDV8MW40NzF0NnBrLDAwMTAwMDAwMDAwMDAwMDAwMDAsMmswcjFsNTVpMnJzNTU0NHd6NQ
     data_api:
       base_url: http://localhost:3080/
     file_api:

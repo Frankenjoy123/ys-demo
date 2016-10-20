@@ -50,7 +50,7 @@ public class OAuthController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "count")
-    public int count(List<String> sourceList, String sourceType) {
+    public int count(@RequestParam("source_list") List<String> sourceList, @RequestParam("source_type") String sourceType) {
         if(sourceList.size() == 0)
             return 0;
         return service.count(sourceList, sourceType);

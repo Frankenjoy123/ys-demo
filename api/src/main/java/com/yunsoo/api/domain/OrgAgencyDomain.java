@@ -116,4 +116,15 @@ public class OrgAgencyDomain {
     public int count(String parentId){
         return dataApiClient.get("organizationagency/count?parent_id={id}", Integer.class, parentId);
     }
+
+    public int authorizedCount(String orgId, String parentId){
+        List<OrgAgencyObject> agencyObjectList = getOrgAgencyByOrgId(orgId, null, parentId, null, null, null, null).getContent();
+        List<String> ids = agencyObjectList.stream().map(agency-> agency.getId()).collect(Collectors.toList());
+        String queryString = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("source_list",ids).append("source_type", LookupCodes.TraceSourceType.AGENCY)
+                .build();
+
+        return authApiClient.get("oauth/count" + queryString, Integer.class);
+
+    }
 }
