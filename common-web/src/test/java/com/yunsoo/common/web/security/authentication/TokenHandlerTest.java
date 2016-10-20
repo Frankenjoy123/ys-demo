@@ -23,4 +23,23 @@ public class TokenHandlerTest {
 
     }
 
+    @Test
+    public void test_parseToken() {
+        TokenHandler tokenHandler = new TokenHandler("lvtHDkfIUxJ2bLWHc0MNztUqCJSVPSJO");
+        String token = "IGHXxgXYIO3yaWb3zvWgZW1smloFu42snAB0lG9KRDV8MW40NzF0NnBrLDAwMTAwMDAwMDAwMDAwMDAwMDAsMmswcjFsNTVpMnJzNTU0NHd6NQ";
+        String[] values = tokenHandler.parseToken(token);
+        assert values != null : "token invalid";
+        System.out.println(Arrays.asList(values));
+    }
+
+    @Test
+    public void createAccessTokenForSystemAccount() {
+        TokenHandler tokenHandler = new TokenHandler("lvtHDkfIUxJ2bLWHc0MNztUqCJSVPSJO");
+        String token = tokenHandler.createToken(DateTime.now().plusYears(100), "0010000000000000000", "2k0r1l55i2rs5544wz5");
+        System.out.println(token);
+        String[] values = tokenHandler.parseToken(token);
+        assert values != null : "token invalid";
+        System.out.println(Arrays.asList(values));
+    }
+
 }

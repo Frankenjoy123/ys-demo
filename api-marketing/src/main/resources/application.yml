@@ -56,11 +56,11 @@ yunsoo:
   environment: local
   client:
     auth_api:
-      base_url: http://dev.yunsu.co:6180/
+      base_url: http://dev-api.yunsu.co:6180/
     file_api:
-      base_url: http://dev.yunsu.co:4180/
+      base_url: http://dev-api.yunsu.co:4180/
     key_api:
-      base_url: http://dev.yunsu.co:4280/
+      base_url: http://dev-api.yunsu.co:4280/
 ---
 spring:
   profiles: dev
