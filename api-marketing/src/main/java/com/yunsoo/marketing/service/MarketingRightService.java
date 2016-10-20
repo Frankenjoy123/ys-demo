@@ -1,5 +1,6 @@
 package com.yunsoo.marketing.service;
 
+import com.yunsoo.marketing.api.util.AuthUtils;
 import com.yunsoo.marketing.dao.entity.MarketingRightEntity;
 import com.yunsoo.marketing.dao.repository.MarketingRightRepository;
 import com.yunsoo.marketing.dto.MarketingRight;
@@ -47,7 +48,7 @@ public class MarketingRightService {
         entity.setValue(marketingRight.getValue());
         entity.setDescription(marketingRight.getDescription());
         entity.setDeleted(marketingRight.getDeleted());
-        entity.setCreatedAccountId(marketingRight.getCreatedAccountId());
+        entity.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
         entity.setCreatedDateTime(DateTime.now());
         return toMarketingRight(marketingRightRepository.save(entity));
     }
@@ -69,7 +70,6 @@ public class MarketingRightService {
         }
     }
 
-
     @Transactional
     public void putMarketingRightsByMarketingId(String marketingId, List<MarketingRight> marketingRights) {
 
@@ -77,6 +77,7 @@ public class MarketingRightService {
             MarketingRightEntity mre = new MarketingRightEntity();
             mre = toMarketingRightEntity(m);
             mre.setMarketingId(marketingId);
+            mre.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
             mre.setModifiedDateTime(DateTime.now());
             return mre;
         }).collect(Collectors.toList());

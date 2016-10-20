@@ -1,9 +1,12 @@
 package com.yunsoo.marketing.service;
 
+import com.yunsoo.common.web.client.Page;
+import com.yunsoo.marketing.api.util.PageUtils;
 import com.yunsoo.marketing.dao.entity.MarketingTemplateEntity;
 import com.yunsoo.marketing.dao.repository.MarketingTemplateRepository;
 import com.yunsoo.marketing.dto.MarketingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -41,6 +44,14 @@ public class MarketingTemplateService {
             marketingTemplateRepository.save(entity);
         }
     }
+
+    public Page<MarketingTemplate> getByOrgId(String orgId, Pageable pageable) {
+        if (StringUtils.isEmpty(orgId)) {
+            return Page.empty();
+        }
+        return PageUtils.convert(marketingTemplateRepository.findByOrgId(orgId, pageable)).map(this::toMarketingTemplate);
+    }
+
 
     private MarketingTemplate toMarketingTemplate(MarketingTemplateEntity entity) {
         if (entity == null) {

@@ -1,10 +1,13 @@
 package com.yunsoo.marketing.service;
 
+import com.yunsoo.common.web.client.Page;
+import com.yunsoo.marketing.api.util.PageUtils;
 import com.yunsoo.marketing.dao.entity.MarketingEntity;
 import com.yunsoo.marketing.dao.repository.MarketingRepository;
 import com.yunsoo.marketing.dto.Marketing;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -63,6 +66,13 @@ public class MarketingService {
             entity.setModifiedDateTime(DateTime.now());
             marketingRepository.save(entity);
         }
+    }
+
+    public Page<Marketing> getByOrgId(String orgId, Pageable pageable) {
+        if (StringUtils.isEmpty(orgId)) {
+            return Page.empty();
+        }
+        return PageUtils.convert(marketingRepository.findByOrgId(orgId, pageable)).map(this::toMarketing);
     }
 
 
