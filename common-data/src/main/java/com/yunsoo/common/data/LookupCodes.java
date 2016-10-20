@@ -391,7 +391,17 @@ public class LookupCodes {
         public static String DELIVERY = "delivery";
     }
 
+    public static class TraceCommentsStatus{
+        private TraceCommentsStatus(){}
 
+        public static final String SUBMITTED="submitted";
+    }
+
+    public static class TraceCommentsType{
+        private TraceCommentsType(){}
+
+        public static final String ARBITRARY_PRICE="arbitrary_price";
+    }
 
     public enum LookupType {
 
