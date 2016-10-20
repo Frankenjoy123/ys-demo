@@ -18,5 +18,6 @@ public interface MarketingRepository extends Repository<MarketingEntity, String>
 
     Page<MarketingEntity> findByOrgId(String orgId, Pageable pageable);
 
+    void delete(MarketingEntity entity);
 
 }

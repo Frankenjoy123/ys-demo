@@ -1,5 +1,6 @@
 package com.yunsoo.marketing.service;
 
+import com.yunsoo.marketing.api.util.AuthUtils;
 import com.yunsoo.marketing.dao.entity.MarketingRightEntity;
 import com.yunsoo.marketing.dao.repository.MarketingRightRepository;
 import com.yunsoo.marketing.dto.MarketingRight;
@@ -47,7 +48,7 @@ public class MarketingRightService {
         entity.setValue(marketingRight.getValue());
         entity.setDescription(marketingRight.getDescription());
         entity.setDeleted(marketingRight.getDeleted());
-        entity.setCreatedAccountId(marketingRight.getCreatedAccountId());
+        entity.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         entity.setCreatedDateTime(DateTime.now());
         return toMarketingRight(marketingRightRepository.save(entity));
     }
@@ -64,11 +65,11 @@ public class MarketingRightService {
             if (marketingRight.getAmount() != null) entity.setAmount(marketingRight.getAmount());
             if (marketingRight.getValue() != null) entity.setValue(marketingRight.getValue());
             if (marketingRight.getDescription() != null) entity.setDescription(marketingRight.getDescription());
+            entity.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
             entity.setModifiedDateTime(DateTime.now());
             marketingRightRepository.save(entity);
         }
     }
-
 
     @Transactional
     public void putMarketingRightsByMarketingId(String marketingId, List<MarketingRight> marketingRights) {
@@ -77,7 +78,8 @@ public class MarketingRightService {
             MarketingRightEntity mre = new MarketingRightEntity();
             mre = toMarketingRightEntity(m);
             mre.setMarketingId(marketingId);
-            mre.setModifiedDateTime(DateTime.now());
+            mre.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
+            mre.setCreatedDateTime(DateTime.now());
             return mre;
         }).collect(Collectors.toList());
         marketingRightRepository.save(forSaveEntities);

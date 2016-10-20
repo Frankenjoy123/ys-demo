@@ -5,6 +5,7 @@ import com.yunsoo.data.service.entity.ProductTraceCommentsEntity;
 import com.yunsoo.data.service.repository.ProductTraceCommentsRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,10 +16,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/producttracecomments")
 public class ProductTraceCommentsController {
 
+    @Autowired
     private ProductTraceCommentsRepository repository;
 
     @RequestMapping(method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.CREATED)
     public ProductTraceCommentsObject save(@RequestBody ProductTraceCommentsObject comments){
         ProductTraceCommentsEntity entity = new ProductTraceCommentsEntity(comments);
         entity.setCreatedDateTime(DateTime.now());

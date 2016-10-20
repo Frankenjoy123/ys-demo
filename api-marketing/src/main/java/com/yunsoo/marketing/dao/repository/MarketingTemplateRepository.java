@@ -2,6 +2,8 @@ package com.yunsoo.marketing.dao.repository;
 
 
 import com.yunsoo.marketing.dao.entity.MarketingTemplateEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.Repository;
 
 /**
@@ -13,5 +15,7 @@ public interface MarketingTemplateRepository extends Repository<MarketingTemplat
     MarketingTemplateEntity findOne(String id);
 
     MarketingTemplateEntity save(MarketingTemplateEntity entity);
+
+    Page<MarketingTemplateEntity> findByOrgId(String orgId, Pageable pageable);
 
 }

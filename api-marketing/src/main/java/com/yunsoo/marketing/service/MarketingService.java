@@ -1,10 +1,14 @@
 package com.yunsoo.marketing.service;
 
+import com.yunsoo.common.web.client.Page;
+import com.yunsoo.marketing.api.util.AuthUtils;
+import com.yunsoo.marketing.api.util.PageUtils;
 import com.yunsoo.marketing.dao.entity.MarketingEntity;
 import com.yunsoo.marketing.dao.repository.MarketingRepository;
 import com.yunsoo.marketing.dto.Marketing;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -42,7 +46,7 @@ public class MarketingService {
         entity.setBudget(marketing.getBudget());
         entity.setBalance(marketing.getBalance());
         entity.setComments(marketing.getComments());
-        entity.setCreatedAccountId(marketing.getCreatedAccountId());
+        entity.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         entity.setCreatedDateTime(DateTime.now());
         return toMarketing(marketingRepository.save(entity));
     }
@@ -60,9 +64,17 @@ public class MarketingService {
             if (marketing.getBudget() != null) entity.setBudget(marketing.getBudget());
             if (marketing.getBalance() != null) entity.setBalance(marketing.getBalance());
             if (marketing.getComments() != null) entity.setComments(marketing.getComments());
+            entity.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
             entity.setModifiedDateTime(DateTime.now());
             marketingRepository.save(entity);
         }
+    }
+
+    public Page<Marketing> getByOrgId(String orgId, Pageable pageable) {
+        if (StringUtils.isEmpty(orgId)) {
+            return Page.empty();
+        }
+        return PageUtils.convert(marketingRepository.findByOrgId(orgId, pageable)).map(this::toMarketing);
     }
 
 

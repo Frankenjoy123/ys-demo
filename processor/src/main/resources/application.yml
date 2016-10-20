@@ -54,11 +54,11 @@ yunsoo:
     environment: local
   client:
     data_api:
-      base_url: http://dev.yunsu.co:3080/
+      base_url: http://dev-api.yunsu.co:3080/
     file_api:
-      base_url: http://dev.yunsu.co:4180/
+      base_url: http://dev-api.yunsu.co:4180/
     key_api:
-      base_url: http://dev.yunsu.co:4280/
+      base_url: http://dev-api.yunsu.co:4280/
 
 logging:
   file: c:/logs/yunsoo/processor.log

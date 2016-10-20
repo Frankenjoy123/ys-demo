@@ -59,9 +59,9 @@ yunsoo:
   environment: local
   client:
     processor:
-      base_url: http://dev.yunsu.co:4080/
+      base_url: http://dev-api.yunsu.co:4080/
     file_api:
-      base_url: http://dev.yunsu.co:4180/
+      base_url: http://dev-api.yunsu.co:4180/
 ---
 spring:
   profiles: dev
