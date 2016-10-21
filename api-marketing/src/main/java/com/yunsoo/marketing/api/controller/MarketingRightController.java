@@ -40,7 +40,7 @@ public class MarketingRightController {
     }
 
     @RequestMapping(value = "list", method = RequestMethod.PATCH)
-    public void createMarketing(@PathVariable("marketing_id") String marketingId, @RequestBody List<MarketingRight> marketingRightList) {
+    public void createMarketingRights(@PathVariable("marketing_id") String marketingId, @RequestBody List<MarketingRight> marketingRightList) {
         marketingRightService.putMarketingRightsByMarketingId(marketingId, marketingRightList);
     }
 
