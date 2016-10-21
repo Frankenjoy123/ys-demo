@@ -18,11 +18,18 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created by:   Lijian
@@ -33,6 +40,7 @@ import java.util.*;
 public class TaskFileDomain {
 
     private static final String[] FILE_TYPE_ARRAY = new String[]{LookupCodes.TaskFileType.PACKAGE, LookupCodes.TaskFileType.TRACE};
+    private static final Pattern REGEXP_DATETIME_PREFIX = Pattern.compile("^\\d\\d\\d\\d\\-[01]\\d\\-[0-3]\\dT[0-2]\\d:[0-5]\\d:[0-5]\\d\\.\\d\\d\\dZ.*");
 
     @Autowired
     private DataApiClient dataApiClient;
@@ -141,6 +149,42 @@ public class TaskFileDomain {
         return fileService.getFile(path);
     }
 
+    public ResourceInputStream exportFile(String orgId, String fileId, String formatTypeCode) {
+        String path = String.format("organization/%s/task_file/%s", orgId, fileId);
+        ResourceInputStream fileStream = fileService.getFile(path);
+        try {
+            YSFile taskFile = YSFile.read(fileStream);
+
+            if ("text_package_multiline".equals(formatTypeCode)) {
+                if (!LookupCodes.TaskFileType.PACKAGE.equals(taskFile.getHeader("file_type"))) {
+                    return null;
+                }
+                List<String> lines = Arrays.asList(new String(taskFile.getContent(), StandardCharsets.UTF_8).split("\r\n"));
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                for (String line : lines) {
+                    if (line.length() > 24 && REGEXP_DATETIME_PREFIX.matcher(line).matches()) {
+                        line = line.substring(24, line.length()).trim();
+                    }
+                    String[] tempArray = line.split(":");
+                    if (tempArray.length == 2 && tempArray[0].length() > 0) {
+                        for (String c : tempArray[1].split(",")) {
+                            if (c.length() > 0) {
+                                String subLine = String.format("%s,%s\r\n", tempArray[0], c);
+                                outputStream.write(subLine.getBytes(StandardCharsets.UTF_8));
+                            }
+                        }
+                    }
+                }
+                byte[] buffer = outputStream.toByteArray();
+                return new ResourceInputStream(new ByteArrayInputStream(buffer), buffer.length, MediaType.TEXT_PLAIN_VALUE);
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
 
     public TaskFileEntryObject getTotal(String orgId, String appId, String deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
@@ -220,6 +264,8 @@ public class TaskFileDomain {
         });
     }
 
+    //region private methods
+
     private TaskFileEntryObject createTaskFileEntry(TaskFileEntryObject obj) {
         obj.setFileId(null);
         obj.setStatusCode(LookupCodes.TaskFileStatus.UPLOADING);
@@ -283,5 +329,7 @@ public class TaskFileDomain {
             return null;
         }
     }
+
+    //endregion
 
 }

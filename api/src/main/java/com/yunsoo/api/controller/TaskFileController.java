@@ -79,7 +79,7 @@ public class TaskFileController {
         }
         ResourceInputStream resourceInputStream = taskFileDomain.getFile(entry.getOrgId(), entry.getFileId());
         if (resourceInputStream == null) {
-            throw new NotFoundException("attachment not found");
+            throw new NotFoundException("file not found");
         }
 
         ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
@@ -91,6 +91,27 @@ public class TaskFileController {
         return builder.body(new InputStreamResource(resourceInputStream));
     }
 
+    @RequestMapping(value = "/file/{id}/export", method = RequestMethod.GET)
+    public ResponseEntity<?> export(@PathVariable("id") String id,
+                                    @RequestParam(value = "format_type_code", required = false) String formatTypeCode)
+            throws UnsupportedEncodingException {
+        TaskFileEntryObject entry = taskFileDomain.getTaskFileEntryById(id);
+        if (entry == null) {
+            throw new NotFoundException("taskFile not found");
+        }
+        ResourceInputStream resourceInputStream = taskFileDomain.exportFile(entry.getOrgId(), entry.getFileId(), formatTypeCode);
+        if (resourceInputStream == null) {
+            throw new NotFoundException("file not found");
+        }
+
+        ResponseEntity.BodyBuilder builder = ResponseEntity.ok();
+        builder.contentType(MediaType.parseMediaType(resourceInputStream.getContentType()));
+        if (resourceInputStream.getContentLength() > 0) {
+            builder.contentLength(resourceInputStream.getContentLength());
+        }
+        builder.header("Content-Disposition", "attachment;filename=" + URLEncoder.encode(entry.getName(), "UTF-8"));
+        return builder.body(new InputStreamResource(resourceInputStream));
+    }
 
     @RequestMapping(value = "form", method = RequestMethod.POST)
     public TaskFileEntry uploadInForm(@RequestParam("file") MultipartFile file) throws IOException {

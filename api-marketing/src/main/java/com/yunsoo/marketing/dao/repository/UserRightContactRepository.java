@@ -10,7 +10,7 @@ import org.springframework.data.repository.Repository;
  * Descriptions:
  */
 public interface UserRightContactRepository extends Repository<UserRightContactEntity, String> {
-    UserRightContactEntity findOne(String id);
+    UserRightContactEntity findOne(String userRightId);
 
     UserRightContactEntity save(UserRightContactEntity entity);
 

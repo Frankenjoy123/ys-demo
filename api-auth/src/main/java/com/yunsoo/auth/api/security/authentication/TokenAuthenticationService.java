@@ -83,9 +83,14 @@ public class TokenAuthenticationService {
         return new Token(loginTokenHandler.createToken(expires, accountId), expires);
     }
 
-    public Token generateLoginToken() {
-
-        return null;
+    public Token generateLoginToken(AuthAccount authAccount, Integer expiresIn) {
+        DateTime expires;
+        if (expiresIn == null || expiresIn <= 0) {
+            expires = DateTime.now().plusMinutes(loginTokenExpiresMinutes);
+        } else {
+            expires = DateTime.now().plusSeconds(expiresIn);
+        }
+        return new Token(loginTokenHandler.createToken(expires, authAccount), expires);
     }
 
     public AuthAccount parseAccessToken(String token) {
