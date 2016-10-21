@@ -1,7 +1,6 @@
 package com.yunsoo.auth.service;
 
 import com.yunsoo.auth.Constants;
-import com.yunsoo.auth.api.security.AuthAccount;
 import com.yunsoo.auth.api.util.AuthUtils;
 import com.yunsoo.auth.api.util.PageUtils;
 import com.yunsoo.auth.dao.entity.DeviceEntity;
@@ -9,6 +8,7 @@ import com.yunsoo.auth.dao.repository.DeviceRepository;
 import com.yunsoo.auth.dto.Device;
 import com.yunsoo.auth.dto.HeartBeatPackage;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.security.authentication.AuthAccount;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
