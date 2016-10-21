@@ -70,6 +70,17 @@ public class OrgAgency implements OrgIdDetectable {
     @JsonProperty("authorized")
     private Boolean authorized;
 
+    @JsonProperty("details")
+    private OrgAgencyDetails details;
+
+    public OrgAgencyDetails getDetails() {
+        return details;
+    }
+
+    public void setDetails(OrgAgencyDetails details) {
+        this.details = details;
+    }
+
     public String getId() {
         return id;
     }

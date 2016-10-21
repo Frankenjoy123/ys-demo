@@ -22,8 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by:   Lijian
@@ -169,8 +168,10 @@ public class TaskFileDomain {
     }
 
     public List<TaskFileEntryObject> getTotalByDate(String deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
-        if (start == null && end == null)
-            start = DateTime.now().minusDays(90);
+        if (start == null)
+            start = DateTime.now().minusMonths(1);
+        if(end == null)
+            end = DateTime.now();
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("device_id", deviceId)
                 .append("type_code", typeCode)
@@ -179,18 +180,28 @@ public class TaskFileDomain {
                 .append("created_datetime_end", end)
                 .build();
 
-        List<TaskFileEntryObject> resultList = dataApiClient.get("/taskFileEntry/sum/date" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
+        List<TaskFileEntryObject> dataList = dataApiClient.get("/taskFileEntry/sum/date" + query, new ParameterizedTypeReference<List<TaskFileEntryObject>>() {
         });
-        if (resultList.size() > 0) {
-            DateTime lastDate = DateTime.parse(resultList.get(resultList.size() - 1).getName() + "T00:00");
-            while (DateTime.now().getDayOfYear() > lastDate.getDayOfYear()) {
-                lastDate = lastDate.plusDays(1);
-                TaskFileEntryObject object = new TaskFileEntryObject();
-                object.setName(lastDate.toString("YYYY-MM-dd"));
-                object.setProductCount(0);
-                object.setPackageCount(0);
-                resultList.add(object);
+
+        Map<String, TaskFileEntryObject> mapData = new HashMap<>();
+        dataList.forEach(item->{
+                mapData.put(item.getName(), item);
+        });
+
+
+        List<TaskFileEntryObject> resultList = new ArrayList<>();
+        int totalLength = new Long((end.getMillis() - start.getMillis())/(24*60*60*1000)).intValue() + 1;
+        for(int i = 0; i< totalLength; i++){
+            String date = start.toString("YYYY-MM-dd");
+            TaskFileEntryObject object = new TaskFileEntryObject();
+            object.setName(date);
+            if(mapData.containsKey(date)){
+                object.setProductCount(mapData.get(date).getProductCount());
+                object.setPackageCount(mapData.get(date).getPackageCount());
             }
+            resultList.add(object);
+
+            start = start.plusDays(1);
         }
 
         return resultList;

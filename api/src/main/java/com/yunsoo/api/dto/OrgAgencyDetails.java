@@ -7,6 +7,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class OrgAgencyDetails {
 
+    @JsonProperty("agency_id")
+    private String agencyId;
+
     @JsonProperty("oauth_name")
     private String oauthName;
 
@@ -18,6 +21,9 @@ public class OrgAgencyDetails {
 
     @JsonProperty("authorized_children_count")
     private int authorizedChildrenCount;
+
+    @JsonProperty("parent_name")
+    private String parentName;
 
     public String getOauthName() {
         return oauthName;
@@ -49,5 +55,21 @@ public class OrgAgencyDetails {
 
     public void setAuthorizedChildrenCount(int authorizedChildrenCount) {
         this.authorizedChildrenCount = authorizedChildrenCount;
+    }
+
+    public String getAgencyId() {
+        return agencyId;
+    }
+
+    public void setAgencyId(String agencyId) {
+        this.agencyId = agencyId;
+    }
+
+    public String getParentName() {
+        return parentName;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
     }
 }

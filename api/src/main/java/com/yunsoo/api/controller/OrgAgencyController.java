@@ -58,14 +58,19 @@ public class OrgAgencyController {
         String oauthAccountId = "2m6oahol8xdtz28q55m";
         OrgAgencyDetails details = new OrgAgencyDetails();
         OAuthAccount account = orgAgencyDomain.getOAuthAccount(oauthAccountId);
-        details.setChildrenCount(orgAgencyDomain.count(account.getSource()));
-        details.setAuthorizedChildrenCount(orgAgencyDomain.authorizedCount(orgId, account.getSource()));
-        details.setOauthName(account.getName());
-        details.setOauthGravatarUrl(account.getGravatarUrl());
-        return details;
+        if(LookupCodes.TraceSourceType.AGENCY.equals(account.getSourceTypeCode())){
+            details.setChildrenCount(orgAgencyDomain.count(account.getSource()));
+            details.setAuthorizedChildrenCount(orgAgencyDomain.authorizedCount(orgId, account.getSource()));
+            details.setOauthName(account.getName());
+            details.setOauthGravatarUrl(account.getGravatarUrl());
+            details.setAgencyId(account.getSource());
+            details.setParentName(orgAgencyDomain.getParentOrgAgencyName(account.getSource()));
+
+            return details;
+
+        }
+        return  null;
     }
-
-
 
     //query by org id
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -83,7 +88,8 @@ public class OrgAgencyController {
         List<OrgAgency> agencyList = PageUtils.response(response, orgAgencyPage.map(OrgAgency::new), pageable != null);
 
         if(parentId != null){
-            orgAgencyDomain.checkAuthroized(agencyList);
+            orgAgencyDomain.getAgencyDetails(agencyList);
+
         }
 
         return agencyList;

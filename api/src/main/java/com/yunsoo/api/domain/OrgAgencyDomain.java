@@ -3,6 +3,7 @@ package com.yunsoo.api.domain;
 import com.yunsoo.api.client.AuthApiClient;
 import com.yunsoo.api.dto.OAuthAccount;
 import com.yunsoo.api.dto.OrgAgency;
+import com.yunsoo.api.dto.OrgAgencyDetails;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.LocationObject;
@@ -93,7 +94,7 @@ public class OrgAgencyDomain {
         dataApiClient.delete("organizationagency/{id}", id);
     }
 
-    public void checkAuthroized(List<OrgAgency> agencyList){
+    public void getAgencyDetails(List<OrgAgency> agencyList){
         List<String> ids = agencyList.stream().map(agency-> agency.getId()).collect(Collectors.toList());
         String queryString = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("source_list",ids).append("source_type", LookupCodes.TraceSourceType.AGENCY)
@@ -107,9 +108,14 @@ public class OrgAgencyDomain {
             for(int i=0; i<length; i++){
                 if(orgAgency.getId().equals(oauthList.get(i).getSource())){
                     orgAgency.setAuthorized(true);
+                    OrgAgencyDetails details = new OrgAgencyDetails();
+                    details.setOauthGravatarUrl(oauthList.get(i).getGravatarUrl());
+                    details.setOauthName(oauthList.get(i).getName());
+                    orgAgency.setDetails(details);
                     break;
                 }
             }
+
         });
     }
 
@@ -131,5 +137,20 @@ public class OrgAgencyDomain {
 
     public OAuthAccount getOAuthAccount(String id){
         return authApiClient.get("oauth/{id}", OAuthAccount.class, id);
+    }
+
+
+    public String getParentOrgAgencyName(String agencyId){
+        OrgAgencyObject currentObject = getOrgAgencyById(agencyId);
+        if(currentObject != null){
+            String parentId = currentObject.getParentId();
+            if(StringUtils.hasText(parentId)){
+                OrgAgencyObject parentObj = getOrgAgencyById(parentId);
+                if(parentObj != null)
+                    return parentObj.getName();
+            }
+        }
+
+        return null;
     }
 }
