@@ -2,11 +2,11 @@ package com.yunsoo.marketing.api.util;
 
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
+import com.yunsoo.common.web.security.authentication.AuthAccount;
 import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
 import com.yunsoo.common.web.security.permission.expression.PermissionExpression.SimplePermissionExpression;
 import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
 import com.yunsoo.common.web.security.permission.expression.RestrictionExpression.OrgRestrictionExpression;
-import com.yunsoo.marketing.security.AuthAccount;
 import com.yunsoo.marketing.security.AuthDetails;
 import com.yunsoo.marketing.security.authentication.AccountAuthentication;
 import org.springframework.security.core.Authentication;
