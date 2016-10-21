@@ -1,7 +1,7 @@
 package com.yunsoo.marketing.auth.service;
 
 import com.yunsoo.common.web.exception.UnauthorizedException;
-import com.yunsoo.marketing.auth.dto.Account;
+import com.yunsoo.common.web.security.authentication.AuthAccount;
 import com.yunsoo.marketing.client.AuthApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,12 +18,12 @@ public class AuthTokenService {
     @Autowired
     private AuthApiClient authApiClient;
 
-    public Account parseAccessToken(String token) {
+    public AuthAccount parseAccessToken(String token) {
         if (StringUtils.isEmpty(token)) {
             return null;
         }
         try {
-            return authApiClient.post("accessToken", token, Account.class);
+            return authApiClient.post("accessToken", token, AuthAccount.class);
         } catch (UnauthorizedException e) {
             return null;
         }

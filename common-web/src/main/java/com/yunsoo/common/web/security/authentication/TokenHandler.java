@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * Created by:   Lijian
@@ -17,6 +17,8 @@ import java.util.Arrays;
 public final class TokenHandler {
 
     private static final String SPLITTER = ",";
+
+    private static final String DELIMITER = ":";
 
     private Log log = LogFactory.getLog(this.getClass());
 
@@ -38,6 +40,19 @@ public final class TokenHandler {
             }
         }
         return encodeToken(sb.toString());
+    }
+
+    public String createToken(DateTime expires, AuthAccount authAccount) {
+        List<String> values = new ArrayList<>();
+        values.add(authAccount.getId());
+        values.add(authAccount.getOrgId());
+        Map<String, String> details = authAccount.getDetails();
+        if (details != null && !details.isEmpty()) {
+            details.forEach((k, v) -> {
+                values.add(String.format("%s%s%s", k, DELIMITER, v));
+            });
+        }
+        return createToken(expires, values.toArray(new String[values.size()]));
     }
 
     public String[] parseToken(String token) {
@@ -64,6 +79,39 @@ public final class TokenHandler {
         return Arrays.copyOfRange(parts, 1, parts.length);
     }
 
+    public AuthAccount parseTokenAsAuthAccount(String token) {
+        if (token == null) {
+            return null;
+        }
+        String[] values = parseToken(token);
+        if (values == null || values.length == 0) {
+            return null;
+        } else {
+            AuthAccount authAccount = new AuthAccount();
+            if (values[0].length() > 0) {
+                authAccount.setId(values[0]);
+            }
+            if (values.length > 1 && values[1].length() > 0) {
+                authAccount.setOrgId(values[1]);
+            }
+            if (values.length > 2) {
+                Map<String, String> details = new HashMap<>();
+                authAccount.setDetails(details);
+                for (int i = 2; i < values.length; i++) {
+                    if (values[i].length() > 0) {
+                        String[] detailArray = values[i].split(DELIMITER, 2);
+                        details.put(
+                                detailArray.length > 1 && detailArray[0].length() > 0 ? detailArray[0] : Integer.toString(i - 2),
+                                detailArray[detailArray.length - 1]);
+                    }
+                }
+            }
+            return authAccount;
+        }
+    }
+
+
+    //region private methods
 
     private String encodeToken(String src) {
         byte[] srcBytes = src.getBytes(StandardCharsets.UTF_8);
@@ -131,5 +179,7 @@ public final class TokenHandler {
         }
         return true;
     }
+
+    //endregion
 
 }

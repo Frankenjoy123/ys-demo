@@ -1,8 +1,8 @@
 package com.yunsoo.marketing.security.authentication;
 
+import com.yunsoo.common.web.security.authentication.AuthAccount;
 import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
 import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
-import com.yunsoo.marketing.security.AuthAccount;
 import com.yunsoo.marketing.security.AuthDetails;
 import com.yunsoo.marketing.security.authorization.AuthorizationService;
 import org.springframework.security.core.Authentication;

@@ -1,8 +1,7 @@
 package com.yunsoo.marketing.security.authentication;
 
-import com.yunsoo.marketing.auth.dto.Account;
+import com.yunsoo.common.web.security.authentication.AuthAccount;
 import com.yunsoo.marketing.auth.service.AuthTokenService;
-import com.yunsoo.marketing.security.AuthAccount;
 import com.yunsoo.marketing.security.authorization.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,13 +24,10 @@ public class TokenAuthenticationService {
         if (token == null) {
             return null;
         }
-        Account account = authTokenService.parseAccessToken(token);
-        if (account == null) {
+        AuthAccount authAccount = authTokenService.parseAccessToken(token);
+        if (authAccount == null) {
             return null;
         }
-        AuthAccount authAccount = new AuthAccount();
-        authAccount.setId(account.getId());
-        authAccount.setOrgId(account.getOrgId());
         return new AccountAuthentication(authAccount, authorizationService).fillCredentials(token);
     }
 }

@@ -1,10 +1,10 @@
 package com.yunsoo.auth.api.util;
 
-import com.yunsoo.auth.api.security.AuthAccount;
 import com.yunsoo.auth.api.security.AuthDetails;
 import com.yunsoo.auth.api.security.authentication.AccountAuthentication;
 import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
+import com.yunsoo.common.web.security.authentication.AuthAccount;
 import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
 import com.yunsoo.common.web.security.permission.expression.PermissionExpression.SimplePermissionExpression;
 import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
