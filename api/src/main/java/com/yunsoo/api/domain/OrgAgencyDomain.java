@@ -100,7 +100,7 @@ public class OrgAgencyDomain {
                 .append("source_list",ids).append("source_type", LookupCodes.TraceSourceType.AGENCY)
                 .build();
 
-        List<OAuthAccount> oauthList = authApiClient.get("oauth" + queryString, new ParameterizedTypeReference<List<OAuthAccount>>() {
+        List<OAuthAccount> oauthList = authApiClient.get("oauth/account" + queryString, new ParameterizedTypeReference<List<OAuthAccount>>() {
         });
 
         agencyList.forEach(orgAgency -> {
@@ -130,13 +130,13 @@ public class OrgAgencyDomain {
                 .append("source_list",ids).append("source_type", LookupCodes.TraceSourceType.AGENCY)
                 .build();
 
-        return authApiClient.get("oauth/count" + queryString, Integer.class);
+        return authApiClient.get("oauth/account/count" + queryString, Integer.class);
 
     }
 
 
     public OAuthAccount getOAuthAccount(String id){
-        return authApiClient.get("oauth/{id}", OAuthAccount.class, id);
+        return authApiClient.get("oauth/account/{id}", OAuthAccount.class, id);
     }
 
 

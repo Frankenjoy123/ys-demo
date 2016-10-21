@@ -3,10 +3,7 @@ package com.yunsoo.auth.api.controller;
 import com.yunsoo.auth.dto.OAuthAccount;
 import com.yunsoo.auth.service.OAuthAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,5 +36,8 @@ public class OAuthAccountController {
         return oAuthAccountService.count(sourceList, sourceType);
     }
 
-
+    @RequestMapping(method = RequestMethod.GET, value = "{id}")
+    public OAuthAccount getById(@PathVariable("id") String id){
+        return oAuthAccountService.getById(id);
+    }
 }
