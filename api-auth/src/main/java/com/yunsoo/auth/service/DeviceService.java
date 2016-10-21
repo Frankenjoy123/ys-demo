@@ -8,7 +8,6 @@ import com.yunsoo.auth.dao.repository.DeviceRepository;
 import com.yunsoo.auth.dto.Device;
 import com.yunsoo.auth.dto.HeartBeatPackage;
 import com.yunsoo.common.web.client.Page;
-import com.yunsoo.common.web.security.authentication.AuthAccount;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -52,9 +51,8 @@ public class DeviceService {
         Assert.notNull(device, "device must not be null");
         Assert.hasText(device.getId(), "device id must not be null or empty");
 
-        AuthAccount currentAccount = AuthUtils.getCurrentAccount();
-        String accountId = currentAccount.getId();
-        String orgId = currentAccount.getOrgId();
+        String accountId = AuthUtils.getCurrentAccount().getId();
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
 
         DeviceEntity entity = deviceRepository.findOne(device.getId());
         if (entity == null) {
