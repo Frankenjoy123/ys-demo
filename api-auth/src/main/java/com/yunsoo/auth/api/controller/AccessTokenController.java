@@ -1,6 +1,5 @@
 package com.yunsoo.auth.api.controller;
 
-import com.yunsoo.auth.api.security.AuthAccount;
 import com.yunsoo.auth.api.security.authentication.TokenAuthenticationService;
 import com.yunsoo.auth.dto.Account;
 import com.yunsoo.auth.dto.AccountToken;
@@ -8,6 +7,7 @@ import com.yunsoo.auth.dto.Token;
 import com.yunsoo.auth.service.AccountTokenService;
 import com.yunsoo.auth.service.LoginService;
 import com.yunsoo.common.web.exception.UnauthorizedException;
+import com.yunsoo.common.web.security.authentication.AuthAccount;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,15 +59,12 @@ public class AccessTokenController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public Account parseAccessToken(@RequestBody String accessToken) {
+    public AuthAccount parseAccessToken(@RequestBody String accessToken) {
         AuthAccount authAccount = tokenAuthenticationService.parseAccessToken(accessToken);
         if (authAccount == null) {
             throw new UnauthorizedException("token invalid");
         }
-        Account account = new Account();
-        account.setId(authAccount.getId());
-        account.setOrgId(authAccount.getOrgId());
-        return account;
+        return authAccount;
     }
 
 }

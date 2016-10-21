@@ -33,6 +33,20 @@ public class TokenHandlerTest {
     }
 
     @Test
+    public void test_createAuthAccountToken() {
+        TokenHandler tokenHandler = new TokenHandler("lvtHDkfIUxJ2bLWHc0MNztUqCJSVPSJO");
+        String token = tokenHandler.createToken(DateTime.now().plusMinutes(1), "123", "456", "few:23", "fe:", ":45");
+        System.out.println(token);
+        String[] values = tokenHandler.parseToken(token);
+        assert values != null : "token invalid";
+        System.out.println(Arrays.asList(values));
+        AuthAccount authAccount = tokenHandler.parseTokenAsAuthAccount(token);
+        System.out.println(authAccount.getId());
+        System.out.println(authAccount.getOrgId());
+        System.out.println(authAccount.getDetails());
+    }
+
+    @Test
     public void createAccessTokenForSystemAccount() {
         TokenHandler tokenHandler = new TokenHandler("lvtHDkfIUxJ2bLWHc0MNztUqCJSVPSJO");
         String token = tokenHandler.createToken(DateTime.now().plusYears(100), "0010000000000000000", "2k0r1l55i2rs5544wz5");

@@ -1,7 +1,6 @@
 package com.yunsoo.auth.service;
 
 import com.yunsoo.auth.Constants;
-import com.yunsoo.auth.api.security.AuthAccount;
 import com.yunsoo.auth.api.util.AuthUtils;
 import com.yunsoo.auth.api.util.PageUtils;
 import com.yunsoo.auth.dao.entity.DeviceEntity;
@@ -52,9 +51,8 @@ public class DeviceService {
         Assert.notNull(device, "device must not be null");
         Assert.hasText(device.getId(), "device id must not be null or empty");
 
-        AuthAccount currentAccount = AuthUtils.getCurrentAccount();
-        String accountId = currentAccount.getId();
-        String orgId = currentAccount.getOrgId();
+        String accountId = AuthUtils.getCurrentAccount().getId();
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
 
         DeviceEntity entity = deviceRepository.findOne(device.getId());
         if (entity == null) {
