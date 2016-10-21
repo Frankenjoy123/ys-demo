@@ -149,7 +149,7 @@ public class TaskFileController {
                                            @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
 
         String orgId = AuthUtils.fixOrgId(null);
-        List<String> statusCodeIn = Arrays.asList(LookupCodes.TaskFileStatus.FINISHED);
+        List<String> statusCodeIn = Arrays.asList(LookupCodes.TaskFileStatus.FINISHED, LookupCodes.TaskFileStatus.UPLOADED);
         TaskFileEntry result = new TaskFileEntry(taskFileDomain.getTotal(orgId, appId, deviceId, typeCode, start, end, statusCodeIn));
         result.setDeviceId(deviceId);
         result.setAppId(appId);
@@ -162,7 +162,7 @@ public class TaskFileController {
                                    @RequestParam(value = "type_code") String typeCode) {
 
         String orgId = AuthUtils.fixOrgId(null);
-        List<String> statusCodeIn = Arrays.asList(LookupCodes.TaskFileStatus.FINISHED);
+        List<String> statusCodeIn = Arrays.asList(LookupCodes.TaskFileStatus.FINISHED, LookupCodes.TaskFileStatus.UPLOADED);
 
         return taskFileDomain.countByDevice(orgId, deviceId, typeCode, statusCodeIn);
 
@@ -174,7 +174,7 @@ public class TaskFileController {
                                                        @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
                                                        @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
 
-        List<String> statusCodeIn = Arrays.asList(LookupCodes.TaskFileStatus.FINISHED);
+        List<String> statusCodeIn = Arrays.asList(LookupCodes.TaskFileStatus.FINISHED, LookupCodes.TaskFileStatus.UPLOADED);
         List<TaskFileEntryObject> returnObj = taskFileDomain.getTotalByDate(deviceId, typeCode, start, end, statusCodeIn);
         return returnObj.stream().map(TaskFileEntry::new).collect(Collectors.toList());
 
@@ -186,7 +186,7 @@ public class TaskFileController {
                                                          @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
                                                          @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
 
-        List<String> statusCodeIn = Arrays.asList(LookupCodes.TaskFileStatus.FINISHED);
+        List<String> statusCodeIn = Arrays.asList(LookupCodes.TaskFileStatus.FINISHED, LookupCodes.TaskFileStatus.UPLOADED);
         List<TaskFileEntryObject> returnObj = taskFileDomain.getTotalByDevice(deviceId, typeCode, start, end, statusCodeIn);
         return returnObj.stream().map(TaskFileEntry::new).collect(Collectors.toList());
 

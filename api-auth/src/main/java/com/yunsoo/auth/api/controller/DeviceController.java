@@ -5,6 +5,7 @@ import com.yunsoo.auth.api.util.AuthUtils;
 import com.yunsoo.auth.api.util.PageUtils;
 import com.yunsoo.auth.dto.Device;
 import com.yunsoo.auth.dto.DeviceRegisterRequest;
+import com.yunsoo.auth.service.ApplicationService;
 import com.yunsoo.auth.service.DeviceService;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Lijian
@@ -31,6 +33,9 @@ public class DeviceController {
 
     @Autowired
     private DeviceService deviceService;
+
+    @Autowired
+    private ApplicationService applicationService;
 
     @RequestMapping("{deviceId}")
     @PostAuthorize("hasPermission(returnObject, 'device:read')")
@@ -47,12 +52,23 @@ public class DeviceController {
     @PostAuthorize("hasPermission(returnObject, 'device:read')")
     public List<Device> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                     @RequestParam(value = "auth_account_id", required = false) String authAccountId,
+                                    @RequestParam(value = "type_code", required = false) String type_code,
                                     Pageable pageable,
                                     HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
 
         Page<Device> page = deviceService.getByFilter(orgId, authAccountId, pageable);
-        return PageUtils.response(response, page, pageable != null);
+        List<Device> devices = PageUtils.response(response, page, pageable != null);
+        if(type_code !=null){
+            List<String> appIds = applicationService.getListByIds(type_code,
+                    devices.stream().map(item ->item.getAppId()).collect(Collectors.toList()))
+                    .stream().map(app -> app.getId()).collect(Collectors.toList());
+
+            devices = devices.stream().filter(device -> appIds.contains(device.getAppId())).collect(Collectors.toList());
+
+        }
+
+        return devices;
     }
 
     @RequestMapping(value = "register", method = RequestMethod.POST)

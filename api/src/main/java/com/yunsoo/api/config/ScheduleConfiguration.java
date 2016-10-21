@@ -37,6 +37,9 @@ public class ScheduleConfiguration {
     @Value("${yunsoo.wechat.app_secret}")
     private String weChatAppSecret;
 
+    @Value("${yunsoo.wechat.refresh_token}")
+    private Boolean weChatAutoRefreshToken;
+
     @Scheduled(initialDelay = 10 * 1000, fixedRate = 300 * 1000)
     public void daemon() {
         try {
@@ -46,10 +49,12 @@ public class ScheduleConfiguration {
         }
     }
 
-    @Scheduled(initialDelay = 10 * 1000, fixedRate = 110 * 60 * 1000)
+    @Scheduled(initialDelay = 300 * 1000, fixedRate = 110 * 60 * 1000)
     public void weChatTokenRefresh(){
-        log.info("start to refresh wechat token");
-        weChatAPIDomain.getWechatAccessToken(Constants.Ids.YUNSU_ORGID, weChatAppId, weChatAppSecret);
+        if(weChatAutoRefreshToken) {
+            log.info("start to refresh wechat token");
+            weChatAPIDomain.getWechatAccessToken(Constants.Ids.YUNSU_ORGID, weChatAppId, weChatAppSecret);
+        }
     }
 
 }

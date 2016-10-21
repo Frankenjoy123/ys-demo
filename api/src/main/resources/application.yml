@@ -73,7 +73,8 @@ yunsoo:
     notify_url: http://115.192.221.38:6080/marketing/alipay/notify
     direct_return_url: http://localhost/enterprise/brandapplication.html
     direct_notify_url: http://localhost:6080/payment/brand/alipay/notify
-
+  wechat:
+    refresh_token: false
 ---
 spring:
   profiles: dev
@@ -94,3 +95,5 @@ yunsoo:
     notify_url: http://dev.yunsu.co:9080/api/marketing/alipay/notify
     direct_return_url: http://dev.yunsu.co:9080/enterprise/brandapplication.html
     direct_notify_url: http://dev.yunsu.co:9080/api/payment/brand/alipay/notify
+  wechat:
+    refresh_token: true

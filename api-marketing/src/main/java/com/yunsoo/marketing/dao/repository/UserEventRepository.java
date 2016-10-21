@@ -10,4 +10,8 @@ import org.springframework.data.repository.Repository;
  * Descriptions:
  */
 public interface UserEventRepository extends Repository<UserEventEntity, String> {
+    UserEventEntity findOne(String id);
+
+    UserEventEntity save(UserEventEntity entity);
+
 }

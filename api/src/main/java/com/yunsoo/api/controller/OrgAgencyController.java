@@ -54,6 +54,14 @@ public class OrgAgencyController {
         return orgAgencyDomain.count(parentId);
     }
 
+    @RequestMapping(value = "authorized/count", method= RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
+    public int authorizedCount(@RequestParam("parent_id")String parentId){
+        String orgId = AuthUtils.fixOrgId(null);
+        return orgAgencyDomain.authorizedCount(orgId, parentId);
+    }
+
+
     //query by org id
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
