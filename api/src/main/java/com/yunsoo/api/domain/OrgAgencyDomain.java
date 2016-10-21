@@ -127,4 +127,9 @@ public class OrgAgencyDomain {
         return authApiClient.get("oauth/count" + queryString, Integer.class);
 
     }
+
+
+    public OAuthAccount getOAuthAccount(String id){
+        return authApiClient.get("oauth/{id}", OAuthAccount.class, id);
+    }
 }

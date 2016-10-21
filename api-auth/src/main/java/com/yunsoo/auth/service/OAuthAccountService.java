@@ -28,4 +28,9 @@ public class OAuthAccountService {
     public int count(List<String> sourceList, String sourceType) {
         return repository.countBySourceInAndSourceTypeCodeAndDisabled(sourceList, sourceType, false);
     }
+
+    public OAuthAccount getById(String id){
+        OAuthAccountEntity entity = repository.findOne(id);
+        return new OAuthAccount(entity);
+    }
 }

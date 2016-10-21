@@ -2,7 +2,9 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.OrgAgencyDomain;
 import com.yunsoo.api.dto.Location;
+import com.yunsoo.api.dto.OAuthAccount;
 import com.yunsoo.api.dto.OrgAgency;
+import com.yunsoo.api.dto.OrgAgencyDetails;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
@@ -48,18 +50,21 @@ public class OrgAgencyController {
         return orgAgency;
     }
 
-    @RequestMapping(value = "count", method= RequestMethod.GET)
+    @RequestMapping(value = "details", method= RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
-    public int count(@RequestParam("parent_id")String parentId){
-        return orgAgencyDomain.count(parentId);
+    public OrgAgencyDetails getOrgAgencyDetails(){
+        String orgId = AuthUtils.fixOrgId(null);
+       // String oauthAccountId = AuthUtils.fixAccountId(null);
+        String oauthAccountId = "2m6oahol8xdtz28q55m";
+        OrgAgencyDetails details = new OrgAgencyDetails();
+        OAuthAccount account = orgAgencyDomain.getOAuthAccount(oauthAccountId);
+        details.setChildrenCount(orgAgencyDomain.count(account.getSource()));
+        details.setAuthorizedChildrenCount(orgAgencyDomain.authorizedCount(orgId, account.getSource()));
+        details.setOauthName(account.getName());
+        details.setOauthGravatarUrl(account.getGravatarUrl());
+        return details;
     }
 
-    @RequestMapping(value = "authorized/count", method= RequestMethod.GET)
-    @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
-    public int authorizedCount(@RequestParam("parent_id")String parentId){
-        String orgId = AuthUtils.fixOrgId(null);
-        return orgAgencyDomain.authorizedCount(orgId, parentId);
-    }
 
 
     //query by org id
