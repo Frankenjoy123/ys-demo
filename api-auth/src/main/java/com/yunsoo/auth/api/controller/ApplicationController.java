@@ -53,7 +53,7 @@ public class ApplicationController {
     public List<Application> getList(Pageable pageable,
                                      @RequestParam(value = "type_code", required = false) String typeCode,
                                      HttpServletResponse response) {
-        Page<Application> applications = applicationService.getList(typeCode, pageable);
+        Page<Application> applications = applicationService.getList(typeCode,  pageable);
         return PageUtils.response(response, applications, pageable != null);
     }
 
