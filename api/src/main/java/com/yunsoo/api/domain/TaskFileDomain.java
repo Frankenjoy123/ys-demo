@@ -108,9 +108,17 @@ public class TaskFileDomain {
         TaskFileEntryObject obj = null;
         if (committed != null) {
             //try override file with the same name in status of uploading
-            obj = getLastUploadingByFileName(fileName);
+            obj = getLastUploadingTaskFileEntry(orgId, appId, deviceId, fileName);
         }
-        if (obj == null || !LookupCodes.TaskFileStatus.UPLOADING.equals(obj.getStatusCode())) {
+        if (obj != null && LookupCodes.TaskFileStatus.UPLOADING.equals(obj.getStatusCode())) {
+            obj.setProductBaseId(ysFile.getHeader("product_base_id"));
+            obj.setPackageCount(tryParseInt(ysFile.getHeader("package_count")));
+            obj.setPackageSize(tryParseInt(ysFile.getHeader("package_size")));
+            obj.setProductCount(tryParseInt(ysFile.getHeader("product_count")));
+            obj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
+            obj.setCreatedDateTime(DateTime.now());
+            this.patchUpdateTaskFileEntry(obj);
+        } else {
             obj = new TaskFileEntryObject();
             obj.setOrgId(orgId);
             obj.setAppId(appId);
@@ -186,6 +194,7 @@ public class TaskFileDomain {
                         line = line.substring(24, line.length()).trim();
                     }
                     outputStream.write(line.getBytes(StandardCharsets.UTF_8));
+                    outputStream.write(new byte[]{13, 10});
                 }
                 byte[] buffer = outputStream.toByteArray();
                 return new ResourceInputStream(new ByteArrayInputStream(buffer), buffer.length, MediaType.TEXT_PLAIN_VALUE);
@@ -286,11 +295,14 @@ public class TaskFileDomain {
         return dataApiClient.post("taskFileEntry", obj, TaskFileEntryObject.class);
     }
 
-    private TaskFileEntryObject getLastUploadingByFileName(String name) {
-        if (StringUtils.isEmpty(name)) {
+    private TaskFileEntryObject getLastUploadingTaskFileEntry(String orgId, String appId, String deviceId, String name) {
+        if (StringUtils.isEmpty(orgId) || StringUtils.isEmpty(appId) || StringUtils.isEmpty(deviceId) || StringUtils.isEmpty(name)) {
             return null;
         }
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("app_id", appId)
+                .append("device_id", deviceId)
                 .append("name", name)
                 .append("status_code_in", Collections.singletonList(LookupCodes.TaskFileStatus.UPLOADING))
                 .build();
@@ -300,6 +312,12 @@ public class TaskFileDomain {
             return null;
         }
         return list.get(list.size() - 1);
+    }
+
+    private void patchUpdateTaskFileEntry(TaskFileEntryObject obj) {
+        if (obj != null && obj.getFileId() != null) {
+            dataApiClient.patch("taskFileEntry/{id}", obj, obj.getFileId());
+        }
     }
 
     private void updateTaskFileEntryStatus(String fileId, String statusCode) {
