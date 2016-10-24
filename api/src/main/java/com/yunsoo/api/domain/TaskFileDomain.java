@@ -175,6 +175,20 @@ public class TaskFileDomain {
                 }
                 byte[] buffer = outputStream.toByteArray();
                 return new ResourceInputStream(new ByteArrayInputStream(buffer), buffer.length, MediaType.TEXT_PLAIN_VALUE);
+            } else if ("text_package_singleline".equals(formatTypeCode)) {
+                if (!LookupCodes.TaskFileType.PACKAGE.equals(taskFile.getHeader("file_type"))) {
+                    return null;
+                }
+                List<String> lines = Arrays.asList(new String(taskFile.getContent(), StandardCharsets.UTF_8).split("\r\n"));
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                for (String line : lines) {
+                    if (line.length() > 24 && REGEXP_DATETIME_PREFIX.matcher(line).matches()) {
+                        line = line.substring(24, line.length()).trim();
+                    }
+                    outputStream.write(line.getBytes(StandardCharsets.UTF_8));
+                }
+                byte[] buffer = outputStream.toByteArray();
+                return new ResourceInputStream(new ByteArrayInputStream(buffer), buffer.length, MediaType.TEXT_PLAIN_VALUE);
             } else {
                 return null;
             }
@@ -212,7 +226,7 @@ public class TaskFileDomain {
     public List<TaskFileEntryObject> getTotalByDate(String deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
         if (start == null)
             start = DateTime.now().minusMonths(1);
-        if(end == null)
+        if (end == null)
             end = DateTime.now();
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("device_id", deviceId)
@@ -226,18 +240,18 @@ public class TaskFileDomain {
         });
 
         Map<String, TaskFileEntryObject> mapData = new HashMap<>();
-        dataList.forEach(item->{
-                mapData.put(item.getName(), item);
+        dataList.forEach(item -> {
+            mapData.put(item.getName(), item);
         });
 
 
         List<TaskFileEntryObject> resultList = new ArrayList<>();
-        int totalLength = new Long((end.getMillis() - start.getMillis())/(24*60*60*1000)).intValue() + 1;
-        for(int i = 0; i< totalLength; i++){
+        int totalLength = new Long((end.getMillis() - start.getMillis()) / (24 * 60 * 60 * 1000)).intValue() + 1;
+        for (int i = 0; i < totalLength; i++) {
             String date = start.toString("YYYY-MM-dd");
             TaskFileEntryObject object = new TaskFileEntryObject();
             object.setName(date);
-            if(mapData.containsKey(date)){
+            if (mapData.containsKey(date)) {
                 object.setProductCount(mapData.get(date).getProductCount());
                 object.setPackageCount(mapData.get(date).getPackageCount());
             }
