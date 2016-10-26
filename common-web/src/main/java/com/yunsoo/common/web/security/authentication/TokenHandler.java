@@ -67,7 +67,13 @@ public final class TokenHandler {
             return null;
         }
         if (parts[0].length() > 0) {
-            long millis = Long.parseLong(parts[0], 36);
+            long millis;
+            try {
+                millis = Long.parseLong(parts[0], 36);
+            } catch (NumberFormatException e) {
+                log.error(String.format("parse expire time %s failed", parts[0]), e);
+                return null;
+            }
             DateTime expires = new DateTime(millis);
             if (expires.isBeforeNow()) {
                 if (log.isDebugEnabled()) {
