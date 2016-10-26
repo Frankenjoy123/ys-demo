@@ -37,6 +37,14 @@ public class MarketingRightRedeemCodeService {
         return marketingRightRedeemCodeRepository.findByMarketingRightId(marketingRightId).stream().map(this::toMarketingRightRedeemCode).collect(Collectors.toList());
     }
 
+    public MarketingRightRedeemCode getFirstRedeemCodeByMarketingRightId(String marketingRightId) {
+        if (StringUtils.isEmpty(marketingRightId)) {
+            return null;
+        }
+        MarketingRightRedeemCodeEntity entity = marketingRightRedeemCodeRepository.findTop1ByMarketingRightIdAndUsedOrderByCreatedDateTime(marketingRightId, false);
+        return toMarketingRightRedeemCode(entity);
+    }
+
     @Transactional
     public void patchUpdate(MarketingRightRedeemCode marketingRightRedeemCode) {
         if (StringUtils.isEmpty(marketingRightRedeemCode.getId())) {

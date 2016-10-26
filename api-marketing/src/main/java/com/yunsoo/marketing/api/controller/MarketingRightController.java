@@ -1,12 +1,15 @@
 package com.yunsoo.marketing.api.controller;
 
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.marketing.dto.MarketingRight;
 import com.yunsoo.marketing.service.MarketingRightService;
 import com.yunsoo.marketing.service.MarketingService;
+import com.yunsoo.marketing.service.UserRightService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,6 +29,9 @@ public class MarketingRightController {
 
     @Autowired
     private MarketingRightService marketingRightService;
+
+    @Autowired
+    private UserRightService userRightService;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<MarketingRight> getMarketingRights(@PathVariable("marketing_id") String marketingId) {
@@ -57,6 +63,20 @@ public class MarketingRightController {
             throw new NotFoundException("marketing right not found");
         }
         return marketingRight;
+    }
+
+    @RequestMapping(value = "/sum", method = RequestMethod.GET)
+    public Long countDrawPrizeByDrawRuleId(
+            @RequestParam(value = "marketing_id") String marketingId,
+            @RequestParam(value = "marketing_right_id", required = false) String marketingRightId) {
+        if (StringUtils.isEmpty(marketingId)) {
+            throw new BadRequestException("marketing id is not valid");
+        }
+        if (StringUtils.isEmpty(marketingRightId))
+            marketingRightId = null;
+
+        Long quantity = userRightService.sumUserRight(marketingId, marketingRightId);
+        return quantity;
     }
 
 }
