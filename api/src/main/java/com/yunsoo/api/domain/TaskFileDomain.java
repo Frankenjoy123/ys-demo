@@ -258,7 +258,7 @@ public class TaskFileDomain {
         List<TaskFileEntryObject> resultList = new ArrayList<>();
         int totalLength = new Long((end.getMillis() - start.getMillis()) / (24 * 60 * 60 * 1000)).intValue() + 1;
         for (int i = 0; i < totalLength; i++) {
-            start.toDateTime(DateTimeZone.forID("+08:00")).toString("YYYY-MM-dd");
+            String date = start.toDateTime(DateTimeZone.forID("+08:00")).toString("YYYY-MM-dd");
             TaskFileEntryObject object = new TaskFileEntryObject();
             object.setName(date);
             if (mapData.containsKey(date)) {
