@@ -36,8 +36,13 @@ public class UserRightController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public UserRight createRight(@RequestBody @Valid UserRight userRight) {
+    public UserRight createUserRight(@RequestBody @Valid UserRight userRight) {
         return userRightService.createUserRight(userRight);
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.PATCH)
+    public void updateUserRight(@RequestBody @Valid UserRight userRight) {
+        userRightService.patchUpdate(userRight);
     }
 
     @RequestMapping(value = "contact", method = RequestMethod.POST)
@@ -68,7 +73,7 @@ public class UserRightController {
             throw new BadRequestException("marketing id is not valid");
         }
 
-        Page<UserRight> userRightPage = userRightService.queryUserMarketing(marketingId, marketingRightId, typeCode, statusCode, createdDateTimeGE, createdDateTimeLE, pageable);
+        Page<UserRight> userRightPage = userRightService.queryUserRight(marketingId, marketingRightId, typeCode, statusCode, createdDateTimeGE, createdDateTimeLE, pageable);
 
         return userRightPage;
     }
