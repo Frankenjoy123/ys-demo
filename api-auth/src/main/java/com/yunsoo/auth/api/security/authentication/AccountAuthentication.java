@@ -1,9 +1,9 @@
 package com.yunsoo.auth.api.security.authentication;
 
-import com.yunsoo.auth.api.security.AuthAccount;
 import com.yunsoo.auth.api.security.AuthDetails;
 import com.yunsoo.auth.api.security.authorization.AuthorizationService;
 import com.yunsoo.auth.api.security.authorization.PermissionGrantedAuthority;
+import com.yunsoo.common.web.security.authentication.AuthAccount;
 import com.yunsoo.common.web.security.permission.PermissionEntry;
 import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
 import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;

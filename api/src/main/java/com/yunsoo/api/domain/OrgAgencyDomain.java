@@ -1,6 +1,11 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.client.AuthApiClient;
+import com.yunsoo.api.dto.OAuthAccount;
+import com.yunsoo.api.dto.OrgAgency;
+import com.yunsoo.api.dto.OrgAgencyDetails;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.LocationObject;
 import com.yunsoo.common.data.object.OrgAgencyObject;
 import com.yunsoo.common.web.client.Page;
@@ -15,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by  : Haitao
@@ -27,6 +33,9 @@ public class OrgAgencyDomain {
     @Autowired
     private RestClient dataApiClient;
 
+    @Autowired
+    private AuthApiClient authApiClient;
+
 
     public OrgAgencyObject getOrgAgencyById(String id) {
         try {
@@ -36,10 +45,14 @@ public class OrgAgencyDomain {
         }
     }
 
-    public Page<OrgAgencyObject> getOrgAgencyByOrgId(String orgId, String searchText, org.joda.time.LocalDate start, org.joda.time.LocalDate end, Pageable pageable) {
+    public Page<OrgAgencyObject> getOrgAgencyByOrgId(String orgId, String searchText, String parentId, List<String> idList, org.joda.time.LocalDate start, org.joda.time.LocalDate end, Pageable pageable) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId).append("search_text", searchText)
-                .append("start_datetime", start).append("end_datetime", end)
+                .append("org_id", orgId)
+                .append("parent_id", parentId)
+                .append("search_text", searchText)
+                .append("ids", idList)
+                .append("start_datetime", start)
+                .append("end_datetime", end)
                 .append(pageable)
                 .build();
 
@@ -81,5 +94,63 @@ public class OrgAgencyDomain {
         dataApiClient.delete("organizationagency/{id}", id);
     }
 
+    public void getAgencyDetails(List<OrgAgency> agencyList){
+        List<String> ids = agencyList.stream().map(agency-> agency.getId()).collect(Collectors.toList());
+        String queryString = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("source_list",ids).append("source_type", LookupCodes.TraceSourceType.AGENCY)
+                .build();
 
+        List<OAuthAccount> oauthList = authApiClient.get("oauth/account" + queryString, new ParameterizedTypeReference<List<OAuthAccount>>() {
+        });
+
+        agencyList.forEach(orgAgency -> {
+            int length=oauthList.size();
+            for(int i=0; i<length; i++){
+                if(orgAgency.getId().equals(oauthList.get(i).getSource())){
+                    orgAgency.setAuthorized(true);
+                    OrgAgencyDetails details = new OrgAgencyDetails();
+                    details.setOauthGravatarUrl(oauthList.get(i).getGravatarUrl());
+                    details.setOauthName(oauthList.get(i).getName());
+                    orgAgency.setDetails(details);
+                    break;
+                }
+            }
+
+        });
+    }
+
+    public int count(String parentId){
+        return dataApiClient.get("organizationagency/count?parent_id={id}", Integer.class, parentId);
+    }
+
+    public int authorizedCount(String orgId, String parentId){
+        List<OrgAgencyObject> agencyObjectList = getOrgAgencyByOrgId(orgId, null, parentId, null, null, null, null).getContent();
+        List<String> ids = agencyObjectList.stream().map(agency-> agency.getId()).collect(Collectors.toList());
+        String queryString = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("source_list",ids).append("source_type", LookupCodes.TraceSourceType.AGENCY)
+                .build();
+
+        return authApiClient.get("oauth/account/count" + queryString, Integer.class);
+
+    }
+
+
+    public OAuthAccount getOAuthAccount(String id){
+        return authApiClient.get("oauth/account/{id}", OAuthAccount.class, id);
+    }
+
+
+    public String getParentOrgAgencyName(String agencyId){
+        OrgAgencyObject currentObject = getOrgAgencyById(agencyId);
+        if(currentObject != null){
+            String parentId = currentObject.getParentId();
+            if(StringUtils.hasText(parentId)){
+                OrgAgencyObject parentObj = getOrgAgencyById(parentId);
+                if(parentObj != null)
+                    return parentObj.getName();
+            }
+        }
+
+        return null;
+    }
 }

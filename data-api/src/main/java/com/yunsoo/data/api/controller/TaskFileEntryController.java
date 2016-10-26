@@ -46,6 +46,7 @@ public class TaskFileEntryController {
             @RequestParam(value = "org_id", required = false) String orgId,
             @RequestParam(value = "app_id", required = false) String appId,
             @RequestParam(value = "device_id", required = false) String deviceId,
+            @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "type_code", required = false) String typeCode,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
             @RequestParam(value = "product_base_id", required = false) String productBaseId,
@@ -58,6 +59,7 @@ public class TaskFileEntryController {
                 orgId,
                 appId,
                 deviceId,
+                name,
                 typeCode,
                 statusCodeIn == null || statusCodeIn.size() == 0 ? null : statusCodeIn,
                 statusCodeIn == null || statusCodeIn.size() == 0,
@@ -78,6 +80,37 @@ public class TaskFileEntryController {
         TaskFileEntryEntity entity = toTaskFileEntryEntity(obj);
         if (entity.getCreatedDateTime() == null) {
             entity.setCreatedDateTime(DateTime.now());
+        }
+        entity = taskFileEntryRepository.save(entity);
+        return toTaskFileEntryObject(entity);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public TaskFileEntryObject patchUpdate(@PathVariable("id") String fileId, @RequestBody TaskFileEntryObject obj) {
+        TaskFileEntryEntity entity = taskFileEntryRepository.findOne(fileId);
+        if (entity == null) {
+            throw new NotFoundException("taskFileEntry not found by [id: " + fileId + "]");
+        }
+        if (obj.getStatusCode() != null) {
+            entity.setStatusCode(obj.getStatusCode());
+        }
+        if (obj.getProductBaseId() != null) {
+            entity.setProductBaseId(obj.getProductBaseId());
+        }
+        if (obj.getPackageCount() != null) {
+            entity.setPackageCount(obj.getPackageCount());
+        }
+        if (obj.getPackageSize() != null) {
+            entity.setPackageSize(obj.getPackageSize());
+        }
+        if (obj.getProductCount() != null) {
+            entity.setProductCount(obj.getProductCount());
+        }
+        if (obj.getCreatedAccountId() != null) {
+            entity.setCreatedAccountId(obj.getCreatedAccountId());
+        }
+        if (obj.getCreatedDateTime() != null) {
+            entity.setCreatedDateTime(obj.getCreatedDateTime());
         }
         entity = taskFileEntryRepository.save(entity);
         return toTaskFileEntryObject(entity);
@@ -117,7 +150,8 @@ public class TaskFileEntryController {
     public int countTaskFiles(@RequestParam(value = "org_id") String orgId,
                               @RequestParam(value = "device_ids") List<String> deviceId,
                               @RequestParam(value = "type_code") String typeCode,
-                              @RequestParam(value = "status_code_in") List<String> statusCodeIn,  @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
+                              @RequestParam(value = "status_code_in") List<String> statusCodeIn,
+                              @RequestParam(value = "created_datetime_start", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime start,
                               @RequestParam(value = "created_datetime_end", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime end) {
 
         return taskFileEntryRepository.count(deviceId, typeCode, start, end,

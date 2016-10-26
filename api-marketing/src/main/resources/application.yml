@@ -1,0 +1,66 @@
+server:
+  port: 6280
+management:
+  port: 6281
+  add-application-context-header: false
+
+spring:
+  profiles.active: local
+  application.name: 'api-marketing'
+  mvc.throw-exception-if-no-handler-found: true
+  jpa:
+    show_sql: false
+    database: MYSQL
+    generate_ddl: false
+
+jdbc:
+  marketing:
+    driver_class_name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://dev-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/marketing?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: admin201512
+    initial_size: 1
+    min_idle: 1
+    max_idle: 5
+    test_on_borrow: true
+    validation_query: select 1
+
+logging:
+  file: /var/log/yunsoo/api-marketing.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'INFO'
+
+yunsoo:
+  debug: true
+  environment: dev
+  client:
+    auth_api:
+      base_url: http://localhost:6180/
+    file_api:
+      base_url: http://localhost:4180/
+    key_api:
+      base_url: http://localhost:4280/
+---
+spring:
+  profiles: local
+  jpa.show_sql: true
+
+logging:
+  file: c:/logs/yunsoo/api-marketing.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'ERROR'
+
+yunsoo:
+  environment: local
+  client:
+    auth_api:
+      base_url: http://dev-api.yunsu.co:6180/
+    file_api:
+      base_url: http://dev-api.yunsu.co:4180/
+    key_api:
+      base_url: http://dev-api.yunsu.co:4280/
+---
+spring:
+  profiles: dev

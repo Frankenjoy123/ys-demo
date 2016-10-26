@@ -12,6 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Created by:   Lijian
  * Created on:   2016-07-11
@@ -31,8 +34,15 @@ public class ApplicationService {
         return toApplication(applicationRepository.findOne(appId));
     }
 
-    public Page<Application> getAll(Pageable pageable) {
-        return PageUtils.convert(applicationRepository.findAll(pageable)).map(this::toApplication);
+    public Page<Application> getList(String typeCode, Pageable pageable) {
+        return PageUtils.convert(StringUtils.isEmpty(typeCode)
+                ? applicationRepository.findAll(pageable)
+                : applicationRepository.findByTypeCode(typeCode, pageable))
+                .map(this::toApplication);
+    }
+
+    public List<Application> getListByIds(String typeCode, List<String> ids){
+        return  applicationRepository.findByTypeCodeAndIdIn(typeCode, ids).stream().map((this::toApplication)).collect(Collectors.toList());
     }
 
     public Application create(Application application) {

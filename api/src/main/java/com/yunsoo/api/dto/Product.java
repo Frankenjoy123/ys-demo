@@ -3,10 +3,10 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.web.security.util.OrgIdDetectable;
 import org.joda.time.DateTime;
 
 import java.util.Set;

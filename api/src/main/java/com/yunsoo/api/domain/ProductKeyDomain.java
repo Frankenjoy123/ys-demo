@@ -90,6 +90,12 @@ public class ProductKeyDomain {
     //endregion
 
     //ProductKeyBatch
+    public String getKeyBatchPartitionId(String orgId){
+        List<String> partitionIds = dataApiClient.get("productkeybatch/partition?org_id={orgId}", new ParameterizedTypeReference<List<String>>() {
+        }, orgId);
+
+        return partitionIds.get(0);
+    }
 
     public ProductKeyBatch getProductKeyBatchById(String id) {
         return toProductKeyBatch(

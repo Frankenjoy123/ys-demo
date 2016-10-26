@@ -274,8 +274,6 @@ public class LookupCodes {
     }
 
 
-
-
     public static class PaymentStatus {
         private PaymentStatus() {
         }
@@ -315,6 +313,7 @@ public class LookupCodes {
 
         public static final String UPLOADING = "uploading";
         public static final String UPLOADED = "uploaded";
+        public static final String PENDING = "pending";
         public static final String PROCESSING = "processing";
         public static final String FAILED = "failed";
         public static final String FINISHED = "finished";
@@ -367,13 +366,41 @@ public class LookupCodes {
     }
 
 
-    public static class SMSTemplate{
-        private SMSTemplate(){
+    public static class SMSTemplate {
+        private SMSTemplate() {
 
         }
 
-        public static final String RESETPASSWORD="reset_password";
+        public static final String RESETPASSWORD = "reset_password";
         public static final String SENDPRIZE = "send_prize";
+    }
+
+    public static class TraceStatus{
+        private TraceStatus(){}
+
+        public static final String  PENDING = "pending";
+        public static final String  SYNCHRONIZED = "synchronized";
+    }
+
+    public static class TraceSourceType {
+        public static String AGENCY = "agency";
+        public static String ORGANIZATION="organization";
+    }
+
+    public static class TraceAction {
+        public static String DELIVERY = "delivery";
+    }
+
+    public static class TraceCommentsStatus{
+        private TraceCommentsStatus(){}
+
+        public static final String SUBMITTED="submitted";
+    }
+
+    public static class TraceCommentsType{
+        private TraceCommentsType(){}
+
+        public static final String ARBITRARY_PRICE="arbitrary_price";
     }
 
     public enum LookupType {

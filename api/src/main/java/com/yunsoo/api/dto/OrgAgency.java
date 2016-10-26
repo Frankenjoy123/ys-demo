@@ -3,10 +3,10 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.api.dto.detectable.OrgIdDetectable;
 import com.yunsoo.common.data.object.OrgAgencyObject;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.web.security.util.OrgIdDetectable;
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -66,6 +66,20 @@ public class OrgAgency implements OrgIdDetectable {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("modified_datetime")
     private DateTime modifiedDateTime;
+
+    @JsonProperty("authorized")
+    private Boolean authorized;
+
+    @JsonProperty("details")
+    private OrgAgencyDetails details;
+
+    public OrgAgencyDetails getDetails() {
+        return details;
+    }
+
+    public void setDetails(OrgAgencyDetails details) {
+        this.details = details;
+    }
 
     public String getId() {
         return id;
@@ -185,6 +199,14 @@ public class OrgAgency implements OrgIdDetectable {
 
     public void setAgencyPhone(String agencyPhone) {
         this.agencyPhone = agencyPhone;
+    }
+
+    public Boolean getAuthorized() {
+        return authorized;
+    }
+
+    public void setAuthorized(Boolean authorized) {
+        this.authorized = authorized;
     }
 
     public OrgAgency() {

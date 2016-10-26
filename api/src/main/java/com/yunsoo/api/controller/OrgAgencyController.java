@@ -2,7 +2,9 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.OrgAgencyDomain;
 import com.yunsoo.api.dto.Location;
+import com.yunsoo.api.dto.OAuthAccount;
 import com.yunsoo.api.dto.OrgAgency;
+import com.yunsoo.api.dto.OrgAgencyDetails;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
@@ -48,19 +50,49 @@ public class OrgAgencyController {
         return orgAgency;
     }
 
+    @RequestMapping(value = "details", method= RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
+    public OrgAgencyDetails getOrgAgencyDetails(){
+        String orgId = AuthUtils.fixOrgId(null);
+       // String oauthAccountId = AuthUtils.fixAccountId(null);
+        String oauthAccountId = "2m6oahol8xdtz28q55m";
+        OrgAgencyDetails details = new OrgAgencyDetails();
+        OAuthAccount account = orgAgencyDomain.getOAuthAccount(oauthAccountId);
+        if(LookupCodes.TraceSourceType.AGENCY.equals(account.getSourceTypeCode())){
+            details.setChildrenCount(orgAgencyDomain.count(account.getSource()));
+            details.setAuthorizedChildrenCount(orgAgencyDomain.authorizedCount(orgId, account.getSource()));
+            details.setOauthName(account.getName());
+            details.setOauthGravatarUrl(account.getGravatarUrl());
+            details.setAgencyId(account.getSource());
+            details.setParentName(orgAgencyDomain.getParentOrgAgencyName(account.getSource()));
+
+            return details;
+
+        }
+        return  null;
+    }
+
     //query by org id
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
     public List<OrgAgency> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                        @RequestParam(value = "search_text", required = false) String searchText,
+                                       @RequestParam(value = "parent_id", required = false) String parentId,
                                        @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
                                        @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime,
                                        Pageable pageable,
                                        HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, searchText, startTime, endTime, pageable);
+        Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, searchText, parentId, null, startTime, endTime, pageable);
 
-        return PageUtils.response(response, orgAgencyPage.map(OrgAgency::new), pageable != null);
+        List<OrgAgency> agencyList = PageUtils.response(response, orgAgencyPage.map(OrgAgency::new), pageable != null);
+
+        if(parentId != null){
+            orgAgencyDomain.getAgencyDetails(agencyList);
+
+        }
+
+        return agencyList;
     }
 
     //query locations

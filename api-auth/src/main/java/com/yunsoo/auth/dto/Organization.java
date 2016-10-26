@@ -1,10 +1,12 @@
 package com.yunsoo.auth.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import com.yunsoo.common.web.security.util.OrgIdDetectable;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
@@ -15,7 +17,7 @@ import java.io.Serializable;
  * Created on:   2016-07-05
  * Descriptions:
  */
-public class Organization implements Serializable {
+public class Organization implements OrgIdDetectable, Serializable {
 
     @JsonProperty("id")
     private String id;
@@ -97,6 +99,11 @@ public class Organization implements Serializable {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    @JsonIgnore
+    public String getOrgId() {
+        return id;
     }
 
 }

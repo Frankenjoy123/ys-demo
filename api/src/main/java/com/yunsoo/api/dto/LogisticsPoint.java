@@ -1,7 +1,7 @@
 package com.yunsoo.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yunsoo.api.dto.detectable.OrgIdDetectable;
+import com.yunsoo.common.web.security.util.OrgIdDetectable;
 
 /**
  * Created by Jerry on 4/29/2015.

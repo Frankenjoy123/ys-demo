@@ -51,6 +51,37 @@ public class DynamodbProductPackageServiceImpl implements ProductPackageService 
     }
 
     @Override
+    public List<String> getAllParentKeysByKey(String key) {
+        List<String> parentKeys = new ArrayList<>();
+        ProductPackageModel productPackageModel = findByKey(key);
+        if (productPackageModel != null) {
+            String parentKey = productPackageModel.getParentProductKey();
+            if (parentKey != null) {
+                parentKeys.add(parentKey);
+                parentKeys.addAll(getAllParentKeysByKey(parentKey));
+            }
+        }
+        return parentKeys;
+    }
+
+    @Override
+    public Set<String> getAllChildProductKeySetByKey(String key) {
+        Set<String> keySet = new HashSet<>();
+        ProductPackageModel productPackageModel = findByKey(key);
+        if (productPackageModel != null) {
+            Set<String> childProductKeySet = productPackageModel.getChildProductKeySet();
+            if (childProductKeySet != null) {
+                childProductKeySet.forEach(childKey->{
+                    keySet.addAll(getAllChildProductKeySetByKey(childKey));
+                });
+            }
+            else
+                keySet.add(productPackageModel.getProductKey());
+        }
+        return keySet;
+    }
+
+    @Override
     public void disable(String key) {
         ProductPackageModel productPackageModel = productPackageDao.getByKey(key);
         if (productPackageModel != null) {

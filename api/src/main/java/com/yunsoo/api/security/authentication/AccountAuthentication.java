@@ -1,9 +1,9 @@
 package com.yunsoo.api.security.authentication;
 
-import com.yunsoo.api.security.AuthAccount;
 import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.security.authorization.AuthorizationService;
 import com.yunsoo.api.security.authorization.PermissionGrantedAuthority;
+import com.yunsoo.common.web.security.authentication.AuthAccount;
 import com.yunsoo.common.web.security.permission.PermissionEntry;
 import com.yunsoo.common.web.security.permission.expression.PermissionExpression;
 import com.yunsoo.common.web.security.permission.expression.RestrictionExpression;
@@ -33,7 +33,7 @@ public class AccountAuthentication implements Authentication {
 
     public List<PermissionEntry> getPermissionEntries() {
         if (permissionEntries == null) {
-            permissionEntries = authorizationService.getPermissionEntries(this);
+            permissionEntries = authorizationService.getPermissionEntries();
         }
         return permissionEntries;
     }

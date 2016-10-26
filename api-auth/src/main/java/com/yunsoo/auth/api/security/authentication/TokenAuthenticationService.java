@@ -1,8 +1,9 @@
 package com.yunsoo.auth.api.security.authentication;
 
-import com.yunsoo.auth.api.security.AuthAccount;
 import com.yunsoo.auth.api.security.authorization.AuthorizationService;
 import com.yunsoo.auth.dto.Token;
+import com.yunsoo.common.web.security.authentication.AuthAccount;
+import com.yunsoo.common.web.security.authentication.TokenHandler;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,34 +49,23 @@ public class TokenAuthenticationService {
         if (token == null) {
             return null;
         }
-        AuthAccount authAccount = accessTokenHandler.parseToken(token);
+        AuthAccount authAccount = parseAccessToken(token);
         if (authAccount == null) {
             return null;
         }
         return new AccountAuthentication(authAccount, authorizationService).fillCredentials(token);
     }
 
-    public AuthAccount parseAccessToken(String token) {
-        if (token == null) {
-            return null;
-        }
-        return accessTokenHandler.parseToken(token);
-    }
-
-    public AuthAccount parseLoginToken(String token) {
-        if (token == null) {
-            return null;
-        }
-        return loginTokenHandler.parseToken(token);
-    }
-
     public Token generateAccessToken(String accountId, String orgId) {
         DateTime expires = DateTime.now().plusMinutes(accessTokenExpiresMinutes);
-        return new Token(accessTokenHandler.createToken(expires, accountId, orgId), expires);
+        String token = accessTokenHandler.createToken(expires, accountId, orgId);
+        return new Token(token, expires);
     }
 
-    public Token generateLoginToken(String accountId) {
-        return generateLoginToken(accountId, null);
+    public Token generateAccessToken(AuthAccount authAccount) {
+        DateTime expires = DateTime.now().plusMinutes(accessTokenExpiresMinutes);
+        String token = accessTokenHandler.createToken(expires, authAccount);
+        return new Token(token, expires);
     }
 
     /**
@@ -91,6 +81,24 @@ public class TokenAuthenticationService {
             expires = DateTime.now().plusSeconds(expiresIn);
         }
         return new Token(loginTokenHandler.createToken(expires, accountId), expires);
+    }
+
+    public Token generateLoginToken(AuthAccount authAccount, Integer expiresIn) {
+        DateTime expires;
+        if (expiresIn == null || expiresIn <= 0) {
+            expires = DateTime.now().plusMinutes(loginTokenExpiresMinutes);
+        } else {
+            expires = DateTime.now().plusSeconds(expiresIn);
+        }
+        return new Token(loginTokenHandler.createToken(expires, authAccount), expires);
+    }
+
+    public AuthAccount parseAccessToken(String token) {
+        return accessTokenHandler.parseTokenAsAuthAccount(token);
+    }
+
+    public AuthAccount parseLoginToken(String token) {
+        return loginTokenHandler.parseTokenAsAuthAccount(token);
     }
 
 }

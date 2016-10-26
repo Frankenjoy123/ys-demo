@@ -11,6 +11,7 @@ create temporary table tmp_market_user_location
     org_id char(19),
     user_id char(19),
     province varchar(45),
+	orginal_province varchar(45),
     city varchar(45),
     marketing_id char(19),
     product_base_id char(19)
@@ -24,13 +25,16 @@ end if;
 
 -- 插入正常的city
 insert into tmp_market_user_location
-SELECT date(convert_tz(mr.created_datetime,"+00:00","+08:00")),m.org_id, u.id, ifnull(l.province,'未知省份'), ifnull(l.city,'未知城市'),
+SELECT date(convert_tz(mr.created_datetime,"+00:00","+08:00")),m.org_id, u.id, ifnull(l.province, '未知省份'), usr.province, ifnull(l.city,'未知城市'),
 mr.marketing_id, mr.product_base_id
 FROM mkt_draw_record mr left join user u on mr.user_id = u.id COLLATE utf8_general_ci
 inner join marketing m on mr.marketing_id = m.id  COLLATE utf8_general_ci
 inner join user_scan_record usr on usr.id = mr.scan_record_id COLLATE utf8_general_ci
 left join lu_province_city l on (l.city = usr.city  or l.city = concat(usr.city,'市') or (length(usr.city) >0 and l.city like concat(usr.city,'%')) )
 where date(convert_tz(mr.created_datetime,'+00:00','+08:00')) = chooseDate;
+
+update tmp_market_user_location
+set province = trim(trailing'省'FROM orginal_province) where orginal_province like '%省' and province = '未知省份';
 
 start transaction;
 -- 删除该天数据

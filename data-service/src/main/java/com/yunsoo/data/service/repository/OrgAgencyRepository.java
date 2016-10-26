@@ -19,12 +19,17 @@ public interface OrgAgencyRepository extends FindOneAndSaveRepository<OrgAgencyE
 
     Page<OrgAgencyEntity> findByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodes, Pageable pageable);
 
-    @Query("select age from OrgAgencyEntity age where (:orgId is null or age.orgId = :orgId)" +
+    @Query("select age from OrgAgencyEntity age where (:orgId is null or age.orgId = :orgId) " +
+            "and (:parentId is null or age.parentId = :parentId) " +
             "and (:searchText is null or age.name like ('%' || :searchText || '%') or age.address like ('%' || :searchText || '%')  " +
-            "or age.agencyResponsible like ('%' || :searchText || '%')  or age.agencyPhone like ('%' || :searchText || '%') )" +
+            "or age.agencyResponsible like ('%' || :searchText || '%')  or age.agencyPhone like ('%' || :searchText || '%') ) " +
             "and (:endTime is null or age.createdDateTime <= :endTime) and  (:startTime is null or age.createdDateTime >= :startTime) and age.statusCode <> 'deleted'")
-    Page<OrgAgencyEntity> query(@Param("orgId") String orgId, @Param("searchText") String searchText,
+    Page<OrgAgencyEntity> query(@Param("orgId") String orgId, @Param("searchText") String searchText,@Param("parentId") String parentId,
                                 @Param("startTime") DateTime start, @Param("endTime") DateTime end, Pageable pageable);
 
+
+    List<OrgAgencyEntity> findByOrgIdAndIdInAndStatusCode(String orgId, List<String> idList, String statusCode);
+
+    int countByParentIdAndStatusCode(String parentId, String status);
 
 }

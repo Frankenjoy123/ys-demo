@@ -1,6 +1,5 @@
 package com.yunsoo.auth.api.controller;
 
-import com.yunsoo.auth.api.security.AuthAccount;
 import com.yunsoo.auth.api.security.authentication.TokenAuthenticationService;
 import com.yunsoo.auth.api.util.IpUtils;
 import com.yunsoo.auth.dto.Account;
@@ -13,6 +12,7 @@ import com.yunsoo.auth.service.LoginService;
 import com.yunsoo.common.web.Constants;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
+import com.yunsoo.common.web.security.authentication.AuthAccount;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
