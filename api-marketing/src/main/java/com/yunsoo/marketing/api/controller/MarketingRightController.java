@@ -57,12 +57,10 @@ public class MarketingRightController {
         marketingRightService.patchUpdate(marketingRight);
     }
 
-    private MarketingRight findMarketingRightById(String marketingRightId) {
-        MarketingRight marketingRight = marketingRightService.getById(marketingRightId);
-        if (marketingRight == null) {
-            throw new NotFoundException("marketing right not found");
-        }
-        return marketingRight;
+    @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") String id) {
+        marketingRightService.deleteMarketingRight(id);
     }
 
     @RequestMapping(value = "/sum", method = RequestMethod.GET)
@@ -77,6 +75,14 @@ public class MarketingRightController {
 
         Long quantity = userRightService.sumUserRight(marketingId, marketingRightId);
         return quantity;
+    }
+
+    private MarketingRight findMarketingRightById(String marketingRightId) {
+        MarketingRight marketingRight = marketingRightService.getById(marketingRightId);
+        if (marketingRight == null) {
+            throw new NotFoundException("marketing right not found");
+        }
+        return marketingRight;
     }
 
 }
