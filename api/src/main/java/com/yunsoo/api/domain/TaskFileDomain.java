@@ -109,9 +109,17 @@ public class TaskFileDomain {
         TaskFileEntryObject obj = null;
         if (committed != null) {
             //try override file with the same name in status of uploading
-            obj = getLastUploadingByFileName(fileName);
+            obj = getLastUploadingTaskFileEntry(orgId, appId, deviceId, fileName);
         }
-        if (obj == null || !LookupCodes.TaskFileStatus.UPLOADING.equals(obj.getStatusCode())) {
+        if (obj != null && LookupCodes.TaskFileStatus.UPLOADING.equals(obj.getStatusCode())) {
+            obj.setProductBaseId(ysFile.getHeader("product_base_id"));
+            obj.setPackageCount(tryParseInt(ysFile.getHeader("package_count")));
+            obj.setPackageSize(tryParseInt(ysFile.getHeader("package_size")));
+            obj.setProductCount(tryParseInt(ysFile.getHeader("product_count")));
+            obj.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
+            obj.setCreatedDateTime(DateTime.now());
+            this.patchUpdateTaskFileEntry(obj);
+        } else {
             obj = new TaskFileEntryObject();
             obj.setOrgId(orgId);
             obj.setAppId(appId);
@@ -176,6 +184,21 @@ public class TaskFileDomain {
                 }
                 byte[] buffer = outputStream.toByteArray();
                 return new ResourceInputStream(new ByteArrayInputStream(buffer), buffer.length, MediaType.TEXT_PLAIN_VALUE);
+            } else if ("text_package_singleline".equals(formatTypeCode)) {
+                if (!LookupCodes.TaskFileType.PACKAGE.equals(taskFile.getHeader("file_type"))) {
+                    return null;
+                }
+                List<String> lines = Arrays.asList(new String(taskFile.getContent(), StandardCharsets.UTF_8).split("\r\n"));
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                for (String line : lines) {
+                    if (line.length() > 24 && REGEXP_DATETIME_PREFIX.matcher(line).matches()) {
+                        line = line.substring(24, line.length()).trim();
+                    }
+                    outputStream.write(line.getBytes(StandardCharsets.UTF_8));
+                    outputStream.write(new byte[]{13, 10});
+                }
+                byte[] buffer = outputStream.toByteArray();
+                return new ResourceInputStream(new ByteArrayInputStream(buffer), buffer.length, MediaType.TEXT_PLAIN_VALUE);
             } else {
                 return null;
             }
@@ -227,18 +250,18 @@ public class TaskFileDomain {
         });
 
         Map<String, TaskFileEntryObject> mapData = new HashMap<>();
-        dataList.forEach(item->{
-                mapData.put(item.getName(), item);
+        dataList.forEach(item -> {
+            mapData.put(item.getName(), item);
         });
 
 
         List<TaskFileEntryObject> resultList = new ArrayList<>();
-        int totalLength = new Long((end.getMillis() - start.getMillis())/(24*60*60*1000)).intValue() + 1;
-        for(int i = 0; i< totalLength; i++){
-            String date = start.toDateTime(DateTimeZone.forID("+08:00")).toString("YYYY-MM-dd");
+        int totalLength = new Long((end.getMillis() - start.getMillis()) / (24 * 60 * 60 * 1000)).intValue() + 1;
+        for (int i = 0; i < totalLength; i++) {
+            start.toDateTime(DateTimeZone.forID("+08:00")).toString("YYYY-MM-dd");
             TaskFileEntryObject object = new TaskFileEntryObject();
             object.setName(date);
-            if(mapData.containsKey(date)){
+            if (mapData.containsKey(date)) {
                 object.setProductCount(mapData.get(date).getProductCount());
                 object.setPackageCount(mapData.get(date).getPackageCount());
             }
@@ -273,11 +296,14 @@ public class TaskFileDomain {
         return dataApiClient.post("taskFileEntry", obj, TaskFileEntryObject.class);
     }
 
-    private TaskFileEntryObject getLastUploadingByFileName(String name) {
-        if (StringUtils.isEmpty(name)) {
+    private TaskFileEntryObject getLastUploadingTaskFileEntry(String orgId, String appId, String deviceId, String name) {
+        if (StringUtils.isEmpty(orgId) || StringUtils.isEmpty(appId) || StringUtils.isEmpty(deviceId) || StringUtils.isEmpty(name)) {
             return null;
         }
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("app_id", appId)
+                .append("device_id", deviceId)
                 .append("name", name)
                 .append("status_code_in", Collections.singletonList(LookupCodes.TaskFileStatus.UPLOADING))
                 .build();
@@ -287,6 +313,12 @@ public class TaskFileDomain {
             return null;
         }
         return list.get(list.size() - 1);
+    }
+
+    private void patchUpdateTaskFileEntry(TaskFileEntryObject obj) {
+        if (obj != null && obj.getFileId() != null) {
+            dataApiClient.patch("taskFileEntry/{id}", obj, obj.getFileId());
+        }
     }
 
     private void updateTaskFileEntryStatus(String fileId, String statusCode) {

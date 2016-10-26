@@ -85,6 +85,37 @@ public class TaskFileEntryController {
         return toTaskFileEntryObject(entity);
     }
 
+    @RequestMapping(value = "{id}", method = RequestMethod.PATCH)
+    public TaskFileEntryObject patchUpdate(@PathVariable("id") String fileId, @RequestBody TaskFileEntryObject obj) {
+        TaskFileEntryEntity entity = taskFileEntryRepository.findOne(fileId);
+        if (entity == null) {
+            throw new NotFoundException("taskFileEntry not found by [id: " + fileId + "]");
+        }
+        if (obj.getStatusCode() != null) {
+            entity.setStatusCode(obj.getStatusCode());
+        }
+        if (obj.getProductBaseId() != null) {
+            entity.setProductBaseId(obj.getProductBaseId());
+        }
+        if (obj.getPackageCount() != null) {
+            entity.setPackageCount(obj.getPackageCount());
+        }
+        if (obj.getPackageSize() != null) {
+            entity.setPackageSize(obj.getPackageSize());
+        }
+        if (obj.getProductCount() != null) {
+            entity.setProductCount(obj.getProductCount());
+        }
+        if (obj.getCreatedAccountId() != null) {
+            entity.setCreatedAccountId(obj.getCreatedAccountId());
+        }
+        if (obj.getCreatedDateTime() != null) {
+            entity.setCreatedDateTime(obj.getCreatedDateTime());
+        }
+        entity = taskFileEntryRepository.save(entity);
+        return toTaskFileEntryObject(entity);
+    }
+
     @RequestMapping(value = "{id}/statusCode", method = RequestMethod.PUT)
     public void updateStatusCode(@PathVariable("id") String fileId, @RequestBody String statusCode) {
         TaskFileEntryEntity entity = taskFileEntryRepository.findOne(fileId);
