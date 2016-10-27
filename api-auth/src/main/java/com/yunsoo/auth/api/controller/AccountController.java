@@ -10,8 +10,8 @@ import com.yunsoo.auth.service.AccountLoginLogService;
 import com.yunsoo.auth.service.AccountService;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.common.web.exception.UnauthorizedException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -214,7 +214,7 @@ public class AccountController {
 
     private void rejectUpdateOnSystemAccount(String accountId) {
         if (Constants.SYSTEM_ACCOUNT_ID.equals(accountId)) {
-            throw new UnauthorizedException("system account can not be modified");
+            throw new ForbiddenException("system account can not be modified");
         }
     }
 
