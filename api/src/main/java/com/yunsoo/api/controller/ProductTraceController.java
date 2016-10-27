@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by yan on 10/14/2016.
@@ -50,11 +51,21 @@ public class ProductTraceController {
             throw new BadRequestException("product trace could not be null");
 
         String orgId = AuthUtils.fixOrgId(null);
+
+        Map<String, String> details = AuthUtils.getCurrentAccount().getDetails();
+
         trace.setProductKey(externalKey);
         trace.setOrgId(orgId);
-        trace.setCreatedSourceType(LookupCodes.TraceSourceType.ORGANIZATION);
-        trace.setCreatedSourceId(orgId);
-        //todo: get created_source_id and created_source_type from token if have
+        if(details.containsKey("source"))
+            trace.setCreatedSourceId(details.get("source"));
+        else
+            trace.setCreatedSourceId(orgId);
+
+        if(details.containsKey("source_type_code"))
+            trace.setCreatedSourceId(details.get("source_type_code"));
+        else
+            trace.setCreatedSourceType(LookupCodes.TraceSourceType.ORGANIZATION);
+
         return domain.save(partitionId, trace);
     }
 

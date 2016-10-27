@@ -33,4 +33,16 @@ public class OAuthAccountService {
         OAuthAccountEntity entity = repository.findOne(id);
         return new OAuthAccount(entity);
     }
+
+    public OAuthAccount save(OAuthAccount account){
+        OAuthAccountEntity entity = new OAuthAccountEntity(account);
+        repository.save(entity);
+        return new OAuthAccount(entity);
+    }
+
+    public List<OAuthAccount> getByOAuthOpenIdAndOAuthTypeCode(String openId, String openType){
+        List<OAuthAccountEntity> accounts = repository.findByOAuthTypeCodeAndOAuthOpenIdAndDisabled(openType, openId, false);
+        return accounts.stream().map(OAuthAccount::new).collect(Collectors.toList());
+    }
+
 }

@@ -1,9 +1,11 @@
 package com.yunsoo.auth.dao.entity;
 
 import com.yunsoo.auth.dao.util.IdGenerator;
+import com.yunsoo.auth.dto.OAuthAccount;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 
@@ -137,5 +139,11 @@ public class OAuthAccountEntity {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public OAuthAccountEntity(){}
+
+    public OAuthAccountEntity(OAuthAccount account){
+        BeanUtils.copyProperties(account, this);
     }
 }
