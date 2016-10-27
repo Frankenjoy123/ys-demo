@@ -23,6 +23,8 @@ public interface UserRightRepository extends Repository<UserRightEntity, String>
 
     Page<UserRightEntity> findByMarketingId(String orgId, Pageable pageable);
 
+    List<UserRightEntity> findByUserEventId(String userEventId);
+
     Long countByMarketingIdIn(List<String> marketingIdIn);
 
     @Query("select count(o.id) from #{#entityName} o where " +

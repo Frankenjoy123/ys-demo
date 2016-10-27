@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Haitao
@@ -71,6 +73,14 @@ public class UserRightService {
 
         return PageUtils.convert(userRightRepository.query(marketingId, marketingRightId, typeCode, statusCode, startTime, endTime, pageable)).map(this::toUserRight);
     }
+
+    public List<UserRight> getByUserEventId(String userEventId) {
+        if (StringUtils.isEmpty(userEventId)) {
+            return new ArrayList<>();
+        }
+        return userRightRepository.findByUserEventId(userEventId).stream().map(this::toUserRight).collect(Collectors.toList());
+    }
+
 
 
     private UserRight toUserRight(UserRightEntity entity) {
