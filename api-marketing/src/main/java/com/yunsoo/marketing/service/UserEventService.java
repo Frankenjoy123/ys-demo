@@ -6,6 +6,11 @@ import com.yunsoo.marketing.dto.UserEvent;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   Haitao
@@ -32,6 +37,14 @@ public class UserEventService {
         entity.setCreatedDateTime(DateTime.now());
         return toUserEvent(userEventRepository.save(entity));
     }
+
+    public List<UserEvent> getByKey(String key) {
+        if (StringUtils.isEmpty(key)) {
+            return new ArrayList<>();
+        }
+        return userEventRepository.findByKey(key).stream().map(this::toUserEvent).collect(Collectors.toList());
+    }
+
 
     private UserEvent toUserEvent(UserEventEntity entity) {
         if (entity == null) {
