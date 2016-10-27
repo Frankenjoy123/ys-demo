@@ -1,11 +1,18 @@
 package com.yunsoo.marketing.service;
 
+import com.yunsoo.common.web.client.Page;
+import com.yunsoo.marketing.api.util.PageUtils;
 import com.yunsoo.marketing.dao.entity.UserRightEntity;
 import com.yunsoo.marketing.dao.repository.UserRightRepository;
 import com.yunsoo.marketing.dto.UserRight;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import javax.transaction.Transactional;
+
 
 /**
  * Created by:   Haitao
@@ -31,6 +38,38 @@ public class UserRightService {
         entity.setDescription(userRight.getDescription());
         entity.setCreatedDateTime(DateTime.now());
         return toUserRight(userRightRepository.save(entity));
+    }
+
+    @Transactional
+    public void patchUpdate(UserRight userRight) {
+        if (StringUtils.isEmpty(userRight.getId())) {
+            return;
+        }
+        UserRightEntity entity = userRightRepository.findOne(userRight.getId());
+        if (entity != null) {
+            if (userRight.getName() != null) entity.setName(userRight.getName());
+            if (userRight.getTypeCode() != null) entity.setTypeCode(userRight.getTypeCode());
+            if (userRight.getStatusCode() != null) entity.setStatusCode(userRight.getStatusCode());
+            if (userRight.getAmount() != null) entity.setAmount(userRight.getAmount());
+            if (userRight.getValue() != null) entity.setValue(userRight.getValue());
+            userRightRepository.save(entity);
+        }
+    }
+
+
+    public Long sumUserRight(String marketingId, String marketingRightId) {
+        if (StringUtils.isEmpty(marketingId)) {
+            return null;
+        }
+        return userRightRepository.sumUserRightId(marketingId, marketingRightId);
+    }
+
+    public Page<UserRight> queryUserRight(String marketingId, String marketingRightId, String typeCode, String statusCode, DateTime startTime, DateTime endTime, Pageable pageable) {
+        if (StringUtils.isEmpty(marketingId)) {
+            return Page.empty();
+        }
+
+        return PageUtils.convert(userRightRepository.query(marketingId, marketingRightId, typeCode, statusCode, startTime, endTime, pageable)).map(this::toUserRight);
     }
 
 

@@ -18,4 +18,7 @@ public interface MarketingRightRedeemCodeRepository extends Repository<Marketing
 
     List<MarketingRightRedeemCodeEntity> findByMarketingRightId(String marketingRightId);
 
+    MarketingRightRedeemCodeEntity findTop1ByMarketingRightIdAndUsedOrderByCreatedDateTime(String marketingRightId, Boolean used);
+
+
 }

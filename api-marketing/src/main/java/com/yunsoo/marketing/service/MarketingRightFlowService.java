@@ -25,6 +25,18 @@ public class MarketingRightFlowService {
         return toMarketingRightFlow(entity);
     }
 
+    public MarketingRightFlow createMarketingRightFlow(MarketingRightFlow marketingRightFlow) {
+        MarketingRightFlowEntity entity = new MarketingRightFlowEntity();
+        entity.setAmount(marketingRightFlow.getAmount());
+        entity.setCost(marketingRightFlow.getCost());
+        entity.setCmccFlowId(marketingRightFlow.getCmccFlowId());
+        entity.setCuccFlowId(marketingRightFlow.getCuccFlowId());
+        entity.setCtccFlowId(marketingRightFlow.getCtccFlowId());
+        entity.setComments(marketingRightFlow.getComments());
+        return toMarketingRightFlow(marketingRightFlowRepository.save(entity));
+    }
+
+
     private MarketingRightFlow toMarketingRightFlow(MarketingRightFlowEntity entity) {
         if (entity == null) {
             return null;
