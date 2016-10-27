@@ -27,6 +27,8 @@ public interface AccountRepository extends Repository<AccountEntity, String> {
 
     AccountEntity save(AccountEntity entity);
 
+    List<AccountEntity> findByTypeCodeAndOrgId(String typeCode, String orgId);
+
     @Query("select acc from #{#entityName} acc " +
             "where (:orgId is null or acc.orgId = :orgId) " +
             "and (:statusCode is null or acc.statusCode = :statusCode) " +
@@ -36,12 +38,14 @@ public interface AccountRepository extends Repository<AccountEntity, String> {
             "" + "or acc.phone like ('%' || :searchText || '%') " +
             "" + "or acc.email like ('%' || :searchText || '%')) " +
             "and (:createdDateTimeGE is null or acc.createdDateTime >= :createdDateTimeGE) " +
-            "and (:createdDateTimeLE is null or acc.createdDateTime <= :createdDateTimeLE) ")
+            "and (:createdDateTimeLE is null or acc.createdDateTime <= :createdDateTimeLE) " +
+            "and (:typeCode is null or acc.typeCode = :typeCode) ")
     Page<AccountEntity> search(@Param("orgId") String orgId,
                                @Param("statusCode") String statusCode,
                                @Param("searchText") String searchText,
                                @Param("createdDateTimeGE") DateTime createdDateTimeGE,
                                @Param("createdDateTimeLE") DateTime createdDateTimeLE,
+                               @Param("typeCode") String typeCode,
                                Pageable pageable);
 
     long countByOrgId(String orgId);

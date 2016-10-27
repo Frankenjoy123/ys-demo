@@ -62,7 +62,7 @@ public class ProductTraceController {
             trace.setCreatedSourceId(orgId);
 
         if(details.containsKey("source_type_code"))
-            trace.setCreatedSourceId(details.get("source_type_code"));
+            trace.setCreatedSourceType(details.get("source_type_code"));
         else
             trace.setCreatedSourceType(LookupCodes.TraceSourceType.ORGANIZATION);
 

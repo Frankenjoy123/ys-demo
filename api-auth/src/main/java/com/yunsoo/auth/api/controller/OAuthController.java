@@ -1,10 +1,9 @@
 package com.yunsoo.auth.api.controller;
 
+import com.yunsoo.auth.Constants;
 import com.yunsoo.auth.api.security.authentication.TokenAuthenticationService;
 import com.yunsoo.auth.api.util.AuthUtils;
-import com.yunsoo.auth.dto.Account;
-import com.yunsoo.auth.dto.OAuthAccount;
-import com.yunsoo.auth.dto.Token;
+import com.yunsoo.auth.dto.*;
 import com.yunsoo.auth.service.AccountService;
 import com.yunsoo.auth.service.LoginService;
 import com.yunsoo.auth.service.OAuthAccountService;
@@ -33,8 +32,8 @@ import java.util.UUID;
 public class OAuthController {
 
     private static int LOGIN_TOKEN_EXPIRES_SECONDS = 1440;
-    private static String SOURCE="source";
-    private static String SOURCE_TYPE="source_type_code";
+    private static String SOURCE = "source";
+    private static String SOURCE_TYPE = "source_type_code";
 
     private Log log = LogFactory.getLog(this.getClass());
 
@@ -47,15 +46,25 @@ public class OAuthController {
     @Autowired
     private OAuthAccountService oAuthAccountService;
 
+    @Autowired
+    private AccountService accountService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public OAuthAccount login(@RequestBody OAuthAccount account) {
-        List<OAuthAccount> accountList = oAuthAccountService.getByOAuthOpenIdAndOAuthTypeCode(account.getoAuthOpenId(), account.getoAuthTypeCode());
-        return accountList.get(0);
+    public OAuthAccountLoginResponse login(@RequestBody OAuthAccountLoginRequest request) {
+        List<OAuthAccount> accountList = oAuthAccountService.getByOAuthOpenIdAndOAuthTypeCode(request.getOauthOpenid(), request.getOauthOpenType());
+        OAuthAccount account = accountList.get(0);
+        Token accessToken = getAccessToken(account.getId(), account.getToken());
+
+        OAuthAccountLoginResponse response = new OAuthAccountLoginResponse();
+        response.setToken(account.getToken());
+        response.setAccessToken(accessToken);
+        response.setOauthAccountId(account.getId());
+        return response;
     }
 
     @RequestMapping(value = "/bind", method = RequestMethod.POST)
-    public OAuthAccount bind(@RequestParam(value = "login_token") String loginToken, @RequestBody OAuthAccount oAuthAccount) {
+    public OAuthAccountLoginResponse bind(@RequestParam(value = "login_token") String loginToken,
+                                          @RequestBody OAuthAccount oAuthAccount) {
         AuthAccount account = tokenAuthenticationService.parseLoginToken(loginToken);
         if (account == null || StringUtils.isEmpty(account.getId())) {
             log.warn(String.format("token is not valid [token: %s]", loginToken));
@@ -64,8 +73,7 @@ public class OAuthController {
 
         //login
         Account userAccount = loginService.login(account.getId());
-        if (userAccount
-                == null) {
+        if (userAccount == null) {
             throw new UnauthorizedException("account is not valid");
         }
 
@@ -75,15 +83,25 @@ public class OAuthController {
         oAuthAccount.setSource(account.getDetails().get(SOURCE));
         oAuthAccount.setSourceTypeCode(account.getDetails().get(SOURCE_TYPE));
         oAuthAccount.setDisabled(false);
-        return oAuthAccountService.save(oAuthAccount);
+        OAuthAccount saveAccount = oAuthAccountService.save(oAuthAccount);
+
+        OAuthAccountLoginResponse response = new OAuthAccountLoginResponse();
+        response.setAccessToken(tokenAuthenticationService.generateAccessToken(account));
+        response.setToken(oAuthAccount.getToken());
+        response.setOauthAccountId(saveAccount.getId());
+
+        return response;
     }
 
-    @RequestMapping("/loginToken")
-    public Token getLoginToken(@RequestParam(value = "account_id", required = false) String accountId,
-                               @RequestParam(value = "source_type_code", required = false) String sourceTypeCode,
+    @RequestMapping(value = "/loginToken", method = RequestMethod.GET)
+    public Token getLoginToken(@RequestParam(value = "source_type_code", required = false) String sourceTypeCode,
                                @RequestParam(value = "source", required = false) String source) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
-       // accountId = AuthUtils.fixAccountId(accountId);
+
+        List<Account> agencyAccountList = accountService.getByTypeCode(Constants.AccountType.AGENCY, AuthUtils.fixOrgId(null));
+        if(agencyAccountList.size()==0)
+            throw new BadRequestException("no agency account exists");
+        String accountId = agencyAccountList.get(0).getId();
 
         log.info(String.format("login token creation request from account [id: %s] for account [id: %s]", currentAccountId, accountId));
 
@@ -106,25 +124,27 @@ public class OAuthController {
         return tokenAuthenticationService.generateLoginToken(authAccount, LOGIN_TOKEN_EXPIRES_SECONDS);
     }
 
-    /**get access token with id and token in oauth_account
+    /**
+     * get access token with id and token in oauth_account
+     *
      * @param oAuthAccountId
      * @param token
      * @return
      */
-    @RequestMapping("accessToken")
+    @RequestMapping(value = "accessToken", method = RequestMethod.GET)
     public Token getAccessToken(@RequestParam("oauth_account_id") String oAuthAccountId,
-                                 @RequestParam("token") String token) {
+                                @RequestParam("token") String token) {
 
         OAuthAccount account = oAuthAccountService.getById(oAuthAccountId);
-        if(account == null)
+        if (account == null)
             throw new BadRequestException("oauth account not existed");
-        if(!account.getToken().equals(token))
+        if (!account.getToken().equals(token))
             throw new BadRequestException("token is invalid");
-        if(account.getDisabled())
+        if (account.getDisabled())
             throw new BadRequestException("oauth account is invalid");
 
         Account userAccount = loginService.login(account.getAccountId());
-        if(userAccount == null)
+        if (userAccount == null)
             throw new BadRequestException("account is invalid");
 
         AuthAccount authAccount = new AuthAccount();
