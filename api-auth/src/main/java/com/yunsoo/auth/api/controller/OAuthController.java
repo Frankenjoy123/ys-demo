@@ -7,6 +7,7 @@ import com.yunsoo.auth.dto.*;
 import com.yunsoo.auth.service.AccountService;
 import com.yunsoo.auth.service.LoginService;
 import com.yunsoo.auth.service.OAuthAccountService;
+import com.yunsoo.auth.service.WeChatService;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
@@ -34,6 +35,7 @@ public class OAuthController {
     private static int LOGIN_TOKEN_EXPIRES_SECONDS = 1440;
     private static String SOURCE = "source";
     private static String SOURCE_TYPE = "source_type_code";
+    private static String WECHAT="wechat";
 
     private Log log = LogFactory.getLog(this.getClass());
 
@@ -49,8 +51,13 @@ public class OAuthController {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private WeChatService weChatService;
+
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public OAuthAccountLoginResponse login(@RequestBody OAuthAccountLoginRequest request) {
+        if(request.getOauthOpenType() == null)
+            request.setOauthOpenType(WECHAT);
         List<OAuthAccount> accountList = oAuthAccountService.getByOAuthOpenIdAndOAuthTypeCode(request.getOauthOpenid(), request.getOauthOpenType());
         OAuthAccount account = accountList.get(0);
         Token accessToken = getAccessToken(account.getId(), account.getToken());
@@ -63,11 +70,13 @@ public class OAuthController {
     }
 
     @RequestMapping(value = "/bind", method = RequestMethod.POST)
-    public OAuthAccountLoginResponse bind(@RequestParam(value = "login_token") String loginToken,
-                                          @RequestBody OAuthAccount oAuthAccount) {
-        AuthAccount account = tokenAuthenticationService.parseLoginToken(loginToken);
+    public OAuthAccountLoginResponse bind(@RequestBody OAuthAccountLoginRequest request) {
+        if(request.getOauthOpenType() == null)
+            request.setOauthOpenType(WECHAT);
+
+        AuthAccount account = tokenAuthenticationService.parseLoginToken(request.getLoginToken());
         if (account == null || StringUtils.isEmpty(account.getId())) {
-            log.warn(String.format("token is not valid [token: %s]", loginToken));
+            log.warn(String.format("token is not valid [token: %s]", request.getLoginToken()));
             throw new UnauthorizedException("token is not valid");
         }
 
@@ -77,12 +86,30 @@ public class OAuthController {
             throw new UnauthorizedException("account is not valid");
         }
 
+        OAuthAccount oAuthAccount = new OAuthAccount();
         oAuthAccount.setCreatedDateTime(DateTime.now());
         oAuthAccount.setAccountId(account.getId());
         oAuthAccount.setToken(HashUtils.sha1HexString(UUID.randomUUID().toString()));  //random sha1
         oAuthAccount.setSource(account.getDetails().get(SOURCE));
         oAuthAccount.setSourceTypeCode(account.getDetails().get(SOURCE_TYPE));
         oAuthAccount.setDisabled(false);
+        oAuthAccount.setoAuthTypeCode(request.getOauthOpenType());
+
+        if(request.getOauthOpenType().equals(WECHAT)){
+            WeChatToken weChatToken = weChatService.getWeChatToken(request.getOauthCode());
+            if(StringUtils.hasText(weChatToken.getErrorCode()))
+                throw new BadRequestException("could not get access token, error message: " + weChatToken.getErrorMsg() + ", error code: " + weChatToken.getErrorCode());
+
+            WeChatUser weChatUser = weChatService.getUserInfo(weChatToken.getAccessToken(), weChatToken.getOpenId());
+            if(StringUtils.hasText(weChatUser.getErrorCode()))
+                throw new BadRequestException("could not get wechat user, error message: " + weChatUser.getErrorMsg() + ", error code: " + weChatUser.getErrorCode());
+
+
+            oAuthAccount.setGravatarUrl(weChatUser.getImageUrl());
+            oAuthAccount.setName(weChatUser.getNickName());
+            oAuthAccount.setoAuthOpenId(weChatUser.getOpenId());
+        }
+
         OAuthAccount saveAccount = oAuthAccountService.save(oAuthAccount);
 
         OAuthAccountLoginResponse response = new OAuthAccountLoginResponse();

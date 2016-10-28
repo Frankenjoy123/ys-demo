@@ -45,3 +45,6 @@ yunsoo:
     default_expire_time: 600 #seconds
     redis:
       host: test-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn
+  wechat:
+    app_id: wxe3804cb3dff62fe3
+    app_secret: 7d553f1bbfbe9f86f973bce5d0ee7852
