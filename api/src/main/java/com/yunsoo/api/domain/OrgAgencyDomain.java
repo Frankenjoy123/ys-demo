@@ -95,13 +95,9 @@ public class OrgAgencyDomain {
     }
 
     public void getAgencyDetails(List<OrgAgency> agencyList){
-        List<String> ids = agencyList.stream().map(agency-> agency.getId()).collect(Collectors.toList());
-        String queryString = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("source_list",ids).append("source_type", LookupCodes.TraceSourceType.AGENCY)
-                .build();
+        List<String> ids = agencyList.stream().map(agency -> agency.getId()).collect(Collectors.toList());
 
-        List<OAuthAccount> oauthList = authApiClient.get("oauth/account" + queryString, new ParameterizedTypeReference<List<OAuthAccount>>() {
-        });
+        List<OAuthAccount> oauthList = getOAuthAccount(ids);
 
         agencyList.forEach(orgAgency -> {
             int length=oauthList.size();
@@ -135,8 +131,14 @@ public class OrgAgencyDomain {
     }
 
 
-    public OAuthAccount getOAuthAccount(String id){
-        return authApiClient.get("oauth/account/{id}", OAuthAccount.class, id);
+    public List<OAuthAccount> getOAuthAccount(List<String> ids){
+
+        String queryString = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("source_list",ids).append("source_type", LookupCodes.TraceSourceType.AGENCY)
+                .build();
+
+        return authApiClient.get("oauth/account" + queryString, new ParameterizedTypeReference<List<OAuthAccount>>() {
+        });
     }
 
 

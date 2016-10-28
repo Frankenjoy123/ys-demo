@@ -10,11 +10,14 @@ import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.OrgAgencyObject;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -22,7 +25,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -54,10 +59,15 @@ public class OrgAgencyController {
     @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
     public OrgAgencyDetails getOrgAgencyDetails(){
         String orgId = AuthUtils.fixOrgId(null);
-       // String oauthAccountId = AuthUtils.fixAccountId(null);
-        String oauthAccountId = "2m6oahol8xdtz28q55m";
+        Map<String, String> accountDetails = AuthUtils.getCurrentAccount().getDetails();
+        String sourceId = accountDetails.get("source");
         OrgAgencyDetails details = new OrgAgencyDetails();
-        OAuthAccount account = orgAgencyDomain.getOAuthAccount(oauthAccountId);
+        List<OAuthAccount> accountList = orgAgencyDomain.getOAuthAccount(Arrays.asList(sourceId));
+        if(accountList.size() == 0)
+            throw new NotFoundException("no agency id");
+
+        OAuthAccount account = accountList.get(0);
+
         if(LookupCodes.TraceSourceType.AGENCY.equals(account.getSourceTypeCode())){
             details.setChildrenCount(orgAgencyDomain.count(account.getSource()));
             details.setAuthorizedChildrenCount(orgAgencyDomain.authorizedCount(orgId, account.getSource()));
@@ -71,6 +81,23 @@ public class OrgAgencyController {
         }
         return  null;
     }
+
+    @RequestMapping(value = "list", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
+    public List<OrgAgency> list( @SortDefault(value = "name", direction = Sort.Direction.ASC) Pageable pageable,
+                                 HttpServletResponse response) {
+        String orgId = AuthUtils.fixOrgId(null);
+        Map<String, String> details = AuthUtils.getCurrentAccount().getDetails();
+        String sourceId = details.get("source");
+        Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, null, sourceId, null, null, null, null);
+
+        List<OrgAgency> agencyList = PageUtils.response(response, orgAgencyPage.map(OrgAgency::new), pageable != null);
+
+        orgAgencyDomain.getAgencyDetails(agencyList);
+
+        return agencyList;
+    }
+
 
     //query by org id
     @RequestMapping(value = "", method = RequestMethod.GET)
