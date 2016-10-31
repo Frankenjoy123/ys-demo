@@ -7,7 +7,7 @@ import com.yunsoo.auth.dto.*;
 import com.yunsoo.auth.service.AccountService;
 import com.yunsoo.auth.service.LoginService;
 import com.yunsoo.auth.service.OAuthAccountService;
-import com.yunsoo.auth.service.WeChatService2;
+import com.yunsoo.auth.service.WechatService;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
@@ -52,7 +52,7 @@ public class OAuthController {
     private AccountService accountService;
 
     @Autowired
-    private WeChatService2 weChatService;
+    private WechatService weChatService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public OAuthAccountLoginResponse login(@RequestBody OAuthAccountLoginRequest request) {

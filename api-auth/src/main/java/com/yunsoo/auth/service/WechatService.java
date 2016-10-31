@@ -17,11 +17,11 @@ import java.util.List;
  * Created by yan on 10/28/2016.
  */
 @Service
-public class WeChatService2 {
+public class WechatService {
 
     private RestClient wechatClient;
 
-    public WeChatService2(){
+    public WechatService(){
         wechatClient = new RestClient("https://api.weixin.qq.com/");
         List<HttpMessageConverter<?>> messageConverterList = wechatClient.getRestTemplate().getMessageConverters();
         for (HttpMessageConverter<?> httpMessageConverter : messageConverterList) {
