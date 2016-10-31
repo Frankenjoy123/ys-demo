@@ -174,9 +174,10 @@ public class TaskFileDomain {
                     }
                     String[] tempArray = line.split(":");
                     if (tempArray.length == 2 && tempArray[0].length() > 0) {
-                        for (String c : tempArray[1].split(",")) {
+                        String[] tempSubArray = tempArray[1].split(",");
+                        for (String c : tempSubArray) {
                             if (c.length() > 0) {
-                                String subLine = String.format("%s,%s\r\n", tempArray[0], c);
+                                String subLine = String.format("%s,%s,%d\r\n", tempArray[0], c, tempSubArray.length);
                                 outputStream.write(subLine.getBytes(StandardCharsets.UTF_8));
                             }
                         }
@@ -236,7 +237,7 @@ public class TaskFileDomain {
     public List<TaskFileEntryObject> getTotalByDate(String deviceId, String typeCode, DateTime start, DateTime end, List<String> statusCodeIn) {
         if (start == null)
             start = DateTime.now().minusMonths(1);
-        if(end == null)
+        if (end == null)
             end = DateTime.now();
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("device_id", deviceId)
