@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by yan on 10/28/2016.
  */
-public class weChatUser {
+public class WeChatUser {
 
     @JsonProperty("openid")
     private String openId;

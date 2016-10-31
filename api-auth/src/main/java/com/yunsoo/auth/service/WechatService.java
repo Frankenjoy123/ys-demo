@@ -1,6 +1,6 @@
 package com.yunsoo.auth.service;
 
-import com.yunsoo.auth.dto.weChatUser;
+import com.yunsoo.auth.dto.WeChatUser;
 import com.yunsoo.common.web.client.RestClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -17,11 +17,11 @@ import java.util.List;
  * Created by yan on 10/28/2016.
  */
 @Service
-public class WechatService {
+public class WeChatService {
 
     private RestClient wechatClient;
 
-    public WechatService(){
+    public WeChatService(){
         wechatClient = new RestClient("https://api.weixin.qq.com/");
         List<HttpMessageConverter<?>> messageConverterList = wechatClient.getRestTemplate().getMessageConverters();
         for (HttpMessageConverter<?> httpMessageConverter : messageConverterList) {
@@ -36,7 +36,7 @@ public class WechatService {
 
     }
 
-    public weChatUser getUserInfo(String accessToken, String openId){
+    public WeChatUser getUserInfo(String accessToken, String openId){
         String user = wechatClient.get("sns/userinfo?access_token={accessToken}&openid={openId}&lang=zh_CN",
                 String.class, accessToken, openId);
         try {
@@ -46,7 +46,7 @@ public class WechatService {
         }
 
         try {
-            return com.yunsoo.common.util.ObjectUtils.toObject(user, weChatUser.class);
+            return com.yunsoo.common.util.ObjectUtils.toObject(user, WeChatUser.class);
         } catch (IOException e) {
             return null;
         }
