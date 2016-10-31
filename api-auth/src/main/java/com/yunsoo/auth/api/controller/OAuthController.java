@@ -7,7 +7,7 @@ import com.yunsoo.auth.dto.*;
 import com.yunsoo.auth.service.AccountService;
 import com.yunsoo.auth.service.LoginService;
 import com.yunsoo.auth.service.OAuthAccountService;
-import com.yunsoo.auth.service.WechatService;
+import com.yunsoo.auth.service.WeChatService;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
@@ -52,7 +52,7 @@ public class OAuthController {
     private AccountService accountService;
 
     @Autowired
-    private WechatService weChatService;
+    private WeChatService weChatService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public OAuthAccountLoginResponse login(@RequestBody OAuthAccountLoginRequest request) {
@@ -103,7 +103,7 @@ public class OAuthController {
             oAuthAccount.setoAuthTypeCode(request.getOauthOpenType());
 
             if (request.getOauthOpenType().equals(WECHAT)) {
-                weChatUser weChatUser = weChatService.getUserInfo(request.getOauthToken(), request.getOauthOpenid());
+                WeChatUser weChatUser = weChatService.getUserInfo(request.getOauthToken(), request.getOauthOpenid());
                 if (StringUtils.hasText(weChatUser.getErrorCode()))
                     throw new BadRequestException("could not get wechat user, error message: " + weChatUser.getErrorMsg() + ", error code: " + weChatUser.getErrorCode());
 
@@ -129,6 +129,9 @@ public class OAuthController {
     @RequestMapping(value = "/loginToken", method = RequestMethod.GET)
     public Token getLoginToken(@RequestParam(value = "source_type_code", required = false) String sourceTypeCode,
                                @RequestParam(value = "source", required = false) String source) {
+        if(sourceTypeCode == null)
+            sourceTypeCode = "agency";
+
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
 
         List<Account> agencyAccountList = accountService.getByTypeCode(Constants.AccountType.AGENCY, AuthUtils.fixOrgId(null));

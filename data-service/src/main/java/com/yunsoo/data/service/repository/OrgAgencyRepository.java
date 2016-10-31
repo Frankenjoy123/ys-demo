@@ -28,7 +28,8 @@ public interface OrgAgencyRepository extends FindOneAndSaveRepository<OrgAgencyE
                                 @Param("startTime") DateTime start, @Param("endTime") DateTime end, Pageable pageable);
 
 
-
+    @Query(value = "select * from org_agency where org_id=:orgId and ((:parentId is null and parent_id is null) or parent_id = :parentId) order by convert(name using gbk)", nativeQuery = true)
+    List<OrgAgencyEntity> getAgencyByOrgIdAndParentId(@Param("orgId") String orgId, @Param("parentId") String parentId);
 
     List<OrgAgencyEntity> findByOrgIdAndIdInAndStatusCode(String orgId, List<String> idList, String statusCode);
 
