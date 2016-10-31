@@ -60,6 +60,16 @@ public class OrgAgencyDomain {
         });
     }
 
+    public List<OrgAgencyObject> getListByOrgIdAndParentId(String orgId, String parentId){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("parent_id", parentId)
+                .build();
+
+        return dataApiClient.get("organizationagency/list" + query, new ParameterizedTypeReference<List<OrgAgencyObject>>() {
+        });
+    }
+
     public List<LocationObject> getLocationsByFilter(String parentId) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("parent_id", parentId)
