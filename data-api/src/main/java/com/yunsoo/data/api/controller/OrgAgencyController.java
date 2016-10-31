@@ -85,7 +85,15 @@ public class OrgAgencyController {
         }
     }
 
-    //create
+    @RequestMapping(value = "list", method = RequestMethod.GET)
+    public List<OrgAgencyObject> getByFilter(@RequestParam(value = "org_id") String orgId,
+                                             @RequestParam(value = "parent_id", required = false) String parentId){
+        return  orgAgencyRepository.getAgencyByOrgIdAndParentId(orgId, parentId).stream().map(this::toOrgAgencyObject).collect(Collectors.toList());
+    }
+
+
+
+                                             //create
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public OrgAgencyObject create(@RequestBody OrgAgencyObject orgAgencyObject) {
