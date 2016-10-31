@@ -7,7 +7,7 @@ import com.yunsoo.auth.dto.*;
 import com.yunsoo.auth.service.AccountService;
 import com.yunsoo.auth.service.LoginService;
 import com.yunsoo.auth.service.OAuthAccountService;
-import com.yunsoo.auth.service.WeChatService;
+import com.yunsoo.auth.service.WeChatService2;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
@@ -52,7 +52,7 @@ public class OAuthController {
     private AccountService accountService;
 
     @Autowired
-    private WeChatService weChatService;
+    private WeChatService2 weChatService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public OAuthAccountLoginResponse login(@RequestBody OAuthAccountLoginRequest request) {
@@ -103,7 +103,7 @@ public class OAuthController {
             oAuthAccount.setoAuthTypeCode(request.getOauthOpenType());
 
             if (request.getOauthOpenType().equals(WECHAT)) {
-                WeChatUser weChatUser = weChatService.getUserInfo(request.getOauthToken(), request.getOauthOpenid());
+                WeChatUser2 weChatUser = weChatService.getUserInfo(request.getOauthToken(), request.getOauthOpenid());
                 if (StringUtils.hasText(weChatUser.getErrorCode()))
                     throw new BadRequestException("could not get wechat user, error message: " + weChatUser.getErrorMsg() + ", error code: " + weChatUser.getErrorCode());
 
