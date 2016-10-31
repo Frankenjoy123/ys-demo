@@ -17,6 +17,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Size;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -87,16 +89,22 @@ public class OrgAgencyController {
 
     @RequestMapping(value = "list", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
-    public List<OrgAgency> list( @SortDefault(value = "name", direction = Sort.Direction.ASC) Pageable pageable,
+    public List<OrgAgency> list(@RequestParam(value = "has_details", required = false) Boolean hasDetails,
+                                @PageableDefault(size = 1000, sort = {"name"}) Pageable pageable,
                                  HttpServletResponse response) {
         String orgId = AuthUtils.fixOrgId(null);
         Map<String, String> details = AuthUtils.getCurrentAccount().getDetails();
-        String sourceId = details.get(SOURCE);
-        Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, null, sourceId, null, null, null, null);
+        String sourceId = details.get(SOURCE);  String sourceType = details.get(SOURCE_TYPE);
+        String parentId="";
+        if("agency".equals(sourceType)) {
+            parentId = sourceId;
+        }
+
+        Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, null, parentId, null, null, null, pageable);
 
         List<OrgAgency> agencyList = PageUtils.response(response, orgAgencyPage.map(OrgAgency::new), pageable != null);
-
-        orgAgencyDomain.getAgencyDetails(agencyList);
+        if(hasDetails!=null && hasDetails)
+            orgAgencyDomain.getAgencyDetails(agencyList);
 
         return agencyList;
     }
@@ -113,11 +121,6 @@ public class OrgAgencyController {
                                        Pageable pageable,
                                        HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
-        Map<String, String> details = AuthUtils.getCurrentAccount().getDetails();
-        String sourceId = details.get(SOURCE);
-        String sourceType = details.get(SOURCE_TYPE);
-        if("agency".equals(sourceType))
-            parentId = sourceId;
 
         Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, searchText, parentId, null, startTime, endTime, pageable);
         List<OrgAgency> agencyList = PageUtils.response(response, orgAgencyPage.map(OrgAgency::new), pageable != null);
