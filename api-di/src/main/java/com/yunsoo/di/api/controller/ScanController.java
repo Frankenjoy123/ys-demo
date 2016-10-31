@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/analysis")
-public class AnalysisController {
+public class ScanController {
 
     @Autowired
     private ScanRecordLocationAnalysisRepository scanRecordLocationAnalysisRepository;
@@ -101,26 +101,5 @@ public class AnalysisController {
         List<ScanRecordLocationAnalysisEntity> list = eventRepository.consumerLocationCount(orgId, productBaseId, batchId, startDateTime, endDateTime);
         return list.stream().map(ScanRecordLocationAnalysisEntity::toDataObject).collect(Collectors.toList());
     }
-
-
-    //TODO ÐèÒªÐÞ¸Ä
-    @RequestMapping(value = "/batch_key_report", method = RequestMethod.GET)
-    public List<ProductKeyBatchObject> queryBatchKeyReport(@RequestParam(value = "org_id") String orgId,
-                                                           @RequestParam(value = "product_base_id", required = false) String productBaseId,
-                                                           @RequestParam(value = "start_time")
-                                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
-                                                           @RequestParam(value = "end_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endTime
-
-    ) {
-        if (StringUtils.isEmpty(productBaseId))
-            productBaseId = null;
-
-        DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
-        DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
-
-        List<ProductKeyBatchEntity> list = productKeyBatchRepository.queryDailyKeyUsageReport(orgId, productBaseId, startDateTime, endDateTime);
-        return list.stream().map(ProductKeyBatchEntity::toDataObject).collect(Collectors.toList());
-    }
-
 
 }
