@@ -14,7 +14,6 @@ public class EMRScanPK implements Serializable {
     private String productBaseId;
     private String batchId;
 
-
     public DateTime getScanDate() {
         return scanDate;
     }
