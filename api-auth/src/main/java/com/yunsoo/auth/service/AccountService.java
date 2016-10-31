@@ -77,13 +77,19 @@ public class AccountService {
         return accountRepository.findByOrgId(orgId).stream().map(this::toAccount).collect(Collectors.toList());
     }
 
+    public List<Account> getByTypeCode(String typeCode, String orgId){
+        if (StringUtils.isEmpty(typeCode) || StringUtils.isEmpty(orgId)) {
+            return new ArrayList<>();
+        }
+        return accountRepository.findByTypeCodeAndOrgId(typeCode, orgId).stream().map(this::toAccount).collect(Collectors.toList());
+    }
 
     public Page<Account> search(String orgId, String statusCode, String searchText, DateTime createdDateTimeGE, DateTime createdDateTimeLE, Pageable pageable) {
         if (StringUtils.isEmpty(orgId)) {
             return Page.empty();
         }
 
-        return PageUtils.convert(accountRepository.search(orgId, statusCode, searchText, createdDateTimeGE, createdDateTimeLE, pageable)).map(this::toAccount);
+        return PageUtils.convert(accountRepository.search(orgId, statusCode, searchText, createdDateTimeGE, createdDateTimeLE, Constants.AccountType.ENTERPRISE, pageable)).map(this::toAccount);
     }
 
 

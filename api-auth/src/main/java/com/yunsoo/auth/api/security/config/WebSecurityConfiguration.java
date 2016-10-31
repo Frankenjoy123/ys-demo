@@ -49,6 +49,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/accesstoken/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/organization/*/name").permitAll()
                 .antMatchers(HttpMethod.POST, "/organization/checkNameExists").permitAll()
+                .antMatchers(HttpMethod.POST, "/oauth/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/oauth/bind").permitAll()
+                .antMatchers(HttpMethod.GET, "/oauth/accessToken").permitAll()
                 .anyRequest().authenticated().and()
 
                 // custom Token based authentication based on the header previously given to the client

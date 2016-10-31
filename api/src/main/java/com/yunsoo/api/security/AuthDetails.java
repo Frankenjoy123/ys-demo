@@ -11,7 +11,6 @@ public class AuthDetails {
 
     private String deviceId;
 
-
     public String getAppId() {
         return appId;
     }

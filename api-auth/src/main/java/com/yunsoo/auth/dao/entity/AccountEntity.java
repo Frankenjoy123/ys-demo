@@ -31,6 +31,9 @@ public class AccountEntity {
     @Column(name = "status_code")
     private String statusCode;
 
+    @Column(name = "type_code")
+    private String typeCode;
+
     @Column(name = "first_name")
     private String firstName;
 
@@ -62,6 +65,8 @@ public class AccountEntity {
     @Column(name = "modified_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime modifiedDateTime;
+
+
 
 
     public String getId() {
@@ -174,5 +179,13 @@ public class AccountEntity {
 
     public void setModifiedDateTime(DateTime modifiedDateTime) {
         this.modifiedDateTime = modifiedDateTime;
+    }
+
+    public String getTypeCode() {
+        return typeCode;
+    }
+
+    public void setTypeCode(String typeCode) {
+        this.typeCode = typeCode;
     }
 }

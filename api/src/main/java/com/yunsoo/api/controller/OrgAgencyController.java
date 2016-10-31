@@ -10,11 +10,15 @@ import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.OrgAgencyObject;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -22,7 +26,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.Size;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +45,9 @@ public class OrgAgencyController {
     @Autowired
     private OrgAgencyDomain orgAgencyDomain;
 
+    private static String SOURCE = "source";
+    private static String SOURCE_TYPE = "source_type_code";
+
     //query by id
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'org_agency:read')")
@@ -50,15 +60,20 @@ public class OrgAgencyController {
         return orgAgency;
     }
 
-    @RequestMapping(value = "details", method= RequestMethod.GET)
+    @RequestMapping(value = "details", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
-    public OrgAgencyDetails getOrgAgencyDetails(){
+    public OrgAgencyDetails getOrgAgencyDetails() {
         String orgId = AuthUtils.fixOrgId(null);
-       // String oauthAccountId = AuthUtils.fixAccountId(null);
-        String oauthAccountId = "2m6oahol8xdtz28q55m";
+        Map<String, String> accountDetails = AuthUtils.getCurrentAccount().getDetails();
+        String sourceId = accountDetails.get(SOURCE);
         OrgAgencyDetails details = new OrgAgencyDetails();
-        OAuthAccount account = orgAgencyDomain.getOAuthAccount(oauthAccountId);
-        if(LookupCodes.TraceSourceType.AGENCY.equals(account.getSourceTypeCode())){
+        List<OAuthAccount> accountList = orgAgencyDomain.getOAuthAccount(Arrays.asList(sourceId));
+        if (accountList.size() == 0)
+            throw new NotFoundException("no agency id");
+
+        OAuthAccount account = accountList.get(0);
+
+        if (LookupCodes.TraceSourceType.AGENCY.equals(account.getSourceTypeCode())) {
             details.setChildrenCount(orgAgencyDomain.count(account.getSource()));
             details.setAuthorizedChildrenCount(orgAgencyDomain.authorizedCount(orgId, account.getSource()));
             details.setOauthName(account.getName());
@@ -69,8 +84,26 @@ public class OrgAgencyController {
             return details;
 
         }
-        return  null;
+        return null;
     }
+
+    @RequestMapping(value = "list", method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
+    public List<OrgAgency> list(@RequestParam(value = "has_details", required = false) Boolean hasDetails) {
+        String orgId = AuthUtils.fixOrgId(null);
+        Map<String, String> details = AuthUtils.getCurrentAccount().getDetails();
+        String sourceId = null;
+        if (details != null)
+            sourceId = details.get(SOURCE);
+
+        List<OrgAgency> agencyList = orgAgencyDomain.getListByOrgIdAndParentId(orgId, sourceId)
+                .stream().map(OrgAgency::new).collect(Collectors.toList());
+        if (hasDetails != null && hasDetails)
+            orgAgencyDomain.getAgencyDetails(agencyList);
+
+        return agencyList;
+    }
+
 
     //query by org id
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -83,14 +116,9 @@ public class OrgAgencyController {
                                        Pageable pageable,
                                        HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
+
         Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, searchText, parentId, null, startTime, endTime, pageable);
-
         List<OrgAgency> agencyList = PageUtils.response(response, orgAgencyPage.map(OrgAgency::new), pageable != null);
-
-        if(parentId != null){
-            orgAgencyDomain.getAgencyDetails(agencyList);
-
-        }
 
         return agencyList;
     }
@@ -111,6 +139,12 @@ public class OrgAgencyController {
         orgAgencyobject.setCreatedDateTime(DateTime.now());
         orgAgencyobject.setStatusCode(LookupCodes.OrgAgencyStatus.ACTIVATED);
         orgAgencyobject.setOrgId(AuthUtils.fixOrgId(orgAgency.getOrgId()));
+
+        Map<String, String> details = AuthUtils.getCurrentAccount().getDetails();
+        String sourceId = details.get(SOURCE);
+        String sourceType = details.get(SOURCE_TYPE);
+        if ("agency".equals(sourceType))
+            orgAgencyobject.setParentId(sourceId);
 
         return new OrgAgency(orgAgencyDomain.createOrgAgency(orgAgencyobject));
     }
@@ -134,7 +168,7 @@ public class OrgAgencyController {
     }
 
 
-    //delete organization agency
+    //delete organization agencys
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "id") String id) {
