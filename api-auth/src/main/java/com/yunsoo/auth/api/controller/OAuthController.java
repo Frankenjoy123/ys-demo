@@ -103,7 +103,7 @@ public class OAuthController {
             oAuthAccount.setoAuthTypeCode(request.getOauthOpenType());
 
             if (request.getOauthOpenType().equals(WECHAT)) {
-                WeChatUser2 weChatUser = weChatService.getUserInfo(request.getOauthToken(), request.getOauthOpenid());
+                weChatUser weChatUser = weChatService.getUserInfo(request.getOauthToken(), request.getOauthOpenid());
                 if (StringUtils.hasText(weChatUser.getErrorCode()))
                     throw new BadRequestException("could not get wechat user, error message: " + weChatUser.getErrorMsg() + ", error code: " + weChatUser.getErrorCode());
 

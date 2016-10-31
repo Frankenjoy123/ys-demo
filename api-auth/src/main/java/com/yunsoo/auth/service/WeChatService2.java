@@ -1,6 +1,6 @@
 package com.yunsoo.auth.service;
 
-import com.yunsoo.auth.dto.WeChatUser2;
+import com.yunsoo.auth.dto.weChatUser;
 import com.yunsoo.common.web.client.RestClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -36,7 +36,7 @@ public class WeChatService2 {
 
     }
 
-    public WeChatUser2 getUserInfo(String accessToken, String openId){
+    public weChatUser getUserInfo(String accessToken, String openId){
         String user = wechatClient.get("sns/userinfo?access_token={accessToken}&openid={openId}&lang=zh_CN",
                 String.class, accessToken, openId);
         try {
@@ -46,7 +46,7 @@ public class WeChatService2 {
         }
 
         try {
-            return com.yunsoo.common.util.ObjectUtils.toObject(user, WeChatUser2.class);
+            return com.yunsoo.common.util.ObjectUtils.toObject(user, weChatUser.class);
         } catch (IOException e) {
             return null;
         }
