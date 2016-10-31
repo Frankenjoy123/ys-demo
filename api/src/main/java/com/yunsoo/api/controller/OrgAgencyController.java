@@ -43,6 +43,9 @@ public class OrgAgencyController {
     @Autowired
     private OrgAgencyDomain orgAgencyDomain;
 
+    private static String SOURCE = "source";
+    private static String SOURCE_TYPE = "source_type_code";
+
     //query by id
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     @PostAuthorize("hasPermission(returnObject, 'org_agency:read')")
@@ -60,7 +63,7 @@ public class OrgAgencyController {
     public OrgAgencyDetails getOrgAgencyDetails(){
         String orgId = AuthUtils.fixOrgId(null);
         Map<String, String> accountDetails = AuthUtils.getCurrentAccount().getDetails();
-        String sourceId = accountDetails.get("source");
+        String sourceId = accountDetails.get(SOURCE);
         OrgAgencyDetails details = new OrgAgencyDetails();
         List<OAuthAccount> accountList = orgAgencyDomain.getOAuthAccount(Arrays.asList(sourceId));
         if(accountList.size() == 0)
@@ -88,7 +91,7 @@ public class OrgAgencyController {
                                  HttpServletResponse response) {
         String orgId = AuthUtils.fixOrgId(null);
         Map<String, String> details = AuthUtils.getCurrentAccount().getDetails();
-        String sourceId = details.get("source");
+        String sourceId = details.get(SOURCE);
         Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, null, sourceId, null, null, null, null);
 
         List<OrgAgency> agencyList = PageUtils.response(response, orgAgencyPage.map(OrgAgency::new), pageable != null);
@@ -110,14 +113,14 @@ public class OrgAgencyController {
                                        Pageable pageable,
                                        HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
+        Map<String, String> details = AuthUtils.getCurrentAccount().getDetails();
+        String sourceId = details.get(SOURCE);
+        String sourceType = details.get(SOURCE_TYPE);
+        if("agency".equals(sourceType))
+            parentId = sourceId;
+
         Page<OrgAgencyObject> orgAgencyPage = orgAgencyDomain.getOrgAgencyByOrgId(orgId, searchText, parentId, null, startTime, endTime, pageable);
-
         List<OrgAgency> agencyList = PageUtils.response(response, orgAgencyPage.map(OrgAgency::new), pageable != null);
-
-        if(parentId != null){
-            orgAgencyDomain.getAgencyDetails(agencyList);
-
-        }
 
         return agencyList;
     }
@@ -138,6 +141,12 @@ public class OrgAgencyController {
         orgAgencyobject.setCreatedDateTime(DateTime.now());
         orgAgencyobject.setStatusCode(LookupCodes.OrgAgencyStatus.ACTIVATED);
         orgAgencyobject.setOrgId(AuthUtils.fixOrgId(orgAgency.getOrgId()));
+
+        Map<String, String> details = AuthUtils.getCurrentAccount().getDetails();
+        String sourceId = details.get(SOURCE);
+        String sourceType = details.get(SOURCE_TYPE);
+        if("agency".equals(sourceType))
+            orgAgencyobject.setParentId(sourceId);
 
         return new OrgAgency(orgAgencyDomain.createOrgAgency(orgAgencyobject));
     }
@@ -161,7 +170,7 @@ public class OrgAgencyController {
     }
 
 
-    //delete organization agency
+    //delete organization agencys
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable(value = "id") String id) {

@@ -7,14 +7,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class OAuthAccountLoginRequest {
 
-    @JsonProperty("oauth_open_id")
+    @JsonProperty("oauth_openid")
     private String oauthOpenid;
 
     @JsonProperty("oauth_open_type")
     private String oauthOpenType;
 
-    @JsonProperty("oauth_code")
-    private String oauthCode;
+    @JsonProperty("oauth_token")
+    private String oauthToken;
 
     @JsonProperty("login_token")
     private String loginToken;
@@ -43,11 +43,11 @@ public class OAuthAccountLoginRequest {
         this.loginToken = loginToken;
     }
 
-    public String getOauthCode() {
-        return oauthCode;
+    public String getOauthToken() {
+        return oauthToken;
     }
 
-    public void setOauthCode(String oauthCode) {
-        this.oauthCode = oauthCode;
+    public void setOauthToken(String oauthToken) {
+        this.oauthToken = oauthToken;
     }
 }

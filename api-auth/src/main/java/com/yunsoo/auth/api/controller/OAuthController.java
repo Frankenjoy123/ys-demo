@@ -59,6 +59,9 @@ public class OAuthController {
         if(request.getOauthOpenType() == null)
             request.setOauthOpenType(WECHAT);
         List<OAuthAccount> accountList = oAuthAccountService.getByOAuthOpenIdAndOAuthTypeCode(request.getOauthOpenid(), request.getOauthOpenType());
+        if(accountList.size() ==0)
+            throw new UnauthorizedException("wechat user not bind");
+
         OAuthAccount account = accountList.get(0);
         Token accessToken = getAccessToken(account.getId(), account.getToken());
 
@@ -76,8 +79,8 @@ public class OAuthController {
 
         AuthAccount account = tokenAuthenticationService.parseLoginToken(request.getLoginToken());
         if (account == null || StringUtils.isEmpty(account.getId())) {
-            log.warn(String.format("token is not valid [token: %s]", request.getLoginToken()));
-            throw new UnauthorizedException("token is not valid");
+            log.warn(String.format("login token is not valid [token: %s]", request.getLoginToken()));
+            throw new UnauthorizedException("login token is not valid");
         }
 
         //login
@@ -86,36 +89,39 @@ public class OAuthController {
             throw new UnauthorizedException("account is not valid");
         }
 
-        OAuthAccount oAuthAccount = new OAuthAccount();
-        oAuthAccount.setCreatedDateTime(DateTime.now());
-        oAuthAccount.setAccountId(account.getId());
-        oAuthAccount.setToken(HashUtils.sha1HexString(UUID.randomUUID().toString()));  //random sha1
-        oAuthAccount.setSource(account.getDetails().get(SOURCE));
-        oAuthAccount.setSourceTypeCode(account.getDetails().get(SOURCE_TYPE));
-        oAuthAccount.setDisabled(false);
-        oAuthAccount.setoAuthTypeCode(request.getOauthOpenType());
+        List<OAuthAccount> accountList = oAuthAccountService.getByOAuthOpenIdAndOAuthTypeCode(request.getOauthOpenid(), request.getOauthOpenType());
+        OAuthAccount currentAccount;
+        if(accountList.size() ==0) {
 
-        if(request.getOauthOpenType().equals(WECHAT)){
-            WeChatToken weChatToken = weChatService.getWeChatToken(request.getOauthCode());
-            if(StringUtils.hasText(weChatToken.getErrorCode()))
-                throw new BadRequestException("could not get access token, error message: " + weChatToken.getErrorMsg() + ", error code: " + weChatToken.getErrorCode());
+            OAuthAccount oAuthAccount = new OAuthAccount();
+            oAuthAccount.setCreatedDateTime(DateTime.now());
+            oAuthAccount.setAccountId(account.getId());
+            oAuthAccount.setToken(HashUtils.sha1HexString(UUID.randomUUID().toString()));  //random sha1
+            oAuthAccount.setSource(account.getDetails().get(SOURCE));
+            oAuthAccount.setSourceTypeCode(account.getDetails().get(SOURCE_TYPE));
+            oAuthAccount.setDisabled(false);
+            oAuthAccount.setoAuthTypeCode(request.getOauthOpenType());
 
-            WeChatUser weChatUser = weChatService.getUserInfo(weChatToken.getAccessToken(), weChatToken.getOpenId());
-            if(StringUtils.hasText(weChatUser.getErrorCode()))
-                throw new BadRequestException("could not get wechat user, error message: " + weChatUser.getErrorMsg() + ", error code: " + weChatUser.getErrorCode());
+            if (request.getOauthOpenType().equals(WECHAT)) {
+                WeChatUser weChatUser = weChatService.getUserInfo(request.getOauthToken(), request.getOauthOpenid());
+                if (StringUtils.hasText(weChatUser.getErrorCode()))
+                    throw new BadRequestException("could not get wechat user, error message: " + weChatUser.getErrorMsg() + ", error code: " + weChatUser.getErrorCode());
 
 
-            oAuthAccount.setGravatarUrl(weChatUser.getImageUrl());
-            oAuthAccount.setName(weChatUser.getNickName());
-            oAuthAccount.setoAuthOpenId(weChatUser.getOpenId());
+                oAuthAccount.setGravatarUrl(weChatUser.getImageUrl());
+                oAuthAccount.setName(weChatUser.getNickName());
+                oAuthAccount.setoAuthOpenId(weChatUser.getOpenId());
+            }
+
+            currentAccount = oAuthAccountService.save(oAuthAccount);
         }
-
-        OAuthAccount saveAccount = oAuthAccountService.save(oAuthAccount);
+        else
+            currentAccount = accountList.get(0);
 
         OAuthAccountLoginResponse response = new OAuthAccountLoginResponse();
         response.setAccessToken(tokenAuthenticationService.generateAccessToken(account));
-        response.setToken(oAuthAccount.getToken());
-        response.setOauthAccountId(saveAccount.getId());
+        response.setToken(currentAccount.getToken());
+        response.setOauthAccountId(currentAccount.getId());
 
         return response;
     }
