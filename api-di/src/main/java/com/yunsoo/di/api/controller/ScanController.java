@@ -31,7 +31,6 @@ public class ScanController {
     @Autowired
     private ScanRecordAnalysisRepository scanRecordAnalysisRepository;
 
-    // region 新增营销方案的repository
     @Autowired
     private MarketUserAreaAnalysisRepository marketUserAreaAnalysisRepository;
     @Autowired
@@ -47,11 +46,9 @@ public class ScanController {
     private LuTagRepository luTagRepository;
     // endregion
 
-    //S 消费者漏斗分析
     @Autowired
     private EMREventRepository eventRepository;
 
-    // 用户属性分析
     @Autowired
     private EMRUserRepository emrUserRepository;
 
@@ -68,7 +65,6 @@ public class ScanController {
                                                 @RequestParam(value = "batch_id", required = false) String batchId) {
 
         if (StringUtils.isEmpty(productBaseId)) {
-            // 所有产品维度
             productBaseId = "All";
         }
         if (StringUtils.isEmpty(batchId))
@@ -82,7 +78,6 @@ public class ScanController {
     }
 
 
-    //TODO 需要修改
     @RequestMapping(value = "/scan_data_location", method = RequestMethod.GET)
     public List<ScanRecordLocationAnalysisObject> queryWithLocation(@RequestParam(value = "org_id") String orgId,
                                                                     @RequestParam(value = "start_time")

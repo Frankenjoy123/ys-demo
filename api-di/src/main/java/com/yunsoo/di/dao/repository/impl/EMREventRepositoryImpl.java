@@ -1,12 +1,11 @@
 package com.yunsoo.di.dao.repository.impl;
 
-import com.amazonaws.util.StringUtils;
-
 import com.yunsoo.di.dao.entity.EMREventEntity;
 import com.yunsoo.di.dao.entity.MarketUserLocationAnalysisEntity;
 import com.yunsoo.di.dao.entity.ScanRecordLocationAnalysisEntity;
 import com.yunsoo.di.dao.repository.CustomEMREventRepository;
 import org.joda.time.DateTime;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -108,11 +107,11 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("eventName", eventName);
         parameters.put("orgId", orgId);
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+        if (!StringUtils.isEmpty(productBaseId)) {
             sql = sql + " and ev.product_base_id = :productBaseId";
             parameters.put("productBaseId", productBaseId);
         }
-        if (!StringUtils.isNullOrEmpty(province)) {
+        if ( !StringUtils.isEmpty(province)) {
             sql = sql + " and ev.province like :province";
             parameters.put("province", "%" + province + "%");
         }
@@ -163,13 +162,13 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
 
     @Override
     public List<ScanRecordLocationAnalysisEntity> consumerLocationCount(String orgId, String productBaseId, String batchId, DateTime startDateTime, DateTime endDateTime) {
-        String sql = "select case when ev.province is null or ev.province ='' then '未公开省份'  else  ev.province END as provinceA, case when ev.city is null or ev.city = '' then '未公开城市' else ev.city END as cityA,ev.product_base_id as product, count(1), count(distinct ev.user_id, ev.ys_id) from emr_event ev  where ev.name= :eventName" +
+        String sql = "select case when pc.province is null or pc.province ='' then '未公开省份'  else  pc.province END as provinceA, case when pc.city is null or pc.city = '' then '未公开城市' else pc.city END as cityA,ev.product_base_id as product, count(1), count(distinct ev.user_id, ev.ys_id) from di_event ev LEFT JOIN lu_province_city pc ON ev.location_id=pc.id where ev.name= :eventName" +
                 " and ev.org_id =:orgId";
 
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("orgId", orgId);
         parameters.put("eventName", "scan");
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+        if (productBaseId!=null && !StringUtils.isEmpty(productBaseId)) {
             sql = sql + " and ev.product_base_id = :productBaseId";
             parameters.put("productBaseId", productBaseId);
         }
@@ -181,7 +180,7 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
             sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
             parameters.put("createdDateTimeEnd", endDateTime.toString("yyyy-MM-dd HH:mm:ss"));
         }
-        sql = sql + " group by provinceA, cityA";
+        sql = sql + " group by location_id";
 
         Query query = entityManager.createNativeQuery(sql);
         for (String key : parameters.keySet()) {
@@ -251,11 +250,11 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("eventName", action);
         parameters.put("orgId", orgId);
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+        if (productBaseId!=null && !StringUtils.isEmpty(productBaseId)) {
             sql = sql + " and ev.product_base_id = :productBaseId";
             parameters.put("productBaseId", productBaseId);
         }
-        if (!StringUtils.isNullOrEmpty(province)) {
+        if (province!=null && !StringUtils.isEmpty(province)) {
             sql = sql + " and pc.province like :province";
             parameters.put("province", "%" + province + "%");
         }
@@ -305,11 +304,11 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("eventName", action);
         parameters.put("orgId", orgId);
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+        if (productBaseId!=null && !StringUtils.isEmpty(productBaseId)) {
             sql = sql + " and ev.product_base_id = :productBaseId";
             parameters.put("productBaseId", productBaseId);
         }
-        if (!StringUtils.isNullOrEmpty(province)) {
+        if (province!=null && !StringUtils.isEmpty(province)) {
             sql = sql + " and ev.province like :province";
             parameters.put("province", "%" + province + "%");
         }
@@ -365,11 +364,11 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("eventName", action);
         parameters.put("orgId", orgId);
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+        if (productBaseId!=null && !StringUtils.isEmpty(productBaseId)) {
             sql = sql + " and ev.product_base_id = :productBaseId";
             parameters.put("productBaseId", productBaseId);
         }
-        if (!StringUtils.isNullOrEmpty(province)) {
+        if (province!=null && !StringUtils.isEmpty(province)) {
             sql = sql + " and ev.province like :province";
             parameters.put("province", "%" + province + "%");
         }
