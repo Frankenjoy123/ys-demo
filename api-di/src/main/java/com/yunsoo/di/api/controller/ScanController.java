@@ -2,7 +2,6 @@ package com.yunsoo.di.api.controller;
 
 import com.yunsoo.di.dao.entity.*;
 import com.yunsoo.di.dao.repository.*;
-import com.yunsoo.di.dao.repository.impl.ScanRecordRepositoryImpl;
 import com.yunsoo.di.dto.*;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
