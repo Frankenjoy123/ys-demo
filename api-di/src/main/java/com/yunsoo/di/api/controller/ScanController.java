@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  */
 
 @RestController
-@RequestMapping("/analysis")
+@RequestMapping("/scan")
 public class ScanController {
 
     @Autowired

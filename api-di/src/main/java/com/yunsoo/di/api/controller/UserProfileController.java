@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  */
 
 @RestController
-@RequestMapping("/analysis")
+@RequestMapping("/user_profile")
 public class UserProfileController {
 
     // 用户属性分析
@@ -30,13 +30,13 @@ public class UserProfileController {
     private UserProfileRepository userProfileRepository;
 
 
-    @RequestMapping(value = "/user_profile/area", method = RequestMethod.GET)
+    @RequestMapping(value = "/area", method = RequestMethod.GET)
     public List<UserProfileTagCountObject> queryUserProfileArea(@RequestParam(value = "org_id") String orgId) {
         List<UserProfileTagCountEntity> list = userProfileRepository.queryUserProfileAreaReport(orgId);
         return list.stream().map(UserProfileTagCountEntity::toDataObject).collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "/user_profile/scan_time_range", method = RequestMethod.GET)
+    @RequestMapping(value = "/scan_time_range", method = RequestMethod.GET)
     public List<UserProfileTagCountObject> queryUserProfileTimeRange(@RequestParam(value = "org_id") String orgId,
                                                                      @RequestParam(value = "start_time")
                                                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startTime,
@@ -50,14 +50,14 @@ public class UserProfileController {
         return list.stream().map(UserProfileTagCountEntity::toDataObject).collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "/user_profile/device", method = RequestMethod.GET)
+    @RequestMapping(value = "/device", method = RequestMethod.GET)
     public List<UserProfileTagCountObject> queryUserProfileDevice(@RequestParam(value = "org_id") String orgId) {
 
         List<UserProfileTagCountEntity> list = userProfileRepository.queryUserProfileDeviceUsage(orgId);
         return list.stream().map(UserProfileTagCountEntity::toDataObject).collect(Collectors.toList());
     }
 
-    @RequestMapping(value = "/user_profile/gender", method = RequestMethod.GET)
+    @RequestMapping(value = "/gender", method = RequestMethod.GET)
     public List<UserProfileTagCountObject> queryUserProfileGender(@RequestParam(value = "org_id") String orgId) {
         List<UserProfileTagCountEntity> list = userProfileRepository.queryUserProfileGenderUsage(orgId);
         return list.stream().map(UserProfileTagCountEntity::toDataObject).collect(Collectors.toList());
