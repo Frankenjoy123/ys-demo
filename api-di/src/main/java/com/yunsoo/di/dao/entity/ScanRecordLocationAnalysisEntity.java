@@ -1,6 +1,5 @@
 package com.yunsoo.di.dao.entity;
 
-
 import com.yunsoo.di.dto.ScanRecordLocationAnalysisObject;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
@@ -8,46 +7,27 @@ import org.joda.time.DateTime;
 import javax.persistence.*;
 
 /**
- * Created by Dake Wang on 2016/2/3.
+ * Created by Xiaowu on 2016/11/1.
  */
-@Entity
-@Table(name = "emr_scan_record_location_analysis")
-@IdClass(EMRScanLocationPK.class)
+
 public class ScanRecordLocationAnalysisEntity {
 
-    @Column(name = "scan_date")
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    @Id
     private DateTime scanDate;
 
-    @Column(name = "org_id")
-    @Id
     private String orgId;
 
-    @Column(name = "product_base_id")
-    @Id
     private String productBaseId;
 
-    @Column(name = "product_name")
     private String productName;
 
-    @Column(name = "batch_id")
-    @Id
     private String batchId;
 
-    @Column(name = "province")
-    @Id
     private String province;
 
-    @Column(name = "city")
-    @Id
     private String city;
 
-    @Column(name = "pv")
     private int pv;
 
-
-    @Column(name = "uv")
     private int uv;
 
 

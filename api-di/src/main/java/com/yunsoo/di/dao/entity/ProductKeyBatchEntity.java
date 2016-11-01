@@ -1,13 +1,15 @@
 package com.yunsoo.di.dao.entity;
 
 
-import com.yunsoo.di.dto.ProductKeyBatchObject;
-import org.hibernate.annotations.GenericGenerator;
+import com.yunsoo.di.dto.ProductKeyBatch;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Arrays;
 
 /**
@@ -20,8 +22,6 @@ import java.util.Arrays;
 public class ProductKeyBatchEntity {
 
     @Id
-    @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
     private String id;
 
@@ -178,20 +178,20 @@ public class ProductKeyBatchEntity {
         this.partitionId = partitionId;
     }
 
-    public static ProductKeyBatchObject toDataObject(ProductKeyBatchEntity entity) {
+    public static ProductKeyBatch toDataObject(ProductKeyBatchEntity entity) {
         if (entity == null) {
             return null;
         }
-        ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
+        ProductKeyBatch batchObj = new ProductKeyBatch();
         batchObj.setId(entity.getId());
         batchObj.setQuantity(entity.getQuantity());
         batchObj.setStatusCode(entity.getStatusCode());
-        batchObj.setOrgId(entity.getOrgId());
+        //batchObj.setOrgId(entity.getOrgId());
         batchObj.setProductBaseId(entity.getProductBaseId());
-        batchObj.setCreatedAppId(entity.getCreatedAppId());
-        batchObj.setCreatedDeviceId(entity.getCreatedDeviceId());
-        batchObj.setCreatedAccountId(entity.getCreatedAccountId());
-        batchObj.setCreatedDateTime(entity.getCreatedDateTime());
+        //batchObj.setCreatedAppId(entity.getCreatedAppId());
+        //batchObj.setCreatedDeviceId(entity.getCreatedDeviceId());
+        //batchObj.setCreatedAccountId(entity.getCreatedAccountId());
+        //batchObj.setCreatedDateTime(entity.getCreatedDateTime());
         String codes = entity.getProductKeyTypeCodes();
         if (codes != null) {
             batchObj.setProductKeyTypeCodes(Arrays.asList(StringUtils.delimitedListToStringArray(codes, ",")));

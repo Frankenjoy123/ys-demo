@@ -10,8 +10,6 @@ import javax.persistence.Column;
  */
 public class UserProfileTagCountEntity {
 
-
-
     public static class TimeSpan {
         public final static String T00_06 = "00:00-06:00";
         public final static String T06_08 = "06:00-08:00";

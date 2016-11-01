@@ -1,23 +1,19 @@
 package com.yunsoo.di.dao.repository;
 
-
 import com.yunsoo.di.dao.entity.ProductKeyBatchEntity;
-import com.yunsoo.di.dao.repository.basic.FindOneAndSaveRepository;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 /**
- * Created by:   Lijian
- * Created on:   2015/4/14
- * Descriptions:
+ * Created by yqy09_000 on 2016/11/1.
  */
-public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<ProductKeyBatchEntity, String> {
-
+public interface ProductKeyBatchRepository extends CrudRepository<ProductKeyBatchEntity, String> {
     @Query("select o from #{#entityName} o where (:orgId is null or o.orgId = :orgId) and (o.statusCode in ('creating', 'available')) " +
             "and (:productBaseId is null or :productBaseId = '' or o.productBaseId = :productBaseId) " +
             "and (o.productKeyTypeCodes != 'package') " +
@@ -70,8 +66,6 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
             "and createdDateTime >=:startTime and createdDateTime <= :endTime")
     List<ProductKeyBatchEntity> queryDailyKeyUsageReport(@Param("orgId") String orgId,
                                                          @Param("productBaseId") String productBaseId, @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime);
-
-    List<ProductKeyBatchEntity> save(Iterable<ProductKeyBatchEntity> entities);
 
     List<ProductKeyBatchEntity> findByMarketingId(String marketingId);
 

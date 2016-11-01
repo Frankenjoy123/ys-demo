@@ -1,10 +1,12 @@
 package com.yunsoo.di.dao.entity;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by Admin on 6/13/2016.
@@ -14,8 +16,6 @@ import javax.persistence.*;
 public class UserTagEntity {
 
     @Id
-    @GeneratedValue(generator = "idGenerator")
-    @GenericGenerator(name = "idGenerator", strategy = "com.yunsoo.data.service.util.IdGenerator")
     @Column(name = "id")
     private String id;
 

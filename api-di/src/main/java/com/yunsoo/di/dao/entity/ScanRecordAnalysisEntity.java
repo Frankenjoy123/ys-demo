@@ -11,31 +11,26 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "di_daily_scan_record")
-@IdClass(EMRScanPK.class)
 public class ScanRecordAnalysisEntity {
-
+    @Id
+    @Column(name = "id")
+    private String id;
 
     @Column(name = "scan_date")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    @Id
     private DateTime scanDate;
 
     @Column(name = "org_id")
-    @Id
     private String orgId;
 
     @Column(name = "product_base_id")
-    @Id
     private String productBaseId;
 
     @Column(name = "product_name")
-    @Id
     private String productName;
 
     @Column(name = "batch_id")
-    @Id
     private String batchId;
-
 
     @Column(name = "pv")
     private int pv;
