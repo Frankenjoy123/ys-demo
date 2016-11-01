@@ -158,11 +158,12 @@ public class OrgAgencyController {
         orgAgencyobject.setOrgId(AuthUtils.fixOrgId(orgAgency.getOrgId()));
 
         Map<String, String> details = AuthUtils.getCurrentAccount().getDetails();
-        String sourceId = details.get(SOURCE);
-        String sourceType = details.get(SOURCE_TYPE);
-        if ("agency".equals(sourceType))
-            orgAgencyobject.setParentId(sourceId);
-
+        if(details != null) {
+            String sourceId = details.get(SOURCE);
+            String sourceType = details.get(SOURCE_TYPE);
+            if ("agency".equals(sourceType))
+                orgAgencyobject.setParentId(sourceId);
+        }
         return new OrgAgency(orgAgencyDomain.createOrgAgency(orgAgencyobject));
     }
 
