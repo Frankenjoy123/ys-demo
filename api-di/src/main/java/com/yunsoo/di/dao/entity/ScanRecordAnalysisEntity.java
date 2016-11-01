@@ -11,7 +11,6 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "di_daily_scan_record")
-@IdClass(EMRScanPK.class)
 public class ScanRecordAnalysisEntity {
 
 
