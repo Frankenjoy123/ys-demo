@@ -97,8 +97,11 @@ public class OAuthController {
             oAuthAccount.setCreatedDateTime(DateTime.now());
             oAuthAccount.setAccountId(account.getId());
             oAuthAccount.setToken(HashUtils.sha1HexString(UUID.randomUUID().toString()));  //random sha1
-            oAuthAccount.setSource(account.getDetails().get(SOURCE));
-            oAuthAccount.setSourceTypeCode(account.getDetails().get(SOURCE_TYPE));
+
+            if(account.getDetails()!=null) {
+                oAuthAccount.setSource(account.getDetails().get(SOURCE));
+                oAuthAccount.setSourceTypeCode(account.getDetails().get(SOURCE_TYPE));
+            }
             oAuthAccount.setDisabled(false);
             oAuthAccount.setoAuthTypeCode(request.getOauthOpenType());
 

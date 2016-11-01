@@ -43,8 +43,9 @@ public class OrgAgencyController {
         return toOrgAgencyObject(entity);
     }
     @RequestMapping(value = "count", method = RequestMethod.GET)
-    public int count( @RequestParam(value = "parent_id") String parentId){
-        return orgAgencyRepository.countByParentIdAndStatusCode(parentId, LookupCodes.OrgAgencyStatus.ACTIVATED);
+    public int count( @RequestParam(value = "org_id") String orgId, @RequestParam(value = "parent_id", required = false) String parentId){
+        return orgAgencyRepository.count(parentId, orgId, LookupCodes.OrgAgencyStatus.ACTIVATED);
+
     }
 
 
@@ -53,6 +54,7 @@ public class OrgAgencyController {
     public List<OrgAgencyObject> getByFilter(@RequestParam(value = "org_id") String orgId,
                                              @RequestParam(value = "search_text", required = false) String searchText,
                                              @RequestParam(value = "parent_id", required = false) String parentId,
+                                             @RequestParam(value = "status_code", required = false) String statusCode,
                                              @RequestParam(value = "ids", required = false) List<String> idList,
                                              @RequestParam(value = "start_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startDateTime,
                                              @RequestParam(value = "end_datetime", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endDateTime,
@@ -88,7 +90,7 @@ public class OrgAgencyController {
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public List<OrgAgencyObject> getByFilter(@RequestParam(value = "org_id") String orgId,
                                              @RequestParam(value = "parent_id", required = false) String parentId){
-        return  orgAgencyRepository.getAgencyByOrgIdAndParentId(orgId, parentId).stream().map(this::toOrgAgencyObject).collect(Collectors.toList());
+        return  orgAgencyRepository.getAgencyByOrgIdAndParentId(orgId, parentId, LookupCodes.OrgAgencyStatus.ACTIVATED).stream().map(this::toOrgAgencyObject).collect(Collectors.toList());
     }
 
 

@@ -1,6 +1,7 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.OrgAgencyDomain;
+import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.Location;
 import com.yunsoo.api.dto.OAuthAccount;
 import com.yunsoo.api.dto.OrgAgency;
@@ -23,6 +24,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -60,39 +62,54 @@ public class OrgAgencyController {
         return orgAgency;
     }
 
-    @RequestMapping(value = "details", method = RequestMethod.GET)
+    @RequestMapping(value = "{id}/details", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
-    public OrgAgencyDetails getOrgAgencyDetails() {
+    public OrgAgencyDetails getOrgAgencyDetails(@PathVariable(value = "id") String id) {
         String orgId = AuthUtils.fixOrgId(null);
+        String accountId = AuthUtils.fixAccountId(null);
+        String sourceId = id;
         Map<String, String> accountDetails = AuthUtils.getCurrentAccount().getDetails();
-        String sourceId = accountDetails.get(SOURCE);
+
+        if(id.equals("current"))
+            sourceId = null;
+        if (accountDetails != null && accountDetails.size() > 0)
+            sourceId = accountDetails.get(SOURCE);
+
+
+
         OrgAgencyDetails details = new OrgAgencyDetails();
-        List<OAuthAccount> accountList = orgAgencyDomain.getOAuthAccount(Arrays.asList(sourceId));
-        if (accountList.size() == 0)
-            throw new NotFoundException("no agency id");
-
-        OAuthAccount account = accountList.get(0);
-
-        if (LookupCodes.TraceSourceType.AGENCY.equals(account.getSourceTypeCode())) {
-            details.setChildrenCount(orgAgencyDomain.count(account.getSource()));
+        List<OAuthAccount> accountList = orgAgencyDomain.getOAuthAccount(sourceId == null ? null : Arrays.asList(sourceId), accountId);
+        if (accountList.size() > 0) {
+            OAuthAccount account = accountList.get(0);
+            details.setChildrenCount(orgAgencyDomain.count(account.getSource(), orgId));
             details.setAuthorizedChildrenCount(orgAgencyDomain.authorizedCount(orgId, account.getSource()));
             details.setOauthName(account.getName());
             details.setOauthGravatarUrl(account.getGravatarUrl());
-            details.setAgencyId(account.getSource());
-            details.setParentName(orgAgencyDomain.getParentOrgAgencyName(account.getSource()));
-
-            return details;
+            if (StringUtils.hasText(account.getSource())) {
+                details.setAgencyId(account.getSource());
+                details.setParentName(orgAgencyDomain.getParentOrgAgencyName(account.getSource()));
+            }
+        }
+        else {
+            details.setChildrenCount(orgAgencyDomain.count(null, orgId));
+            details.setAuthorizedChildrenCount(orgAgencyDomain.authorizedCount(orgId, null));
 
         }
-        return null;
+
+        return details;
+
     }
 
-    @RequestMapping(value = "list", method = RequestMethod.GET)
+    @RequestMapping(value = "{id}/list", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'org_agency:read')")
-    public List<OrgAgency> list(@RequestParam(value = "has_details", required = false) Boolean hasDetails) {
+    public List<OrgAgency> list(@PathVariable(value = "id") String id, @RequestParam(value = "has_details", required = false) Boolean hasDetails) {
         String orgId = AuthUtils.fixOrgId(null);
         Map<String, String> details = AuthUtils.getCurrentAccount().getDetails();
-        String sourceId = null;
+        String sourceId = id;
+
+        if(id.equals("current"))
+            sourceId = null;
+
         if (details != null)
             sourceId = details.get(SOURCE);
 

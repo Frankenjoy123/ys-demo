@@ -20,8 +20,8 @@ public class OAuthAccountService {
     @Autowired
     private OAuthAccountRepository repository;
 
-    public List<OAuthAccount> search(List<String> sourceList, String sourceType){
-        List<OAuthAccountEntity> entities = repository.findBySourceInAndSourceTypeCodeAndDisabled(sourceList, sourceType, false);
+    public List<OAuthAccount> search(List<String> sourceList, String sourceType, String accountId){
+        List<OAuthAccountEntity> entities = repository.query(sourceList, sourceType, accountId, false);
         return entities.stream().map(OAuthAccount::new).collect(Collectors.toList());
     }
 
