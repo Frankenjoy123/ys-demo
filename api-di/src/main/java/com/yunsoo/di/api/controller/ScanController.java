@@ -2,6 +2,7 @@ package com.yunsoo.di.api.controller;
 
 import com.yunsoo.di.dao.entity.*;
 import com.yunsoo.di.dao.repository.*;
+import com.yunsoo.di.dao.repository.impl.ScanRecordRepositoryImpl;
 import com.yunsoo.di.dto.*;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -26,35 +27,11 @@ import java.util.stream.Collectors;
 public class ScanController {
 
     @Autowired
-    private ScanRecordLocationAnalysisRepository scanRecordLocationAnalysisRepository;
-
-    @Autowired
     private ScanRecordAnalysisRepository scanRecordAnalysisRepository;
 
     @Autowired
-    private MarketUserAreaAnalysisRepository marketUserAreaAnalysisRepository;
-    @Autowired
-    private MarketUserDeviceAnalysisRepository marketUserDeviceAnalysisRepository;
-    @Autowired
-    private MarketUserGenderAnalysisRepository marketUserGenderAnalysisRepository;
-    @Autowired
-    private MarketUserUsageAnalysisRepository marketUserUsageAnalysisRepository;
-    @Autowired
-    private MarketUserLocationAnalysisRepository marketUserLocationAnalysisRepository;
+    private ScanRecordRepository scanRecordRepository;
 
-    @Autowired
-    private LuTagRepository luTagRepository;
-    // endregion
-
-    @Autowired
-    private EMREventRepository eventRepository;
-
-    @Autowired
-    private EMRUserRepository emrUserRepository;
-
-
-    @Autowired
-    private ProductKeyBatchRepository productKeyBatchRepository;
 
     @RequestMapping(value = "/scan_data", method = RequestMethod.GET)
     public List<ScanRecordAnalysisObject> query(@RequestParam(value = "org_id") String orgId,
@@ -93,7 +70,7 @@ public class ScanController {
         DateTime startDateTime = startTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
         DateTime endDateTime = endTime.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusHours(23).plusMinutes(59).plusSeconds(59).plusMillis(999);
 
-        List<ScanRecordLocationAnalysisEntity> list = eventRepository.consumerLocationCount(orgId, productBaseId, batchId, startDateTime, endDateTime);
+        List<ScanRecordLocationAnalysisEntity> list = scanRecordRepository.consumerLocationCount(orgId, productBaseId, batchId, startDateTime, endDateTime);
         return list.stream().map(ScanRecordLocationAnalysisEntity::toDataObject).collect(Collectors.toList());
     }
 
