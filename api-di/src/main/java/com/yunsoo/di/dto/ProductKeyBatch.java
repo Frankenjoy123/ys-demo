@@ -15,7 +15,7 @@ import java.util.List;
  * Created on:   2015/3/16
  * Descriptions:
  */
-public class ProductKeyBatchObject implements Serializable {
+public class ProductKeyBatch implements Serializable {
 
     @JsonProperty("id")
     private String id;
@@ -35,6 +35,17 @@ public class ProductKeyBatchObject implements Serializable {
     @JsonProperty("product_base_id")
     private String productBaseId;
 
+    @JsonProperty("created_datetime")
+    @JsonSerialize(using = DateTimeJsonSerializer.class)
+    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
+    private DateTime createdDateTime;
+
+    @JsonProperty("marketing_id")
+    private String marketingId;
+
+    @JsonProperty("download_no")
+    private Integer downloadNo;
+
     @JsonProperty("org_id")
     private String orgId;
 
@@ -46,18 +57,6 @@ public class ProductKeyBatchObject implements Serializable {
 
     @JsonProperty("created_account_id")
     private String createdAccountId;
-
-    @JsonProperty("created_datetime")
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    private DateTime createdDateTime;
-
-    @JsonProperty("marketing_id")
-    private String marketingId;
-
-
-    @JsonProperty("download_no")
-    private Integer downloadNo;
 
     public String getId() {
         return id;
@@ -107,6 +106,30 @@ public class ProductKeyBatchObject implements Serializable {
         this.productBaseId = productBaseId;
     }
 
+    public DateTime getCreatedDateTime() {
+        return createdDateTime;
+    }
+
+    public void setCreatedDateTime(DateTime createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+    public String getMarketingId() {
+        return marketingId;
+    }
+
+    public void setMarketingId(String marketingId) {
+        this.marketingId = marketingId;
+    }
+
+    public Integer getDownloadNo() {
+        return downloadNo;
+    }
+
+    public void setDownloadNo(Integer downloadNo) {
+        this.downloadNo = downloadNo;
+    }
+
     public String getOrgId() {
         return orgId;
     }
@@ -137,29 +160,5 @@ public class ProductKeyBatchObject implements Serializable {
 
     public void setCreatedAccountId(String createdAccountId) {
         this.createdAccountId = createdAccountId;
-    }
-
-    public DateTime getCreatedDateTime() {
-        return createdDateTime;
-    }
-
-    public void setCreatedDateTime(DateTime createdDateTime) {
-        this.createdDateTime = createdDateTime;
-    }
-
-    public String getMarketingId() {
-        return marketingId;
-    }
-
-    public void setMarketingId(String marketingId) {
-        this.marketingId = marketingId;
-    }
-
-    public Integer getDownloadNo() {
-        return downloadNo;
-    }
-
-    public void setDownloadNo(Integer downloadNo) {
-        this.downloadNo = downloadNo;
     }
 }
