@@ -21,7 +21,11 @@ public class OAuthAccountService {
     private OAuthAccountRepository repository;
 
     public List<OAuthAccount> search(List<String> sourceList, String sourceType, String accountId){
-        List<OAuthAccountEntity> entities = repository.query(sourceList, sourceType, accountId, false);
+        boolean hasSource = true;
+        if(sourceList == null)
+            hasSource = false;
+
+        List<OAuthAccountEntity> entities = repository.query(hasSource, sourceList, sourceType, accountId, false);
         return entities.stream().map(OAuthAccount::new).collect(Collectors.toList());
     }
 

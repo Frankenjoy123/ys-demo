@@ -12,10 +12,10 @@ import java.util.List;
  */
 public interface OAuthAccountRepository extends CrudRepository<OAuthAccountEntity, String> {
 
-    @Query("from OAuthAccountEntity where (:source is null or source = :source) and (:sourceType is null or :sourceType = sourceTypeCode) " +
+    @Query("from OAuthAccountEntity where (:hasSource = true and source in (:source)) and (:sourceType is null or :sourceType = sourceTypeCode) " +
             "and (:accountId is null or :accountId=accountId) and (:disabled is null or :disabled=disabled)")
-    List<OAuthAccountEntity> query(@Param("source")List<String> source, @Param("sourceType")String sourceTypeCode,
-                                                                        @Param("accountId")String accountId, @Param("disabled")Boolean disabled);
+    List<OAuthAccountEntity> query(@Param("hasSource")Boolean hasSource, @Param("source")List<String> source, @Param("sourceType")String sourceTypeCode,
+                                   @Param("accountId")String accountId, @Param("disabled")Boolean disabled);
 
     int countBySourceInAndSourceTypeCodeAndDisabled(List<String> source, String sourceTypeCode, Boolean disabled);
 
