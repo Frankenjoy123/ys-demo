@@ -1,7 +1,9 @@
 package com.yunsoo.di.api.controller;
 
+import com.yunsoo.di.dao.entity.UserProfileLocationCountEntity;
 import com.yunsoo.di.dao.entity.UserProfileTagCountEntity;
 import com.yunsoo.di.dao.repository.UserProfileRepository;
+import com.yunsoo.di.dto.UserProfileLocationCountObject;
 import com.yunsoo.di.dto.UserProfileTagCountObject;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -61,6 +63,12 @@ public class UserProfileController {
     public List<UserProfileTagCountObject> queryUserProfileGender(@RequestParam(value = "org_id") String orgId) {
         List<UserProfileTagCountEntity> list = userProfileRepository.queryUserProfileGenderUsage(orgId);
         return list.stream().map(UserProfileTagCountEntity::toDataObject).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/location", method = RequestMethod.GET)
+    public List<UserProfileLocationCountObject> queryUserProfileLocation(@RequestParam(value = "org_id") String orgId) {
+        List<UserProfileLocationCountEntity> list = userProfileRepository.queryUserProfileLocationReport(orgId);
+        return list.stream().map(UserProfileLocationCountEntity::toDataObject).collect(Collectors.toList());
     }
 
 }

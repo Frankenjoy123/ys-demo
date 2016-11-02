@@ -242,6 +242,31 @@ public class UserProfileRepositoryImpl implements UserProfileRepository{
 
     @Override
     public List<UserProfileLocationCountEntity> queryUserProfileLocationReport(String orgId) {
-        return null;
+        HashMap<String, Object> parameters = new HashMap<>();
+        String sql = "select case when province is null or province ='' then '未公开省份'  else  province END as provinceA, case when city is null or city = '' then '未公开城市' else city END as cityA, count(1) " +
+                "from di_user u left JOIN  lu_province_city pc ON u.location_id=pc.id where u.org_id = :orgId " +
+                "group by u.location_id";
+
+        parameters.put("orgId", orgId);
+        //bypass datetime 限制
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        List<Object[]> queryList = query.getResultList();
+        List<UserProfileLocationCountEntity> list = new ArrayList<>();
+        for(Object[] obj : queryList)
+        {
+            String province = (String)obj[0];
+            String city = (String)obj[1];
+            int count = ((BigInteger)obj[2]).intValue();
+
+            UserProfileLocationCountEntity item = new UserProfileLocationCountEntity();
+            item.setProvince(province);
+            item.setCity(city);
+            item.setCount(count);
+            list.add(item);
+        }
+        return list;
     }
 }
