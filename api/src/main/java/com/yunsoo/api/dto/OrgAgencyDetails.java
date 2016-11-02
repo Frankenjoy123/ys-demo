@@ -72,4 +72,5 @@ public class OrgAgencyDetails {
     public void setParentName(String parentName) {
         this.parentName = parentName;
     }
+
 }
