@@ -5,6 +5,7 @@ import com.yunsoo.api.key.Constants;
 import com.yunsoo.api.key.dto.Key;
 import com.yunsoo.api.key.dto.Product;
 import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,32 +59,22 @@ public class ProductService {
         }
     }
 
-    public void activeProduct(String key) {
-        setProductStatus(key, Constants.ProductStatus.ACTIVATED);
-    }
-
-    public void deleteProduct(String key) {
-        setProductStatus(key, Constants.ProductStatus.DELETED);
-    }
-
-    public void activeProductByExternalKey(String partitionId, String externalKey) {
-        setProductStatusByExternalKey(partitionId, externalKey, Constants.ProductStatus.ACTIVATED);
-    }
-
-    public void deleteProductByExternalKey(String partitionId, String externalKey) {
-        setProductStatusByExternalKey(partitionId, externalKey, Constants.ProductStatus.DELETED);
-    }
-
-    private void setProductStatus(String key, String statusCode) {
+    public void setProductStatusByKey(String key, String statusCode) {
+        if (!Constants.ProductStatus.ALL.contains(statusCode)) {
+            throw new BadRequestException("status_code invalid");
+        }
         Product product = new Product();
         product.setKey(key);
         product.setStatusCode(statusCode);
         patchUpdate(product);
     }
 
-    private void setProductStatusByExternalKey(String partitionId, String externalKey, String statusCode) {
+    public void setProductStatusByExternalKey(String partitionId, String externalKey, String statusCode) {
         Assert.hasText(partitionId, "partitionId must not be null or empty");
         Assert.hasText(externalKey, "externalKey must not be null or empty");
+        if (!Constants.ProductStatus.ALL.contains(statusCode)) {
+            throw new BadRequestException("status_code invalid");
+        }
 
         boolean success = false;
         //all partitionIds
@@ -92,14 +83,14 @@ public class ProductService {
             for (String pId : partitionIds) {
                 Key key = keyService.getExternalKey(pId, externalKey);
                 if (key != null && !key.isDisabled()) {
-                    setProductStatus(key.getKey(), statusCode);
+                    setProductStatusByKey(key.getKey(), statusCode);
                     success = true;
                 }
             }
         } else {
             Key key = keyService.getExternalKey(partitionId, externalKey);
             if (key != null && !key.isDisabled()) {
-                setProductStatus(key.getKey(), statusCode);
+                setProductStatusByKey(key.getKey(), statusCode);
                 success = true;
             }
         }
