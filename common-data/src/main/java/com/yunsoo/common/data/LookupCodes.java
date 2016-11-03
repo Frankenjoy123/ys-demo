@@ -216,6 +216,7 @@ public class LookupCodes {
         public static final String SHAKE = "SHAKE";
         public static final String DRAW01 = "DRAW01"; // tao sheng yuan marketing template
         public static final String DRAW02 = "DRAW02"; // ai si man marketing template
+        public static final String DRAW03 = "DRAW03"; // yang pao pao marketing template
 
 
     }
