@@ -2,13 +2,18 @@ package com.yunsoo.api.key.service;
 
 import com.yunsoo.api.client.KeyApiClient;
 import com.yunsoo.api.key.Constants;
+import com.yunsoo.api.key.dto.Key;
 import com.yunsoo.api.key.dto.Product;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -22,6 +27,12 @@ public class ProductService {
 
     @Autowired
     private KeyApiClient keyApiClient;
+
+    @Autowired
+    private KeyService keyService;
+
+    @Autowired
+    private KeyBatchService keyBatchService;
 
 
     public Product getProductByKey(String key) {
@@ -48,17 +59,53 @@ public class ProductService {
     }
 
     public void activeProduct(String key) {
-        Product product = new Product();
-        product.setKey(key);
-        product.setStatusCode(Constants.ProductStatus.ACTIVATED);
-        patchUpdate(product);
+        setProductStatus(key, Constants.ProductStatus.ACTIVATED);
     }
 
     public void deleteProduct(String key) {
+        setProductStatus(key, Constants.ProductStatus.DELETED);
+    }
+
+    public void activeProductByExternalKey(String partitionId, String externalKey) {
+        setProductStatusByExternalKey(partitionId, externalKey, Constants.ProductStatus.ACTIVATED);
+    }
+
+    public void deleteProductByExternalKey(String partitionId, String externalKey) {
+        setProductStatusByExternalKey(partitionId, externalKey, Constants.ProductStatus.DELETED);
+    }
+
+    private void setProductStatus(String key, String statusCode) {
         Product product = new Product();
         product.setKey(key);
-        product.setStatusCode(Constants.ProductStatus.DELETED);
+        product.setStatusCode(statusCode);
         patchUpdate(product);
+    }
+
+    private void setProductStatusByExternalKey(String partitionId, String externalKey, String statusCode) {
+        Assert.hasText(partitionId, "partitionId must not be null or empty");
+        Assert.hasText(externalKey, "externalKey must not be null or empty");
+
+        boolean success = false;
+        //all partitionIds
+        if ("*".equals(partitionId)) {
+            List<String> partitionIds = keyBatchService.getPartitionIdsByOrgId(AuthUtils.getCurrentAccount().getOrgId());
+            for (String pId : partitionIds) {
+                Key key = keyService.getExternalKey(pId, externalKey);
+                if (key != null && !key.isDisabled()) {
+                    setProductStatus(key.getKey(), statusCode);
+                    success = true;
+                }
+            }
+        } else {
+            Key key = keyService.getExternalKey(partitionId, externalKey);
+            if (key != null && !key.isDisabled()) {
+                setProductStatus(key.getKey(), statusCode);
+                success = true;
+            }
+        }
+        if (!success) {
+            throw new NotFoundException(String.format("product not found by key: %s/%s", partitionId, externalKey));
+        }
     }
 
 }
