@@ -1,5 +1,6 @@
 package com.yunsoo.di.dao.repository;
 
+import com.yunsoo.di.dao.entity.MarketUserLocationAnalysisEntity;
 import com.yunsoo.di.dao.entity.UserProfileLocationCountEntity;
 import com.yunsoo.di.dao.entity.UserProfileTagCountEntity;
 import org.joda.time.DateTime;
@@ -21,6 +22,10 @@ public interface MarketUserRepository {
     List<UserProfileTagCountEntity> queryMarketUserUsageAnalysis( String orgId, DateTime startTime, DateTime endTime, String marketingId);
 
     List<UserProfileLocationCountEntity> queryMarketUserLocationAnalysis( String orgId, DateTime startTime, DateTime endTime, String marketingId);
+
+    List<MarketUserLocationAnalysisEntity> queryRewardLocationReport(String marketingId);
+
+
 
 
 }

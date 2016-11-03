@@ -1,6 +1,7 @@
 package com.yunsoo.di.api.controller;
 
 import com.yunsoo.di.dao.entity.LuTagEntity;
+import com.yunsoo.di.dao.entity.MarketUserLocationAnalysisEntity;
 import com.yunsoo.di.dao.entity.UserProfileLocationCountEntity;
 import com.yunsoo.di.dao.entity.UserProfileTagCountEntity;
 import com.yunsoo.di.dao.repository.LuTagRepository;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -128,6 +130,32 @@ public class MarketUserController {
 
         List<LuTagEntity> list = luTagRepository.findAll();
         return list.stream().map(LuTagEntity::toDataObject).collect(Collectors.toList());
+    }
+
+
+    // 核销管理，关于中奖的数据分析
+    @RequestMapping(value = "/win_location", method = RequestMethod.GET)
+    public List<MarketWinUserLocationAnalysisObject> queryMarketUserLocaiton(@RequestParam(value = "marketing_id") String marketingId) {
+        List<MarketUserLocationAnalysisEntity> list = marketUserRepository.queryRewardLocationReport(marketingId);
+
+        Map<String, Integer> provinceData = list.stream().collect(
+                Collectors.groupingBy(MarketUserLocationAnalysisEntity::getProvince,
+                        Collectors.summingInt(MarketUserLocationAnalysisEntity::getCount)));
+
+        return provinceData.entrySet().stream().map(i -> {
+            MarketWinUserLocationAnalysisObject provinceItem = new MarketWinUserLocationAnalysisObject();
+            provinceItem.setName(i.getKey());
+            provinceItem.setValue(i.getValue());
+
+            List<MarketWinUserLocationAnalysisObject> cityData = list.stream().filter(l -> l.getProvince().equals(i.getKey())).map(ii -> {
+                MarketWinUserLocationAnalysisObject city = new MarketWinUserLocationAnalysisObject();
+                city.setName(ii.getCity());
+                city.setValue(ii.getCount());
+                return city;
+            }).collect(Collectors.toList());
+            provinceItem.setCityData(cityData);
+            return provinceItem;
+        }).collect(Collectors.toList());
     }
 
 }

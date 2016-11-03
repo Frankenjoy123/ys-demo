@@ -1,5 +1,6 @@
 package com.yunsoo.di.dao.repository.Impl;
 
+import com.yunsoo.di.dao.entity.MarketUserLocationAnalysisEntity;
 import com.yunsoo.di.dao.entity.UserProfileLocationCountEntity;
 import com.yunsoo.di.dao.entity.UserProfileTagCountEntity;
 import com.yunsoo.di.dao.repository.MarketUserRepository;
@@ -331,6 +332,30 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
             item.setCity(city);
             item.setCount(count);
             list.add(item);
+        }
+        return list;
+    }
+
+    @Override
+    public List<MarketUserLocationAnalysisEntity> queryRewardLocationReport(String marketingId) {
+        String sql = "select lu.province, lu.city, count(1) from di.mkt_draw_record dr LEFT JOIN di.di_event ev ON dr.scan_record_id=ev.event_id left join lu_province_city lu on ev.location_id = lu.id " +
+                " where dr.isPrized = 1 and dr.marketing_id =:marketingId " +
+                " group by lu.id ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("marketingId", marketingId);
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        List<Object[]> data = query.getResultList();
+        List<MarketUserLocationAnalysisEntity> list = new ArrayList<>();
+        for (Object[] item : data) {
+            MarketUserLocationAnalysisEntity entity = new MarketUserLocationAnalysisEntity();
+            entity.setProvince(item[0] == null ? "未知地区" : (String) item[0]);
+            entity.setCity(item[1] == null ? "未知地区" : (String) item[1]);
+            entity.setCount(((BigInteger) item[2]).intValue());
+            list.add(entity);
         }
         return list;
     }
