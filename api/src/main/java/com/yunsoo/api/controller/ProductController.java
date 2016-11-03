@@ -1,10 +1,7 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.ProductDomain;
-import com.yunsoo.api.domain.ProductKeyDomain;
-import com.yunsoo.api.dto.Product;
-import com.yunsoo.common.data.object.ProductKeyBatchObject;
-import com.yunsoo.common.data.object.ProductObject;
+import com.yunsoo.api.key.dto.Product;
+import com.yunsoo.api.key.service.ProductService;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -25,31 +22,22 @@ import java.nio.charset.StandardCharsets;
 public class ProductController {
 
     @Autowired
-    private ProductDomain productDomain;
-
-    @Autowired
-    private ProductKeyDomain productKeyDomain;
+    private ProductService productService;
 
 
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
     public Product get(@PathVariable(value = "key") String key) {
-        ProductObject productObject = findProduct(key);
-        Product product = new Product(productObject);
-        ProductKeyBatchObject productKeyBatchObject = productKeyDomain.getProductKeyBatchObjectById(productObject.getProductKeyBatchId());
-        if (productKeyBatchObject != null) {
-            product.setOrgId(productKeyBatchObject.getOrgId());
-        }
-        return product;
+        return findProduct(key);
     }
 
     @RequestMapping(value = "/{key}/active", method = RequestMethod.POST)
     public void active(@PathVariable(value = "key") String key) {
-        productDomain.activeProduct(key);
+        productService.activeProduct(key);
     }
 
     @RequestMapping(value = "/{key}/delete", method = RequestMethod.POST)
     public void delete(@PathVariable(value = "key") String key) {
-        productDomain.deleteProduct(key);
+        productService.deleteProduct(key);
     }
 
     @RequestMapping(value = "/{key}/details", method = RequestMethod.GET)
@@ -57,7 +45,7 @@ public class ProductController {
         String details = findProduct(key).getDetails();
         byte[] buffer = details == null ? new byte[0] : details.getBytes(StandardCharsets.UTF_8);
         ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok();
-        bodyBuilder.contentType(MediaType.APPLICATION_JSON);
+        bodyBuilder.contentType(MediaType.APPLICATION_JSON_UTF8);
         bodyBuilder.contentLength(buffer.length);
         return bodyBuilder.body(new InputStreamResource(new ByteArrayInputStream(buffer)));
     }
@@ -65,18 +53,18 @@ public class ProductController {
     @RequestMapping(value = "/{key}/details", method = RequestMethod.PUT)
     public void putDetails(@PathVariable(value = "key") String key,
                            @RequestBody String details) {
-        ProductObject productObject = new ProductObject();
-        productObject.setProductKey(key);
-        productObject.setDetails(details);
-        productDomain.patchUpdateProduct(productObject);
+        Product product = new Product();
+        product.setKey(key);
+        product.setDetails(details);
+        productService.patchUpdate(product);
     }
 
-    private ProductObject findProduct(String key) {
-        ProductObject productObject = productDomain.getProduct(key);
-        if (productObject == null) {
+    private Product findProduct(String key) {
+        Product product = productService.getProductByKey(key);
+        if (product == null) {
             throw new NotFoundException("product not found by key " + key);
         }
-        return productObject;
+        return product;
     }
 
 }

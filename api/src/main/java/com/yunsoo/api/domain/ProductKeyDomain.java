@@ -9,7 +9,6 @@ import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.message.ProductKeyBatchCreateMessage;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
-import com.yunsoo.common.data.object.ProductKeyObject;
 import com.yunsoo.common.data.object.ProductKeysObject;
 import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.web.client.Page;
@@ -68,26 +67,6 @@ public class ProductKeyDomain {
     @Value("${yunsoo.product_key_base_url}")
     private String productKeyBaseUrl;
 
-
-    //region ProductKey
-
-    public ProductKeyObject getProductKey(String productKey) {
-        try {
-            return dataApiClient.get("productkey/{key}", ProductKeyObject.class, productKey);
-        } catch (NotFoundException ex) {
-            return null;
-        }
-    }
-
-    public void setProductKeyDisabled(String productKey, Boolean disabled) {
-        try {
-            dataApiClient.put("productkey/{key}/disabled", disabled, productKey);
-        } catch (NotFoundException ex) {
-            throw new NotFoundException("product key not found. " + productKey);
-        }
-    }
-
-    //endregion
 
     //ProductKeyBatch
     public String getKeyBatchPartitionId(String orgId){

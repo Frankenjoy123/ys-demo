@@ -1,8 +1,7 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.domain.ProductKeyDomain;
-import com.yunsoo.api.dto.ProductKey;
-import com.yunsoo.common.data.object.ProductKeyObject;
+import com.yunsoo.api.key.dto.Key;
+import com.yunsoo.api.key.service.KeyService;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,26 +19,26 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductKeyController {
 
     @Autowired
-    private ProductKeyDomain productKeyDomain;
+    private KeyService keyService;
 
 
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
-    public ProductKey get(@PathVariable(value = "key") String key) {
-        ProductKeyObject productKeyObject = productKeyDomain.getProductKey(key);
-        if (productKeyObject == null) {
+    public Key get(@PathVariable(value = "key") String key) {
+        Key k = keyService.getKey(key);
+        if (k == null) {
             throw new NotFoundException("product key not found. " + key);
         }
-        return new ProductKey(productKeyObject);
+        return k;
     }
 
     @RequestMapping(value = "{key}/disable", method = RequestMethod.POST)
     public void disableKey(@PathVariable(value = "key") String key) {
-        productKeyDomain.setProductKeyDisabled(key, true);
+        keyService.disableKey(key);
     }
 
     @RequestMapping(value = "{key}/enable", method = RequestMethod.POST)
     public void enableKey(@PathVariable(value = "key") String key) {
-        productKeyDomain.setProductKeyDisabled(key, false);
+        keyService.enableKey(key);
     }
 
 }
