@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class EMRUserReportObject {
 
-    // scan, wx, draw, win, reward
+    // scan, draw, win, reward
     @JsonProperty("event_count")
     private List<Integer> eventCount;
     @JsonProperty("user_count")
