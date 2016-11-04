@@ -4,10 +4,12 @@ import com.amazonaws.util.IOUtils;
 import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.util.ObjectIdGenerator;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.key.Constants;
+import com.yunsoo.key.api.util.PageUtils;
 import com.yunsoo.key.dao.entity.KeyBatchEntity;
 import com.yunsoo.key.dao.repository.KeyBatchRepository;
 import com.yunsoo.key.dto.KeyBatch;
@@ -22,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -66,6 +69,22 @@ public class KeyBatchServiceImpl implements KeyBatchService {
     }
 
     @Override
+    public Page<KeyBatch> getByFilter(String orgId, String productBaseId, List<String> statusCodeIn, String createdAccountId, DateTime createdDateTimeGE, DateTime createdDateTimeLE, Pageable pageable) {
+        if (StringUtils.isEmpty(orgId)) {
+            return Page.empty();
+        }
+        return PageUtils.convert(keyBatchRepository.query(
+                orgId,
+                productBaseId,
+                statusCodeIn == null || statusCodeIn.size() == 0 ? null : statusCodeIn,
+                statusCodeIn == null || statusCodeIn.size() == 0,
+                createdAccountId,
+                createdDateTimeGE,
+                createdDateTimeLE,
+                pageable)).map(this::toKeyBatch);
+    }
+
+    @Override
     public Keys getKeysById(String batchId) {
         KeyBatchEntity batchEntity = keyBatchRepository.findOne(batchId);
         if (batchEntity == null) {
@@ -97,20 +116,27 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         List<String> keyTypeCodes = request.getKeyTypeCodes();
         List<String> externalKeys = request.getExternalKeys();
         String productStatusCode = request.getProductStatusCode();
+        if (keyTypeCodes == null || keyTypeCodes.size() == 0) {
+            throw new BadRequestException("key_type_codes must not be null or empty");
+        }
+        if (Constants.KeyType.EXTERNAL.equals(keyTypeCodes.get(0))) {
+            throw new BadRequestException("key_type_codes invalid, primary key can not be external");
+        }
+
         for (String c : keyTypeCodes) {
             if (!Constants.KeyType.ALL.contains(c)) {
-                throw new BadRequestException("key_type_codes not valid");
+                throw new BadRequestException("key_type_codes invalid");
             }
             if (Constants.KeyType.EXTERNAL.equals(c)) {
                 if (hasExternalKeys) {
-                    throw new BadRequestException("key_type_codes not valid");
+                    throw new BadRequestException("key_type_codes invalid");
                 }
                 hasExternalKeys = true;
             }
         }
         if (hasExternalKeys) {
             if (externalKeys == null || externalKeys.size() != quantity) {
-                throw new BadRequestException("external_keys not valid");
+                throw new BadRequestException("external_keys invalid");
             }
             if (partitionId == null || partitionId.length() == 0) {
                 partitionId = ObjectIdGenerator.getNew();
@@ -121,7 +147,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         if (productStatusCode == null || productStatusCode.length() == 0) {
             productStatusCode = Constants.ProductStatus.ACTIVATED; // default activated
         } else if (!Constants.ProductStatus.ALL.contains(productStatusCode)) {
-            throw new BadRequestException("product_status_code not valid");
+            throw new BadRequestException("product_status_code invalid");
         }
         //endregion
 

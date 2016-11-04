@@ -2,6 +2,7 @@ package com.yunsoo.api.key.service;
 
 import com.yunsoo.api.client.KeyApiClient;
 import com.yunsoo.api.key.dto.Key;
+import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +32,18 @@ public class KeyService {
             return keyApiClient.get("key/{key}", Key.class, key);
         } catch (NotFoundException e) {
             log.warn("key not found, key: " + key, e);
+            return null;
+        }
+    }
+
+    public Key getExternalKey(String partitionId, String externalKey) {
+        if (!StringUtils.hasText(partitionId) || !StringUtils.hasText(externalKey)) {
+            return null;
+        }
+        try {
+            return keyApiClient.get("key/external/{partitionId}/{externalKey}", Key.class, partitionId, externalKey);
+        } catch (NotFoundException e) {
+            log.warn("key not found " + StringFormatter.formatMap("partitionId", partitionId, "externalKey", externalKey));
             return null;
         }
     }
