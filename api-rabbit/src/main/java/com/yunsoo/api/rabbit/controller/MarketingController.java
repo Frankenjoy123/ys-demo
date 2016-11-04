@@ -188,7 +188,7 @@ public class MarketingController {
             switch (currentPrize.getPrizeTypeCode()){
                 case LookupCodes.MktPrizeType.MOBILE_FEE:
                     marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
-                    boolean isMobileFeeSuccess = marketingDomain.createMobileOrder(mktDrawPrize.getDrawRecordId());
+                    boolean isMobileFeeSuccess = marketingDomain.createMobileOrder(mktDrawPrizeObject.getDrawRecordId());
                     if (!isMobileFeeSuccess) {
                         mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
                         result = false;
@@ -199,7 +199,7 @@ public class MarketingController {
                     break;
                 case LookupCodes.MktPrizeType.MOBILE_DATA:
                     marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
-                    boolean isMobileDataSuccess = marketingDomain.createMobileDataFlow(mktDrawPrize.getDrawRecordId());
+                    boolean isMobileDataSuccess = marketingDomain.createMobileDataFlow(mktDrawPrizeObject.getDrawRecordId());
                     if (!isMobileDataSuccess) {
                         mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
                         result = false;
