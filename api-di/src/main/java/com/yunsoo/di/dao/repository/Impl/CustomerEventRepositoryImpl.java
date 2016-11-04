@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -68,47 +69,57 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
 
     @Override
     public List<String[]> scanDailyCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return null;
+        return queryDailyScanCount( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
     }
+
 
     @Override
     public List<String[]> shareDailyCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return null;
+        return queryDailyEventCount("share", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
     }
 
     @Override
     public List<String[]> storeUrlDailyCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return null;
+        return queryDailyEventCount("store_url", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
     }
 
     @Override
     public List<String[]> commentDailyCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return null;
+        return queryDailyEventCount("comment", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
     }
 
     @Override
     public List<int[]> eventLocationCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return null;
+        int[] scanCount = queryScanCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+        int[] shareCount = queryEventCount("share", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+        int[] storeUrlCount = queryEventCount("store_url", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+        int[] commentCount = queryEventCount("comment", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+        List<int[]> list = new ArrayList<>();
+        list.add(scanCount);
+        list.add(shareCount);
+        list.add(storeUrlCount);
+        list.add((commentCount));
+        return list;
     }
 
     @Override
     public List<String[]> scanLocationCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return null;
+        return queryScanLocationCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
     }
 
     @Override
     public List<String[]> shareLocationCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return null;
+        return queryEventLocationCount("share",orgId,productBaseId,province,city,createdDateTimeStart,createdDateTimeEnd);
     }
 
     @Override
     public List<String[]> storeUrlLocationCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return null;
+        return queryEventLocationCount("store_url",orgId,productBaseId,province,city,createdDateTimeStart,createdDateTimeEnd);
     }
 
     @Override
     public List<String[]> commentLocationCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return null;
+        return  queryEventLocationCount("comment",orgId,productBaseId,province,city,createdDateTimeStart,createdDateTimeEnd);
     }
 
     private int[] scanQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, String scanSource) {
@@ -123,11 +134,11 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
             parameters.put("productBaseId", productBaseId);
         }
         if (!StringUtils.isEmpty(province)) {
-            sql = sql + " and ev.province like :province";
+            sql = sql + " and pc.province like :province";
             parameters.put("province", "%" + province + "%");
         }
         if (!org.springframework.util.StringUtils.isEmpty(city)) {
-            sql = sql + " and ev.city like :city";
+            sql = sql + " and pc.city like :city";
             parameters.put("city", "%" + city + "%");
         }
         if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
@@ -165,11 +176,11 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
             parameters.put("productBaseId", productBaseId);
         }
         if (!StringUtils.isEmpty(province)) {
-            sql = sql + " and ev.province like :province";
+            sql = sql + " and pc.province like :province";
             parameters.put("province", "%" + province + "%");
         }
         if (!org.springframework.util.StringUtils.isEmpty(city)) {
-            sql = sql + " and ev.city like :city";
+            sql = sql + " and pc.city like :city";
             parameters.put("city", "%" + city + "%");
         }
         if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
@@ -214,11 +225,11 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
             parameters.put("productBaseId", productBaseId);
         }
         if (!StringUtils.isEmpty(province)) {
-            sql = sql + " and ev.province like :province";
+            sql = sql + " and pc.province like :province";
             parameters.put("province", "%" + province + "%");
         }
         if (!org.springframework.util.StringUtils.isEmpty(city)) {
-            sql = sql + " and ev.city like :city";
+            sql = sql + " and pc.city like :city";
             parameters.put("city", "%" + city + "%");
         }
         if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
@@ -243,6 +254,287 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         array[0] = ((BigInteger) data[0]).intValue();
         array[1] = ((BigInteger) data[1]).intValue();
         return array;
+    }
+
+    private List<String[]> queryDailyScanCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        String sql = "select DATE_FORMAT(ev.event_datetime,'%Y-%m-%d'),count(1), count(distinct u.id) " +
+                "from di.di_event ev LEFT JOIN di.lu_province_city pc ON ev.location_id=pc.id "+
+                "inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) "+
+                "where ev.org_id = :orgId ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isEmpty(province)) {
+            sql = sql + " and pc.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and pc.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and ev.event_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+        sql = sql + " group by DATE_FORMAT(ev.event_datetime,'%Y-%m-%d');";
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        List<Object[]> data = query.getResultList();
+        List<String[]> list = new ArrayList<>();
+        for (Object[] item : data) {
+            String[] temp = new String[3];
+            temp[0] = (String) item[0];
+            temp[1] = (String) item[1].toString();
+            temp[2] = (String) item[2].toString();
+            list.add(temp);
+        }
+        return list;
+    }
+
+
+    private List<String[]> queryDailyEventCount(String eventName, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        String sql = "select DATE_FORMAT(ue.created_datetime,'%Y-%m-%d'),count(1), count(distinct u.id) " +
+                "from di.user_event ue left join di.di_event ev on ue.scan_record_id=ev.event_id "+
+                "LEFT JOIN di.lu_province_city pc ON ev.location_id=pc.id "+
+                "inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) "+
+                "where ev.org_id = :orgId and ue.type_code= :eventName ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("eventName", eventName);
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isEmpty(province)) {
+            sql = sql + " and pc.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and pc.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and ue.created_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and ue.created_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+        sql = sql + " group by DATE_FORMAT(ue.created_datetime,'%Y-%m-%d');";
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        List<Object[]> data = query.getResultList();
+        List<String[]> list = new ArrayList<>();
+        for (Object[] item : data) {
+            String[] temp = new String[3];
+            temp[0] = (String) item[0];
+            temp[1] = (String) item[1].toString();
+            temp[2] = (String) item[2].toString();
+            list.add(temp);
+        }
+        return list;
+    }
+
+
+    private int[] queryScanCount( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        String sql = "select count(1), count(distinct u.id) " +
+                "from di.di_event ev LEFT JOIN di.lu_province_city pc ON ev.location_id=pc.id "+
+                "inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) "+
+                "where ev.org_id = :orgId ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isEmpty(province)) {
+            sql = sql + " and pc.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and pc.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and ev.event_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        Object[] data = (Object[]) query.getSingleResult();
+        int[] array = new int[2];
+        array[0] = ((BigInteger) data[0]).intValue();
+        array[1] = ((BigInteger) data[1]).intValue();
+        return array;
+    }
+
+    private int[] queryEventCount(String eventName, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+
+        String sql = "select count(1), count(distinct u.id) " +
+                "from di.user_event ue left join di.di_event ev on ue.scan_record_id=ev.event_id "+
+                "LEFT JOIN di.lu_province_city pc ON ev.location_id=pc.id "+
+                "inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) "+
+                "where ev.org_id = :orgId and ue.type_code= :eventName ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("eventName", eventName);
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isEmpty(province)) {
+            sql = sql + " and pc.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and pc.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and ev.event_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        Object[] data = (Object[]) query.getSingleResult();
+        int[] array = new int[2];
+        array[0] = ((BigInteger) data[0]).intValue();
+        array[1] = ((BigInteger) data[1]).intValue();
+        return array;
+    }
+
+
+    private List<String[]> queryScanLocationCount( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+        String sql = "select case when pc.province is null or pc.province ='' then '未公开省份'  else  pc.province END as provinceA, case when pc.city is null or pc.city = '' then '未公开城市' else pc.city END as cityA, count(1), count(distinct u.id) " +
+                "from di.di_event ev LEFT JOIN di.lu_province_city pc ON ev.location_id=pc.id "+
+                "inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) "+
+                "where ev.org_id = :orgId ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isEmpty(province)) {
+            sql = sql + " and pc.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and pc.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and ev.event_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+
+        sql = sql + " group by pc.id";
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        List<Object[]> data = query.getResultList();
+        List<String[]> list = new ArrayList<>();
+        for (Object[] item : data) {
+            String[] temp = new String[5];
+            temp[0] = (String) item[0];
+            temp[1] = (String) item[1];
+            temp[2] = String.valueOf(item[2]) ;
+            temp[3] = String.valueOf(item[2]) ;
+            list.add(temp);
+        }
+        return list;
+    }
+
+
+    private List<String[]> queryEventLocationCount(String action, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+
+        String sql = "select case when pc.province is null or pc.province ='' then '未公开省份'  else  pc.province END as provinceA, case when pc.city is null or pc.city = '' then '未公开城市' else pc.city END as cityA, count(1), count(distinct u.id) " +
+                "from di.user_event ue left join di.di_event ev on ue.scan_record_id=ev.event_id "+
+                "LEFT JOIN di.lu_province_city pc ON ev.location_id=pc.id "+
+                "inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) "+
+                "where ev.org_id = :orgId and ue.type_code= :eventName ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("eventName", action);
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isEmpty(province)) {
+            sql = sql + " and pc.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and pc.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and ev.event_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+
+        sql = sql + " group by pc.id";
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        List<Object[]> data = query.getResultList();
+        List<String[]> list = new ArrayList<>();
+        for (Object[] item : data) {
+            String[] temp = new String[5];
+            temp[0] = (String) item[0];
+            temp[1] = (String) item[1];
+            temp[2] = String.valueOf(item[2]) ;
+            temp[3] = String.valueOf(item[2]) ;
+            list.add(temp);
+        }
+        return list;
     }
 
 }
