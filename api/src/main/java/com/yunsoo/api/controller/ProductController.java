@@ -32,36 +32,36 @@ public class ProductController {
     }
 
     @RequestMapping(value = "{key}/active", method = RequestMethod.POST)
-    public String active(@PathVariable(value = "key") String key) {
-        return productService.setProductStatusByKey(key, Constants.ProductStatus.ACTIVATED);
+    public void active(@PathVariable(value = "key") String key) {
+        productService.setProductStatusByKey(key, Constants.ProductStatus.ACTIVATED);
     }
 
     @RequestMapping(value = "{key}/recall", method = RequestMethod.POST)
-    public String recall(@PathVariable(value = "key") String key) {
-        return productService.setProductStatusByKey(key, Constants.ProductStatus.RECALLED);
+    public void recall(@PathVariable(value = "key") String key) {
+        productService.setProductStatusByKey(key, Constants.ProductStatus.RECALLED);
     }
 
     @RequestMapping(value = "{key}/delete", method = RequestMethod.POST)
-    public String delete(@PathVariable(value = "key") String key) {
-        return productService.setProductStatusByKey(key, Constants.ProductStatus.DELETED);
+    public void delete(@PathVariable(value = "key") String key) {
+        productService.setProductStatusByKey(key, Constants.ProductStatus.DELETED);
     }
 
     @RequestMapping(value = "external/{partitionId}/{externalKey}/active", method = RequestMethod.POST)
-    public String activeByExternalKey(@PathVariable(value = "partitionId") String partitionId,
-                                      @PathVariable(value = "externalKey") String externalKey) {
-        return productService.setProductStatusByExternalKey(partitionId, externalKey, Constants.ProductStatus.ACTIVATED);
+    public void activeByExternalKey(@PathVariable(value = "partitionId") String partitionId,
+                                    @PathVariable(value = "externalKey") String externalKey) {
+        productService.setProductStatusByExternalKey(partitionId, externalKey, Constants.ProductStatus.ACTIVATED);
     }
 
     @RequestMapping(value = "external/{partitionId}/{externalKey}/recall", method = RequestMethod.POST)
-    public String recallByExternalKey(@PathVariable(value = "partitionId") String partitionId,
-                                      @PathVariable(value = "externalKey") String externalKey) {
-        return productService.setProductStatusByExternalKey(partitionId, externalKey, Constants.ProductStatus.RECALLED);
+    public void recallByExternalKey(@PathVariable(value = "partitionId") String partitionId,
+                                    @PathVariable(value = "externalKey") String externalKey) {
+        productService.setProductStatusByExternalKey(partitionId, externalKey, Constants.ProductStatus.RECALLED);
     }
 
     @RequestMapping(value = "external/{partitionId}/{externalKey}/delete", method = RequestMethod.POST)
-    public String deleteByExternalKey(@PathVariable(value = "partitionId") String partitionId,
-                                      @PathVariable(value = "externalKey") String externalKey) {
-        return productService.setProductStatusByExternalKey(partitionId, externalKey, Constants.ProductStatus.DELETED);
+    public void deleteByExternalKey(@PathVariable(value = "partitionId") String partitionId,
+                                    @PathVariable(value = "externalKey") String externalKey) {
+        productService.setProductStatusByExternalKey(partitionId, externalKey, Constants.ProductStatus.DELETED);
     }
 
     @RequestMapping(value = "{key}/details", method = RequestMethod.GET)

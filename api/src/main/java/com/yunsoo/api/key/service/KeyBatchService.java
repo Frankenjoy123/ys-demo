@@ -34,6 +34,7 @@ public class KeyBatchService {
             return Page.empty();
         }
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
                 .append("product_base_id", productBaseId)
                 .append("status_code_in", statusCodeIn)
                 .append("created_account_id", createdAccountId)

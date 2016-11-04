@@ -59,7 +59,7 @@ public class ProductService {
         }
     }
 
-    public String setProductStatusByKey(String key, String statusCode) {
+    public void setProductStatusByKey(String key, String statusCode) {
         if (!Constants.ProductStatus.ALL.contains(statusCode)) {
             throw new BadRequestException("status_code invalid");
         }
@@ -67,10 +67,9 @@ public class ProductService {
         product.setKey(key);
         product.setStatusCode(statusCode);
         patchUpdate(product);
-        return statusCode;
     }
 
-    public String setProductStatusByExternalKey(String partitionId, String externalKey, String statusCode) {
+    public void setProductStatusByExternalKey(String partitionId, String externalKey, String statusCode) {
         Assert.hasText(partitionId, "partitionId must not be null or empty");
         Assert.hasText(externalKey, "externalKey must not be null or empty");
         if (!Constants.ProductStatus.ALL.contains(statusCode)) {
@@ -98,7 +97,6 @@ public class ProductService {
         if (!success) {
             throw new NotFoundException(String.format("product not found by key: %s/%s", partitionId, externalKey));
         }
-        return statusCode;
     }
 
 }
