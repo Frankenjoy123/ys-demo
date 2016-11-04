@@ -83,14 +83,14 @@ public class ProductService {
             for (String pId : partitionIds) {
                 Key key = keyService.getExternalKey(pId, externalKey);
                 if (key != null && !key.isDisabled()) {
-                    setProductStatusByKey(key.getKey(), statusCode);
+                    setProductStatusByKey(key.getPrimaryKey(), statusCode);
                     success = true;
                 }
             }
         } else {
             Key key = keyService.getExternalKey(partitionId, externalKey);
             if (key != null && !key.isDisabled()) {
-                setProductStatusByKey(key.getKey(), statusCode);
+                setProductStatusByKey(key.getPrimaryKey(), statusCode);
                 success = true;
             }
         }
