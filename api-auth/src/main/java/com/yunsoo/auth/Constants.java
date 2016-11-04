@@ -25,6 +25,15 @@ public final class Constants {
         public static final List<String> ALL = Arrays.asList(CREATED, AVAILABLE, DISABLED);
     }
 
+    public static class AccountType{
+        private AccountType(){}
+
+        public static final String ENTERPRISE="enterprise";
+        public static final String AGENCY="agency";
+        public static final String SYSTEM="system";
+
+    }
+
     public static class ApplicationType {
         private ApplicationType() {
         }

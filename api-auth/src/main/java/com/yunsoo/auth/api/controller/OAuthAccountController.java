@@ -21,12 +21,15 @@ public class OAuthAccountController {
     private OAuthAccountService oAuthAccountService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<OAuthAccount> getOauthAccountList(@RequestParam("source_list") List<String> sourceList, @RequestParam("source_type") String sourceType) {
-        if (sourceList.size() == 0) {
-            return new ArrayList<>();
-        }
-        return oAuthAccountService.search(sourceList, sourceType);
+    public List<OAuthAccount> getOauthAccountList(@RequestParam(value = "source_list", required = false) List<String> sourceList,
+                                                  @RequestParam(value = "source_type", required = false) String sourceType,
+                                                  @RequestParam(value = "account_id", required = false) String accountId) {
+
+
+        return oAuthAccountService.search(sourceList, sourceType, accountId);
     }
+
+
 
     @RequestMapping(method = RequestMethod.GET, value = "count")
     public int count(@RequestParam("source_list") List<String> sourceList, @RequestParam("source_type") String sourceType) {
@@ -40,4 +43,7 @@ public class OAuthAccountController {
     public OAuthAccount getById(@PathVariable("id") String id){
         return oAuthAccountService.getById(id);
     }
+
+
+
 }

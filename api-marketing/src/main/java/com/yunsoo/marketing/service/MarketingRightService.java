@@ -85,6 +85,21 @@ public class MarketingRightService {
         marketingRightRepository.save(forSaveEntities);
     }
 
+    @Transactional
+    public void deleteMarketingRight(String id) {
+        if (StringUtils.isEmpty(id)) {
+            return;
+        }
+        MarketingRightEntity entity = marketingRightRepository.findOne(id);
+        if (entity != null) {
+            entity.setDeleted(true);
+            entity.setModifiedAccountId(AuthUtils.getCurrentAccount().getId());
+            entity.setModifiedDateTime(DateTime.now());
+            marketingRightRepository.save(entity);
+        }
+    }
+
+
     private MarketingRight toMarketingRight(MarketingRightEntity entity) {
         if (entity == null) {
             return null;

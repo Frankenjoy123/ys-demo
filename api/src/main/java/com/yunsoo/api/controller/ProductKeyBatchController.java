@@ -80,7 +80,7 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
-    @OperationLog(operation = "'下载产品码批次' + #id", level = "P1")
+    @OperationLog(operation = "'下载产品码批次:' + #id", level = "P1")
     public ResponseEntity<?> getKeysById(@PathVariable(value = "id") String id) {
         ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
         if (batch == null) {

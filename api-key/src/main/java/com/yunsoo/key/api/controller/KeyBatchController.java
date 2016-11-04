@@ -1,15 +1,20 @@
 package com.yunsoo.key.api.controller;
 
 import com.yunsoo.common.support.YSFile;
+import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.key.api.util.PageUtils;
 import com.yunsoo.key.api.util.ResponseEntityUtils;
 import com.yunsoo.key.dto.KeyBatch;
 import com.yunsoo.key.dto.KeyBatchCreationRequest;
 import com.yunsoo.key.dto.Keys;
 import com.yunsoo.key.service.KeyBatchService;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -44,6 +50,19 @@ public class KeyBatchController {
             throw new NotFoundException("keyBatch not found by id: " + id);
         }
         return keyBatch;
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<KeyBatch> getByFilterPaged(@RequestParam(value = "org_id") String orgId,
+                                           @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                           @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
+                                           @RequestParam(value = "created_account_id", required = false) String createdAccountId,
+                                           @RequestParam(value = "created_datetime_ge", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeGE,
+                                           @RequestParam(value = "created_datetime_le", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeLE,
+                                           Pageable pageable,
+                                           HttpServletResponse response) {
+        Page<KeyBatch> page = keyBatchService.getByFilter(orgId, productBaseId, statusCodeIn, createdAccountId, createdDateTimeGE, createdDateTimeLE, pageable);
+        return PageUtils.response(response, page, page != null);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

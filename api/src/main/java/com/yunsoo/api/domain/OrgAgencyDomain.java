@@ -60,6 +60,16 @@ public class OrgAgencyDomain {
         });
     }
 
+    public List<OrgAgencyObject> getListByOrgIdAndParentId(String orgId, String parentId){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("parent_id", parentId)
+                .build();
+
+        return dataApiClient.get("organizationagency/list" + query, new ParameterizedTypeReference<List<OrgAgencyObject>>() {
+        });
+    }
+
     public List<LocationObject> getLocationsByFilter(String parentId) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("parent_id", parentId)
@@ -95,13 +105,9 @@ public class OrgAgencyDomain {
     }
 
     public void getAgencyDetails(List<OrgAgency> agencyList){
-        List<String> ids = agencyList.stream().map(agency-> agency.getId()).collect(Collectors.toList());
-        String queryString = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("source_list",ids).append("source_type", LookupCodes.TraceSourceType.AGENCY)
-                .build();
+        List<String> ids = agencyList.stream().map(agency -> agency.getId()).collect(Collectors.toList());
 
-        List<OAuthAccount> oauthList = authApiClient.get("oauth/account" + queryString, new ParameterizedTypeReference<List<OAuthAccount>>() {
-        });
+        List<OAuthAccount> oauthList = getOAuthAccount(ids, null);
 
         agencyList.forEach(orgAgency -> {
             int length=oauthList.size();
@@ -119,12 +125,18 @@ public class OrgAgencyDomain {
         });
     }
 
-    public int count(String parentId){
-        return dataApiClient.get("organizationagency/count?parent_id={id}", Integer.class, parentId);
+    public int count(String parentId, String orgId){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("org_id", orgId)
+                .append("parent_id", parentId)
+                .build();
+
+
+        return dataApiClient.get("organizationagency/count" + query, Integer.class);
     }
 
     public int authorizedCount(String orgId, String parentId){
-        List<OrgAgencyObject> agencyObjectList = getOrgAgencyByOrgId(orgId, null, parentId, null, null, null, null).getContent();
+        List<OrgAgencyObject> agencyObjectList = getListByOrgIdAndParentId(orgId, parentId);
         List<String> ids = agencyObjectList.stream().map(agency-> agency.getId()).collect(Collectors.toList());
         String queryString = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("source_list",ids).append("source_type", LookupCodes.TraceSourceType.AGENCY)
@@ -135,8 +147,15 @@ public class OrgAgencyDomain {
     }
 
 
-    public OAuthAccount getOAuthAccount(String id){
-        return authApiClient.get("oauth/account/{id}", OAuthAccount.class, id);
+    public List<OAuthAccount> getOAuthAccount(List<String> ids, String accountId){
+
+        String queryString = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("source_list",ids).append("source_type", LookupCodes.TraceSourceType.AGENCY)
+                .append("account_id", accountId)
+                .build();
+
+        return authApiClient.get("oauth/account" + queryString, new ParameterizedTypeReference<List<OAuthAccount>>() {
+        });
     }
 
 

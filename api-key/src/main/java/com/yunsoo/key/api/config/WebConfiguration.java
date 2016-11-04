@@ -1,9 +1,11 @@
 package com.yunsoo.key.api.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -24,6 +26,13 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
         AntPathMatcher pathMatcher = new AntPathMatcher();
         pathMatcher.setCaseSensitive(false); //make path case insensitive.
         configurer.setPathMatcher(pathMatcher);
+    }
+
+    @Override
+    protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        PageableHandlerMethodArgumentResolver pageableHandlerMethodArgumentResolver = new PageableHandlerMethodArgumentResolver();
+        pageableHandlerMethodArgumentResolver.setFallbackPageable(null);
+        argumentResolvers.add(pageableHandlerMethodArgumentResolver);
     }
 
     @Override
