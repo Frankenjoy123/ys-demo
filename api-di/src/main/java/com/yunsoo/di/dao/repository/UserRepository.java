@@ -38,4 +38,6 @@ public interface UserRepository extends FindOneAndSaveRepository<UserEntity, Str
                                      @Param("wxUser") Boolean wxUser,
                                      Pageable pageable);
 
+
+
 }

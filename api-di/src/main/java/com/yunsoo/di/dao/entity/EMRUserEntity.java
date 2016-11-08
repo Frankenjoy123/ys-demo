@@ -1,83 +1,71 @@
-package com.yunsoo.di.dto;
+package com.yunsoo.di.dao.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.databind.DateTimeJsonDeserializer;
-import com.yunsoo.common.databind.DateTimeJsonSerializer;
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
+import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
-public class EMRUserObject implements Serializable {
 
-    @JsonProperty("id")
+public class EMRUserEntity implements Serializable {
+
+    @Column(name = "id")
     private int id;
 
-    @JsonProperty("user_id")
+    @Column(name = "user_id")
     private String userId;
 
-    @JsonProperty("ys_id")
+    @Column(name = "ys_id")
     private String ysId;
 
-    @JsonProperty("org_id")
+    @Column(name = "org_id")
     private String orgId;
 
-    @JsonProperty("org_name")
+    @Column(name = "org_name")
     private String orgName;
 
-    @JsonProperty("phone")
+    @Column(name = "phone")
     private String phone;
 
-    @JsonProperty("name")
+    @Column(name = "name")
     private String name;
 
-    @JsonProperty("email")
+    @Column(name = "email")
     private String email;
 
-    @JsonProperty("age")
+    @Column(name = "age")
     private Integer age;
 
-    @JsonProperty("sex")
+    @Column(name = "sex")
     private Boolean sex;
 
-    @JsonProperty("province")
+    @Column(name = "province")
     private String province;
 
-    @JsonProperty("city")
+    @Column(name = "city")
     private String city;
 
-    @JsonProperty("gravatar_url")
-    private String gravatarUrl;
+    @Column(name = "wx_openid")
+    private String wxOpenId;
 
-    @JsonProperty("address")
+    @Column(name = "address")
     private String address;
 
-    @JsonProperty("wx_openid")
-    private String wxOpenid;
+    @Column(name = "gravatar_url")
+    private String gravatarUrl;
 
-    @JsonSerialize(using = DateTimeJsonSerializer.class)
-    @JsonDeserialize(using = DateTimeJsonDeserializer.class)
-    @JsonProperty("join_datetime")
+    @Column(name = "join_datetime")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime joinDateTime;
 
-    @JsonProperty("ip")
+    @Column(name = "latest_event_ip")
     private String ip;
 
-    @JsonProperty("device")
+    @Column(name = "latest_event_device")
     private String device;
 
-    @JsonProperty("user_tags")
-    private List<UserTagObject> userTagObjects;
-
-    public List<UserTagObject> getUserTagObjects() {
-        return userTagObjects;
-    }
-
-    public void setUserTagObjects(List<UserTagObject> userTagObjects) {
-        this.userTagObjects = userTagObjects;
-    }
+    private Set<UserTagEntity> userTagEntities;
 
     public int getId() {
         return id;
@@ -175,12 +163,12 @@ public class EMRUserObject implements Serializable {
         this.city = city;
     }
 
-    public String getGravatarUrl() {
-        return gravatarUrl;
+    public String getWxOpenId() {
+        return wxOpenId;
     }
 
-    public void setGravatarUrl(String gravatarUrl) {
-        this.gravatarUrl = gravatarUrl;
+    public void setWxOpenId(String wxOpenId) {
+        this.wxOpenId = wxOpenId;
     }
 
     public String getAddress() {
@@ -191,12 +179,12 @@ public class EMRUserObject implements Serializable {
         this.address = address;
     }
 
-    public String getWxOpenid() {
-        return wxOpenid;
+    public String getGravatarUrl() {
+        return gravatarUrl;
     }
 
-    public void setWxOpenid(String wxOpenid) {
-        this.wxOpenid = wxOpenid;
+    public void setGravatarUrl(String gravatarUrl) {
+        this.gravatarUrl = gravatarUrl;
     }
 
     public DateTime getJoinDateTime() {
@@ -207,12 +195,12 @@ public class EMRUserObject implements Serializable {
         this.joinDateTime = joinDateTime;
     }
 
-    public String getIp() {
-        return ip;
+    public Set<UserTagEntity> getUserTagEntities() {
+        return userTagEntities;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip;
+    public void setUserTagEntities(Set<UserTagEntity> userTagEntities) {
+        this.userTagEntities = userTagEntities;
     }
 
     public String getDevice() {
@@ -221,5 +209,13 @@ public class EMRUserObject implements Serializable {
 
     public void setDevice(String device) {
         this.device = device;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 }

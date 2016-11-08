@@ -1,14 +1,17 @@
 package com.yunsoo.di.api.controller;
 
 import com.yunsoo.common.web.util.PageableUtils;
+import com.yunsoo.di.dao.entity.EMRUserEntity;
 import com.yunsoo.di.dao.entity.UserEntity;
 import com.yunsoo.di.dao.repository.CustomerEventRepository;
+import com.yunsoo.di.dao.repository.EMRUserRepository;
 import com.yunsoo.di.dao.repository.UserRepository;
 import com.yunsoo.di.dto.*;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.StringUtils;
@@ -34,7 +37,7 @@ public class CustomerManageController {
     private CustomerEventRepository customerEventRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private EMRUserRepository userRepository;
 
     // event count and user count about scan, draw, win, reward
     @RequestMapping(value = "/funnel", method = RequestMethod.GET)
@@ -296,7 +299,7 @@ public class CustomerManageController {
 
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<EMRUserObject> findByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+    public List<EMRUserObject> findByFilter(@RequestParam(value = "org_id") String orgId,
                                             @RequestParam(value = "sex", required = false) Boolean sex,
                                             @RequestParam(value = "wx_user", required = false) Boolean wxUser,
                                             @RequestParam(value = "phone", required = false) String phone,
@@ -329,9 +332,16 @@ public class CustomerManageController {
             tags = null;
         }
 
-        Page<UserEntity> entityPage = userRepository.findByFilter(orgId, sex, phone, name ,province,city,ageStart, ageEnd, createdDateTimeStartTo, createdDateTimeEndTo,
+        List<EMRUserEntity> entityList = userRepository.findUsersByFilter(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStartTo, createdDateTimeEndTo,
                 tags == null || tags.size() == 0 ? null : tags,
                 tags == null || tags.size() == 0, wxUser, pageable);
+
+        int totalCount = userRepository.countUsersByFilter(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStartTo, createdDateTimeEndTo,
+                tags == null || tags.size() == 0 ? null : tags,
+                tags == null || tags.size() == 0, wxUser);
+
+        Page<EMRUserEntity> entityPage = new PageImpl<EMRUserEntity>(entityList.stream().collect(Collectors.toList()),
+                pageable, totalCount);
 
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
@@ -342,7 +352,7 @@ public class CustomerManageController {
                 .collect(Collectors.toList());
     }
 
-    private EMRUserObject toEMRUserObject(UserEntity entity) {
+    private EMRUserObject toEMRUserObject(EMRUserEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -352,10 +362,8 @@ public class CustomerManageController {
         object.setYsId(entity.getYsId());
         object.setOrgId(entity.getOrgId());
         object.setName(entity.getName());
-        if (entity.getLuProvinceCityEntity()!=null){
-            object.setProvince(entity.getLuProvinceCityEntity().getProvince());
-            object.setCity(entity.getLuProvinceCityEntity().getCity());
-        }
+        object.setProvince(entity.getProvince());
+        object.setCity(entity.getCity());
         object.setPhone(entity.getPhone());
         object.setWxOpenid(entity.getWxOpenId());
         object.setAge(entity.getAge());
@@ -363,6 +371,8 @@ public class CustomerManageController {
         object.setEmail(entity.getEmail());
         object.setGravatarUrl(entity.getGravatarUrl());
         object.setJoinDateTime(entity.getJoinDateTime());
+        object.setIp(entity.getIp());
+        object.setDevice(entity.getDevice());
         return object;
     }
 
