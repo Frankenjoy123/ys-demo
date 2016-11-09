@@ -1,17 +1,12 @@
 package com.yunsoo.di.dao.repository.Impl;
 
-import com.yunsoo.common.util.DateTimeUtils;
 import com.yunsoo.di.dao.entity.EMRUserEntity;
-import com.yunsoo.di.dao.entity.UserEntity;
-import com.yunsoo.di.dao.entity.UserProfileTagCountEntity;
 import com.yunsoo.di.dao.repository.EMRUserRepository;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -20,9 +15,7 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by yunsu on 2016/11/8.

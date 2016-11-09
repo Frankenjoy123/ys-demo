@@ -1,18 +1,29 @@
 package com.yunsoo.di.api.controller;
 
+import com.yunsoo.common.web.util.PageableUtils;
+import com.yunsoo.di.dao.entity.EMREventEntity;
 import com.yunsoo.di.dao.entity.EMRUserEntity;
 import com.yunsoo.di.dao.entity.UserTagEntity;
+import com.yunsoo.di.dao.repository.EMREventRepository;
 import com.yunsoo.di.dao.repository.EMRUserRepository;
 import com.yunsoo.di.dao.repository.UserTagRepository;
+import com.yunsoo.di.dto.EMREventObject;
 import com.yunsoo.di.dto.EMRUserObject;
+import com.yunsoo.di.dto.EMRUserProductEventStasticsObject;
 import com.yunsoo.di.dto.UserTagObject;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +42,9 @@ public class CustomerDetailController {
     @Autowired
     private UserTagRepository userTagRepository;
 
+    @Autowired
+    private EMREventRepository emrEventRepository;
+
     @RequestMapping(value = "id", method = RequestMethod.GET)
     public EMRUserObject getUser(@RequestParam(value = "org_id", required = false) String orgId,
                                  @RequestParam(value = "user_id", required = false) String userId,
@@ -45,9 +59,6 @@ public class CustomerDetailController {
 
         return object;
     }
-
-
-
 
 
     private EMRUserObject toEMRUserObject(EMRUserEntity entity) {
