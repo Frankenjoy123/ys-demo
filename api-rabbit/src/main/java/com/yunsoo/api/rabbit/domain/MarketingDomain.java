@@ -47,8 +47,19 @@ public class MarketingDomain {
         return dataApiClient.get("marketing/draw/{key}", MktDrawRecordObject.class, key);
     }
 
+    // query marketing draw record by product key and ysid
+    public MktDrawRecordObject getMktDrawRecordByProductKeyAndUser(String key, String ysId) {
+        return dataApiClient.get("marketing/draw/{key}/user/{id}", MktDrawRecordObject.class, key, ysId);
+    }
+
+
     public MktDrawPrizeObject getMktDrawPrizeByProductKey(String key) {
         return dataApiClient.get("marketing/drawprize/{key}", MktDrawPrizeObject.class, key);
+    }
+
+    // query marketing draw prize by product key and ysid
+    public MktDrawPrizeObject getMktDrawPrizeByProductKeyAndUser(String key, String ysId) {
+        return dataApiClient.get("marketing/drawprize/{key}/user/{id}", MktDrawPrizeObject.class, key, ysId);
     }
 
     public MktDrawPrizeObject getMktDrawPrizeByPrizeId(String prizeId) {
@@ -72,6 +83,10 @@ public class MarketingDomain {
         return dataApiClient.get("marketing/consumer/key/{key}", MktConsumerRightObject.class, productKey);
     }
 
+    // query consumer right by product key and ysid
+    public MktConsumerRightObject getConsumerRightByProductKeyAndUser(String productKey, String ysId) {
+        return dataApiClient.get("marketing/consumer/key/{key}/user/{id}", MktConsumerRightObject.class, productKey, ysId);
+    }
 
     public MktDrawRuleObject getDrawRuleById(String id){
         return dataApiClient.get("marketing/Rule/{id}", MktDrawRuleObject.class, id);
