@@ -5,6 +5,7 @@ import com.yunsoo.di.dao.entity.EMREventEntity;
 import com.yunsoo.di.dao.entity.EMRUserEntity;
 import com.yunsoo.di.dao.repository.EMREventRepository;
 import com.yunsoo.di.dto.EMREventObject;
+import com.yunsoo.di.dto.PeriodUserConsumptionStatsObject;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,24 @@ public class EventController {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 最近一次消费
+     *
+     * @param orgId
+     * @param userId
+     * @param ysId
+     * @param response
+     * @return
+     */
+    @RequestMapping(value = "latest_consumption", method = RequestMethod.GET)
+    public EMREventObject findLatestConsumption(@RequestParam(value = "org_id", required = true) String orgId,
+                                                @RequestParam(value = "user_id", required = false) String userId,
+                                                @RequestParam(value = "ys_id", required = false) String ysId,
+                                                HttpServletResponse response) {
+        EMREventEntity entity = emrEventRepository.recentlyConsumptionEvent(orgId, userId, ysId);
+        return toEMREventObject(entity);
+    }
+
     private EMREventObject toEMREventObject(EMREventEntity entity) {
         if (entity == null) {
             return null;
@@ -92,6 +111,27 @@ public class EventController {
         object.setWxOpenId(entity.getWxOpenId());
         object.setMarketingId(entity.getMarketingId());
         object.setValue(entity.getValue());
+        return object;
+    }
+
+    @RequestMapping(value = "period_consumption_stats", method = RequestMethod.GET)
+    public PeriodUserConsumptionStatsObject findLatestConsumption(@RequestParam(value = "org_id", required = true) String orgId,
+                                                                  @RequestParam(value = "user_id", required = false) String userId,
+                                                                  @RequestParam(value = "ys_id", required = false) String ysId,
+                                                                  @RequestParam(value = "period", required = false) Integer days,
+                                                                  HttpServletResponse response) {
+        if (days == null) days = 60;
+
+        DateTime eventDateTimeEndTo = DateTime.now();
+        DateTime eventDateTimeStartTo = eventDateTimeEndTo.minusDays(60);
+
+        int totalCount = emrEventRepository.periodConsumptionCount(orgId, userId, ysId, eventDateTimeStartTo, eventDateTimeEndTo);
+        PeriodUserConsumptionStatsObject object = new PeriodUserConsumptionStatsObject();
+        object.setTotalCount(totalCount);
+        object.setDailyCount((double) totalCount / days);
+        object.setWeeklyCount((double) totalCount * 7.0 / days);
+        object.setMonthlyCount((double) totalCount * 30.0 / days);
+
         return object;
     }
 

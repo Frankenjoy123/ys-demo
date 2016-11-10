@@ -185,4 +185,78 @@ public class EMREventRepositoryImpl implements EMREventRepository {
 
     }
 
+    @Override
+    public EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId) {
+
+        String sql="select ev.org_id, ev.user_id, ev.ys_id, ev.name as event_name, ev.product_base_id, ev.product_key, ev.key_batch_id,  0 as is_priced, ev.event_datetime,  pc.province, pc.city, ev.ip, p.name, '' as marketing_id  from di_event ev " +
+                "left join lu_province_city pc on ev.location_id=pc.id " +
+                "LEFT JOIN di.product_base p on p.id=ev.product_base_id "+
+                "where ev.event_id = " +
+                "(select up.scan_record_id " +
+                "from di_user_product up " +
+                "where up.org_id =:orgId and up.user_id=:userId and up.ys_id=:ysId " +
+                "order by up.time_id desc limit 1) ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("orgId", orgId);
+        parameters.put("userId", userId == null ? "" : userId);
+        parameters.put("ysId", ysId == null ? "" : ysId);
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+
+        List<Object[]> queryList = query.getResultList();
+
+        if (queryList.isEmpty())
+            return null;
+
+        Object[] obj=queryList.get(0);
+
+        EMREventEntity eventEntity=new EMREventEntity();
+        eventEntity.setOrgId((String) obj[0]);
+        eventEntity.setUserId((String) obj[1]);
+        eventEntity.setYsId((String) obj[2]);
+        eventEntity.setName((String) obj[3]);
+        eventEntity.setProductBaseId((String) obj[4]);
+        eventEntity.setProductKey((String) obj[5]);
+        eventEntity.setKeyBatchId((String) obj[6]);
+        Timestamp timestamp= (Timestamp) obj[8];
+        eventEntity.setEventDateTime(LocalDateTime.fromDateFields(timestamp).toDateTime());
+        eventEntity.setProvince((String) obj[9]);
+        eventEntity.setCity((String) obj[10]);
+        eventEntity.setIp((String) obj[11]);
+        eventEntity.setProductName((String) obj[12]);
+
+        return eventEntity;
+    }
+
+    @Override
+    public int periodConsumptionCount(String orgId, String userId, String ysId, DateTime eventDateTimeStart, DateTime eventDateTimeEnd) {
+
+        String sql="select count(1) from di_event ev " +
+                "where ev.event_datetime <:eventDateTimeEnd and ev.event_datetime >=:eventDateTimeStart and ev.event_id IN " +
+                "(select up.scan_record_id " +
+                "from di_user_product up " +
+                "where up.org_id =:orgId and up.user_id=:userId and up.ys_id=:ysId ) ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("orgId", orgId);
+        parameters.put("userId", userId == null ? "" : userId);
+        parameters.put("ysId", ysId == null ? "" : ysId);
+        parameters.put("eventDateTimeStart", eventDateTimeStart.toString("yyyy-MM-dd HH:mm:ss"));
+        parameters.put("eventDateTimeEnd", eventDateTimeEnd.toString("yyyy-MM-dd HH:mm:ss"));
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        BigInteger value = (BigInteger) query.getSingleResult();
+
+        return value.intValue();
+
+
+    }
+
 }

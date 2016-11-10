@@ -18,4 +18,7 @@ public interface EMREventRepository  {
                                       DateTime eventDateTimeStart,
                                       DateTime eventDateTimeEnd);
 
+    EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId);
+
+    int periodConsumptionCount(String orgId, String userId, String ysId, DateTime eventDateTimeStartTo, DateTime eventDateTimeEndTo);
 }
