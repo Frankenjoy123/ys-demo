@@ -61,6 +61,21 @@ public class MarketingController {
         }
     }
 
+    //获取Key所对应的抽奖记录by product key and ysid
+    @RequestMapping(value = "draw/{key}/user/{ysid}", method = RequestMethod.GET)
+    public MktDrawRecord getMktDrawRecordByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "ysid") String ysId) {
+        if (key == null) {
+            throw new BadRequestException("product key can not be null");
+        }
+        MktDrawRecordObject mktDrawRecordObject = marketingDomain.getMktDrawRecordByProductKeyAndUser(key, ysId);
+        if (mktDrawRecordObject != null) {
+            return new MktDrawRecord(mktDrawRecordObject);
+        } else {
+            return null;
+        }
+    }
+
+
     //获取Key所对应的兑奖情况
     @RequestMapping(value = "drawPrize/{key}", method = RequestMethod.GET)
     public MktDrawPrize getMktDrawPrizeByProductKey(@PathVariable String key) {
@@ -68,6 +83,26 @@ public class MarketingController {
             throw new BadRequestException("product key can not be null");
         }
         MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKey(key);
+        if (mktDrawPrizeObject != null) {
+            MktDrawPrize prize = new MktDrawPrize(mktDrawPrizeObject);
+            MktDrawRuleObject rule = marketingDomain.getDrawRuleById(prize.getDrawRuleId());
+            if (StringUtils.hasText(rule.getConsumerRightId())) {
+                MktConsumerRightObject right = marketingDomain.getConsumerRightById(rule.getConsumerRightId());
+                prize.setMktConsumerRight(new MktConsumerRight(right));
+            }
+            return prize;
+        } else {
+            return null;
+        }
+    }
+
+    //获取Key所对应的兑奖情况 by product key and ysid
+    @RequestMapping(value = "drawPrize/{key}/user/{ysid}", method = RequestMethod.GET)
+    public MktDrawPrize getMktDrawPrizeByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "ysid") String ysId) {
+        if (key == null) {
+            throw new BadRequestException("product key can not be null");
+        }
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKeyAndUser(key, ysId);
         if (mktDrawPrizeObject != null) {
             MktDrawPrize prize = new MktDrawPrize(mktDrawPrizeObject);
             MktDrawRuleObject rule = marketingDomain.getDrawRuleById(prize.getDrawRuleId());
@@ -132,6 +167,27 @@ public class MarketingController {
             return null;
         }
     }
+
+    // query draw01 prize contact by product key and ysId
+    @RequestMapping(value = "drawPrize/contact/{key}/user/{ysid}", method = RequestMethod.GET)
+    public MktPrizeContact getPrizeContactByProductKeyAndUser(@PathVariable(value = "key") String productKey, @PathVariable(value = "ysid") String ysId) {
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKeyAndUser(productKey, ysId);
+        if (mktDrawPrizeObject == null) {
+            throw new NotFoundException("marketing draw prize can not be found");
+        }
+        String prizeContactId = mktDrawPrizeObject.getPrizeContactId();
+        if (!StringUtils.hasText(prizeContactId)) {
+            return null;
+        }
+        MktPrizeContactObject mktPrizeContactObject = marketingDomain.getMktPrizeContactById(prizeContactId);
+
+        if ((!mktDrawPrizeObject.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.CREATED)) && (mktPrizeContactObject != null)) {
+            return new MktPrizeContact(mktPrizeContactObject);
+        } else {
+            return null;
+        }
+    }
+
 
     // create draw01 prize contact and update draw prize record
     @RequestMapping(value = "drawPrize/contact/{key}", method = RequestMethod.POST)
@@ -292,6 +348,21 @@ public class MarketingController {
             return null;
         }
     }
+
+    // query consumer right by product key and ysid
+    @RequestMapping(value = "consumer/key/{key}/user/{ysid}", method = RequestMethod.GET)
+    public MktConsumerRight getMktConsumerRightByProductKeyAndUser(@PathVariable String key, @PathVariable String ysId) {
+        if (key == null) {
+            throw new BadRequestException("product key can not be null");
+        }
+        MktConsumerRightObject mktConsumerRightObject = marketingDomain.getConsumerRightByProductKeyAndUser(key, ysId);
+        if (mktConsumerRightObject != null) {
+            return new MktConsumerRight(mktConsumerRightObject);
+        } else {
+            return null;
+        }
+    }
+
 
     //判断营销方案是否可用，暨用户能否参加营销活动
     @RequestMapping(value = "validate/key/{key}", method = RequestMethod.GET)

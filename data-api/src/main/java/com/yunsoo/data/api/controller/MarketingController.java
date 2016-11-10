@@ -96,6 +96,27 @@ public class MarketingController {
         }
     }
 
+    //get mktDrawPrize by product key and ysid, provide API-Rabbit
+    @RequestMapping(value = "/drawprize/{key}/user/{id}", method = RequestMethod.GET)
+    public MktDrawPrizeObject getMktDrawPrizeByProductKey(@PathVariable(value = "key") String key, @PathVariable(value = "id") String id) {
+
+        List<MktDrawRecordEntity> mktDrawRecordEntities = mktDrawRecordRepository.findByProductKeyAndYsidAndIsPrized(key, id, true);
+        if (mktDrawRecordEntities.size() > 0) {
+            MktDrawRecordEntity mktDrawRecordEntity = mktDrawRecordEntities.get(0);
+            String scanRecordId = mktDrawRecordEntity.getScanRecordId();
+            List<MktDrawPrizeEntity> mktDrawPrizeEntityList = mktDrawPrizeRepository.findByScanRecordId(scanRecordId);
+            if (mktDrawPrizeEntityList.size() > 0) {
+                MktDrawPrizeEntity entity = mktDrawPrizeEntityList.get(0);
+                return toMktDrawPrizeObject(entity);
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+
     //get mktDrawRecord by product key, provide API-Rabbit
     @RequestMapping(value = "/draw", method = RequestMethod.GET)
     public List<MktDrawRecordObject> queryRecord(@RequestParam("ys_id") String ysId, @RequestParam("marketing_id") String marketingId) {
@@ -113,6 +134,19 @@ public class MarketingController {
             return null;
         }
     }
+
+    // query marketing draw record by product key and ysid
+    @RequestMapping(value = "/draw/{key}/user/{id}", method = RequestMethod.GET)
+    public MktDrawRecordObject getMktDrawRecordByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "id") String id) {
+        List<MktDrawRecordEntity> entities = mktDrawRecordRepository.findByProductKeyAndYsid(key, id);
+        if (entities.size() > 0) {
+            MktDrawRecordEntity entity = entities.get(0);
+            return toMktDrawRecordObject(entity);
+        } else {
+            return null;
+        }
+    }
+
 
     //query marketing plan, provide API
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -257,6 +291,43 @@ public class MarketingController {
                 return null;
             }
 
+        } else {
+            return null;
+        }
+    }
+
+    //get marketing consumer right by key and ysid
+    @RequestMapping(value = "consumer/key/{key}/user/{id}", method = RequestMethod.GET)
+    public MktConsumerRightObject getMktConsumerRightByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "id") String id) {
+
+        List<MktDrawRecordEntity> mktDrawRecordEntityList = mktDrawRecordRepository.findByProductKeyAndYsidAndIsPrized(key, id, true);
+        if (mktDrawRecordEntityList.size() > 0) {
+            MktDrawRecordEntity mktDrawRecordEntity = mktDrawRecordEntityList.get(0);
+            String scanRecordId = mktDrawRecordEntity.getScanRecordId();
+            List<MktDrawPrizeEntity> mktDrawPrizeEntityList = mktDrawPrizeRepository.findByScanRecordId(scanRecordId);
+            if (mktDrawPrizeEntityList.size() > 0) {
+                MktDrawPrizeEntity mktDrawPrizeEntity = mktDrawPrizeEntityList.get(0);
+                String drawRuleId = mktDrawPrizeEntity.getDrawRuleId();
+                MktDrawRuleEntity mktDrawRuleEntity = mktDrawRuleRepository.findOne(drawRuleId);
+                if (mktDrawRuleEntity != null) {
+                    String consumerRightId = mktDrawRuleEntity.getConsumerRightId();
+                    if (consumerRightId != null) {
+                        MktConsumerRightEntity mktConsumerRightEntity = mktConsumerRightRepository.findOne(consumerRightId);
+                        if (mktConsumerRightEntity != null) {
+                            return toMktConsumerRightObject(mktConsumerRightEntity);
+                        } else {
+                            return null;
+                        }
+
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
@@ -542,10 +613,10 @@ public class MarketingController {
         if (product == null) {
             throw new NotFoundException("Product");
         }
-        List<MktDrawRecordEntity> mktDrawRecordEntityList = mktDrawRecordRepository.findByProductKey(productKey);
-        if (mktDrawRecordEntityList.size() > 0) {
-            throw new ConflictException("This product has been already drawed.");
-        }
+//        List<MktDrawRecordEntity> mktDrawRecordEntityList = mktDrawRecordRepository.findByProductKey(productKey);
+//        if (mktDrawRecordEntityList.size() > 0) {
+//            throw new ConflictException("This product has been already drawed.");
+//        }
 
         MktDrawRecordEntity entity = toMktDrawRecordEntity(mktDrawRecordObject);
         entity.setId(null);
