@@ -12,7 +12,7 @@ public interface CustomerEventRepository {
                     String province, String city,
                     DateTime createdDateTimeStart,
                     DateTime createdDateTimeEnd ,
-                    String scanSource);
+                    Boolean wxUser);
 
     int[] wxCount(String orgId, String productBaseId,
                   String province, String city,
@@ -23,19 +23,19 @@ public interface CustomerEventRepository {
                     String province, String city,
                     DateTime createdDateTimeStart,
                     DateTime createdDateTimeEnd,
-                    String scanSource);
+                    Boolean wxUser);
 
     int[] winCount(String orgId, String productBaseId,
                    String province, String city,
                    DateTime createdDateTimeStart,
                    DateTime createdDateTimeEnd,
-                   String scanSource);
+                   Boolean wxUser);
 
     int[] rewardCount(String orgId, String productBaseId,
                       String province, String city,
                       DateTime createdDateTimeStart,
                       DateTime createdDateTimeEnd,
-                      String scanSource);
+                      Boolean wxUser);
 
     int[] shareCount(String orgId, String productBaseId,
                      String province, String city,
@@ -81,8 +81,6 @@ public interface CustomerEventRepository {
                                      String province, String city,
                                      DateTime createdDateTimeStart,
                                      DateTime createdDateTimeEnd);
-
-
 
     List<String[]> shareLocationCount(String orgId, String productBaseId,
                                       String province, String city,

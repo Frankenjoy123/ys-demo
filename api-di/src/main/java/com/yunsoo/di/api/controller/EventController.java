@@ -33,7 +33,7 @@ public class EventController {
     private EMREventRepository emrEventRepository;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<EMREventObject> findByFilter(@RequestParam(value = "org_id", required = false) String orgId,
+    public List<EMREventObject> findByFilter(@RequestParam(value = "org_id", required = true) String orgId,
                                              @RequestParam(value = "user_id", required = false) String userId,
                                              @RequestParam(value = "ys_id", required = false) String ysId,
                                              @RequestParam(value = "event_datetime_start", required = false)

@@ -49,7 +49,7 @@ public class CustomerManageController {
                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
                                                @RequestParam(value = "create_datetime_end", required = false)
                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
-                                               @RequestParam(value = "scan_source", required = false) String scanSource) {
+                                               @RequestParam(value = "wx_user", required = false) Boolean wxUser) {
 
         DateTime startDateTime = null;
         DateTime endDateTime = null;
@@ -65,20 +65,20 @@ public class CustomerManageController {
         List<Integer> eventCount = new ArrayList<>();
         List<Integer> userCount = new ArrayList<>();
 
-        int[] scanData = customerEventRepository.scanCount(orgId, productBaseId, province, city, startDateTime, endDateTime,scanSource);
+        int[] scanData = customerEventRepository.scanCount(orgId, productBaseId, province, city, startDateTime, endDateTime,wxUser);
         eventCount.add(scanData[0]);
         userCount.add(scanData[1]);
 
 
-        int[] drawCount = customerEventRepository.drawCount(orgId, productBaseId, province, city, startDateTime, endDateTime,scanSource);
+        int[] drawCount = customerEventRepository.drawCount(orgId, productBaseId, province, city, startDateTime, endDateTime,wxUser);
         eventCount.add(drawCount[0]);
         userCount.add(drawCount[1]);
 
-        int[] winCount = customerEventRepository.winCount(orgId, productBaseId, province, city, startDateTime, endDateTime,scanSource);
+        int[] winCount = customerEventRepository.winCount(orgId, productBaseId, province, city, startDateTime, endDateTime,wxUser);
         eventCount.add(winCount[0]);
         userCount.add(winCount[1]);
 
-        int[] rewardCount = customerEventRepository.rewardCount(orgId, productBaseId, province, city, startDateTime, endDateTime,scanSource);
+        int[] rewardCount = customerEventRepository.rewardCount(orgId, productBaseId, province, city, startDateTime, endDateTime,wxUser);
         eventCount.add(rewardCount[0]);
         userCount.add(rewardCount[1]);
 

@@ -66,26 +66,18 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
         }
         List<Object[]> queryList = query.getResultList();
         List<UserProfileTagCountEntity> list = new ArrayList<>();
-        int nullCount=0;
         for(Object[] obj : queryList)
         {
-            if (obj[0] == null){
-                nullCount=((BigInteger)obj[1]).intValue();
-            }else {
-                String tagName = (String)obj[0];
-                int count = ((BigInteger)obj[1]).intValue();
-                UserProfileTagCountEntity item = new UserProfileTagCountEntity();
-                item.setCount(count);
-                item.setTag(tagName);
-                list.add(item);
-            }
+            String tagName = (String)obj[0];
+            int count = ((BigInteger)obj[1]).intValue();
+            UserProfileTagCountEntity item = new UserProfileTagCountEntity();
+            item.setCount(count);
+            item.setTag(tagName);
+            list.add(item);
         }
-        UserProfileTagCountEntity otherEntity=new UserProfileTagCountEntity();
-        otherEntity.setCount(nullCount);
-        otherEntity.setTag("其他地区(港澳台，国外等)");
-        list.add(otherEntity);
         return list;
     }
+
 
     @Override
     public List<UserProfileTagCountEntity> queryMarketUserDeviceAnalysis(String orgId, DateTime startTime, DateTime endTime, String marketingId) {

@@ -55,7 +55,7 @@ public class EMREventRepositoryImpl implements EMREventRepository {
         if (eventDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(eventDateTimeEnd.toString())) {
             builder1.append("and ev.event_datetime <=:eventDateTimeEnd ");
             builder2.append("and dr.created_datetime <=:eventDateTimeEnd ");
-            parameters.put("createdDateTimeEnd", eventDateTimeEnd.toString("yyyy-MM-dd"));
+            parameters.put("eventDateTimeEnd", eventDateTimeEnd.toString("yyyy-MM-dd"));
         }
 
         StringBuilder sqlBuilder=new StringBuilder(builder1.toString());
@@ -147,7 +147,7 @@ public class EMREventRepositoryImpl implements EMREventRepository {
         if (eventDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(eventDateTimeEnd.toString())) {
             builder1.append("and ev.event_datetime <=:eventDateTimeEnd ");
             builder2.append("and dr.created_datetime <=:eventDateTimeEnd ");
-            parameters.put("createdDateTimeEnd", eventDateTimeEnd.toString("yyyy-MM-dd"));
+            parameters.put("eventDateTimeEnd", eventDateTimeEnd.toString("yyyy-MM-dd"));
         }
 
         StringBuilder sqlBuilder=new StringBuilder("select (");

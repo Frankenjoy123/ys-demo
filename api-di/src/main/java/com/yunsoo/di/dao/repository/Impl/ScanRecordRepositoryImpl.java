@@ -57,7 +57,7 @@ public class ScanRecordRepositoryImpl implements ScanRecordRepository {
             ScanRecordLocationAnalysisEntity entity = new ScanRecordLocationAnalysisEntity();
             entity.setProvince((String) d[0]);
             entity.setCity((String) d[1]);
-            entity.setProductBaseId((String) d[2]);
+            entity.setProductBaseId(productBaseId);
             entity.setPv(((BigInteger) d[3]).intValue());
             entity.setUv(((BigInteger) d[4]).intValue());
             list.add(entity);
