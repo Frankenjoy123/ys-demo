@@ -28,6 +28,8 @@ yunsoo:
       base_url: http://localhost:4180/
     key_api:
       base_url: http://localhost:4280/
+    di_api:
+      base_url: http://localhost:4380/
 
   product_key_base_url: http://dev.yunsu.co:7080/
   alipay:
@@ -67,6 +69,8 @@ yunsoo:
       base_url: http://dev-api.yunsu.co:4180/
     key_api:
       base_url: http://localhost:4280/
+    di_api:
+      base_url: http://localhost:4380/
   cache:
     type: local
   alipay:
