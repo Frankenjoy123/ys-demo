@@ -24,31 +24,29 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
     @PersistenceContext(unitName = "di")
     private EntityManager entityManager;
 
-    private static final String WEXIN="wexin";
-
     @Override
-    public int[] scanCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd , String scanSource) {
-        return scanQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, scanSource);
+    public int[] scanCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd , Boolean wxUser) {
+        return scanQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, wxUser);
     }
 
     @Override
     public int[] wxCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return scanQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, WEXIN);
+        return scanQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, null);
     }
 
     @Override
-    public int[] drawCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd ,String scanSource) {
-        return  drawQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, scanSource , 2);
+    public int[] drawCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd ,Boolean wxUser) {
+        return  drawQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, wxUser , 2);
     }
 
     @Override
-    public int[] winCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd,String scanSource) {
-        return drawQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, scanSource , 3);
+    public int[] winCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd,Boolean wxUser) {
+        return drawQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, wxUser , 3);
     }
 
     @Override
-    public int[] rewardCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, String scanSource) {
-        return prizedQuery(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, scanSource);
+    public int[] rewardCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Boolean wxUser) {
+        return prizedQuery(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, wxUser);
     }
 
 
@@ -122,7 +120,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         return  queryEventLocationCount("comment",orgId,productBaseId,province,city,createdDateTimeStart,createdDateTimeEnd);
     }
 
-    private int[] scanQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, String scanSource) {
+    private int[] scanQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Boolean wxUser) {
         String sql = "select count(1), count(distinct u.id) from di.di_event ev inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.name= :eventName " +
                 " and ev.org_id =:orgId ";
 
@@ -150,7 +148,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
             parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
         }
 
-        if (!StringUtils.isEmpty(scanSource)&& scanSource.equals(WEXIN)){
+        if (wxUser!=null && wxUser){
             sql = sql + " and u.wx_openid is not null";
         }
 
@@ -165,7 +163,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         return array;
     }
 
-    private int[] drawQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, String scanSource ,  int level) {
+    private int[] drawQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Boolean wxUser ,  int level) {
         String sql = "select count(1), count(distinct u.id) from di.mkt_draw_record dr left join di.di_event ev on dr.scan_record_id=ev.event_id  " +
                 "inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.org_id =:orgId  ";
 
@@ -192,7 +190,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
             parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
         }
 
-        if (!StringUtils.isEmpty(scanSource)&& scanSource.equals(WEXIN)){
+        if (wxUser!=null && wxUser){
             sql = sql + " and u.wx_openid is not null";
         }
 
@@ -214,7 +212,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         return array;
     }
 
-    private int[] prizedQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, String scanSource) {
+    private int[] prizedQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Boolean wxUser) {
         String sql = "select count(1), count(distinct u.id) from di.mkt_draw_record dr left join di.di_event ev on dr.scan_record_id=ev.event_id INNER JOIN di.mkt_draw_prize dp ON dr.id=dp.draw_record_id " +
                 "inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.org_id =:orgId  and dr.isPrized = 1 and dp.status_code in ('submit','paid') ";
 
@@ -241,7 +239,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
             parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
         }
 
-        if (!StringUtils.isEmpty(scanSource)&& scanSource.equals(WEXIN)){
+        if (wxUser!=null && wxUser){
             sql = sql + " and u.wx_openid is not null";
         }
 
