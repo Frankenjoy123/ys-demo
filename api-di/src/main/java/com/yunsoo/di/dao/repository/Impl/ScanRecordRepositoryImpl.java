@@ -1,4 +1,4 @@
-package com.yunsoo.di.dao.repository.impl;
+package com.yunsoo.di.dao.repository.Impl;
 
 import com.yunsoo.di.dao.entity.ScanRecordLocationAnalysisEntity;
 import com.yunsoo.di.dao.repository.ScanRecordRepository;
