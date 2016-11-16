@@ -8,7 +8,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -158,8 +157,8 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         }
         Object[] data = (Object[]) query.getSingleResult();
         int[] array = new int[2];
-        array[0] = ((BigInteger) data[0]).intValue();
-        array[1] = ((BigInteger) data[1]).intValue();
+        array[0] = ((Number) data[0]).intValue();
+        array[1] = ((Number) data[1]).intValue();
         return array;
     }
 
@@ -207,8 +206,8 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         }
         Object[] data = (Object[]) query.getSingleResult();
         int[] array = new int[2];
-        array[0] = ((BigInteger) data[0]).intValue();
-        array[1] = ((BigInteger) data[1]).intValue();
+        array[0] = ((Number) data[0]).intValue();
+        array[1] = ((Number) data[1]).intValue();
         return array;
     }
 
@@ -249,8 +248,8 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         }
         Object[] data = (Object[]) query.getSingleResult();
         int[] array = new int[2];
-        array[0] = ((BigInteger) data[0]).intValue();
-        array[1] = ((BigInteger) data[1]).intValue();
+        array[0] = ((Number) data[0]).intValue();
+        array[1] = ((Number) data[1]).intValue();
         return array;
     }
 
@@ -385,8 +384,8 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         }
         Object[] data = (Object[]) query.getSingleResult();
         int[] array = new int[2];
-        array[0] = ((BigInteger) data[0]).intValue();
-        array[1] = ((BigInteger) data[1]).intValue();
+        array[0] = ((Number) data[0]).intValue();
+        array[1] = ((Number) data[1]).intValue();
         return array;
     }
 
@@ -428,8 +427,8 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         }
         Object[] data = (Object[]) query.getSingleResult();
         int[] array = new int[2];
-        array[0] = ((BigInteger) data[0]).intValue();
-        array[1] = ((BigInteger) data[1]).intValue();
+        array[0] = ((Number) data[0]).intValue();
+        array[1] = ((Number) data[1]).intValue();
         return array;
     }
 

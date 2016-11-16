@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,7 +50,7 @@ public class DrawAnalysisRepositoryImpl implements DrawAnalysisRepository {
             DrawReportEntity entity = new DrawReportEntity();
             entity.setDrawRuleName((String) d[0]);
             entity.setId((String) d[1]);
-            entity.setCount(((BigDecimal) d[2]).intValue());
+            entity.setCount(((Number) d[2]).intValue());
             list.add(entity);
         }
         return list;

@@ -10,7 +10,6 @@ import org.joda.time.DateTime;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -134,8 +133,8 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         }
         Object[] data = (Object[]) query.getSingleResult();
         int[] array = new int[2];
-        array[0] = ((BigInteger) data[0]).intValue();
-        array[1] = ((BigInteger) data[1]).intValue();
+        array[0] = ((Number) data[0]).intValue();
+        array[1] = ((Number) data[1]).intValue();
         return array;
     }
     // endregion
@@ -193,8 +192,8 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
             entity.setProvince((String) d[0]);
             entity.setCity((String) d[1]);
             entity.setProductBaseId((String) d[2]);
-            entity.setPv(((BigInteger) d[3]).intValue());
-            entity.setUv(((BigInteger) d[4]).intValue());
+            entity.setPv(((Number) d[3]).intValue());
+            entity.setUv(((Number) d[4]).intValue());
             list.add(entity);
         }
         return list;
@@ -237,7 +236,7 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         for (String key : parameters.keySet()) {
             query.setParameter(key, parameters.get(key));
         }
-        BigInteger value = (BigInteger) query.getSingleResult();
+        Number value = (Number) query.getSingleResult();
 
         return value.intValue();
     }
@@ -292,8 +291,8 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         }
         Object[] data = (Object[]) query.getSingleResult();
         int[] array = new int[2];
-        array[0] = ((BigInteger) data[0]).intValue();
-        array[1] = ((BigInteger) data[1]).intValue();
+        array[0] = ((Number) data[0]).intValue();
+        array[1] = ((Number) data[1]).intValue();
         return array;
     }
 
@@ -438,7 +437,7 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
             MarketUserLocationAnalysisEntity entity = new MarketUserLocationAnalysisEntity();
             entity.setProvince(item[0] == null ? "未知地区" : (String) item[0]);
             entity.setCity(item[1] == null ? "未知地区" : (String) item[1]);
-            entity.setCount(((BigInteger) item[2]).intValue());
+            entity.setCount(((Number) item[2]).intValue());
             list.add(entity);
         }
         return list;

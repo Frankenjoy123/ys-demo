@@ -7,11 +7,10 @@ import org.joda.time.LocalDateTime;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,7 +91,7 @@ public class EMRUserRepositoryImpl implements EMRUserRepository {
             query.setParameter(key, parameters.get(key));
         }
 
-        BigInteger value = (BigInteger) query.getSingleResult();
+        Number value = (Number) query.getSingleResult();
         return value.intValue();
     }
 
@@ -176,7 +175,7 @@ public class EMRUserRepositoryImpl implements EMRUserRepository {
         for(Object[] obj : queryList)
         {
             EMRUserEntity userEntity=new EMRUserEntity();
-            userEntity.setId(((BigInteger)obj[0]).intValue());
+            userEntity.setId(((Number)obj[0]).intValue());
             userEntity.setUserId((String) obj[1]);
             userEntity.setYsId((String) obj[2]);
             userEntity.setOrgId((String) obj[3]);
@@ -184,7 +183,7 @@ public class EMRUserRepositoryImpl implements EMRUserRepository {
             userEntity.setPhone((String) obj[5]);
             userEntity.setEmail((String) obj[6]);
             if (obj[7]!=null){
-                userEntity.setAge(((BigInteger)obj[7]).intValue());
+                userEntity.setAge(((Number)obj[7]).intValue());
             }
             userEntity.setSex((Boolean) obj[8]);
             userEntity.setGravatarUrl((String) obj[9]);
@@ -228,7 +227,7 @@ public class EMRUserRepositoryImpl implements EMRUserRepository {
         Object[] obj= (Object[]) query.getSingleResult();
 
         EMRUserEntity userEntity=new EMRUserEntity();
-        userEntity.setId(((BigInteger)obj[0]).intValue());
+        userEntity.setId(((Number)obj[0]).intValue());
         userEntity.setUserId((String) obj[1]);
         userEntity.setYsId((String) obj[2]);
         userEntity.setOrgId((String) obj[3]);
@@ -236,7 +235,7 @@ public class EMRUserRepositoryImpl implements EMRUserRepository {
         userEntity.setPhone((String) obj[5]);
         userEntity.setEmail((String) obj[6]);
         if (obj[7]!=null){
-            userEntity.setAge(((BigInteger)obj[7]).intValue());
+            userEntity.setAge(((Number)obj[7]).intValue());
         }
         userEntity.setSex((Boolean) obj[8]);
         userEntity.setGravatarUrl((String) obj[9]);

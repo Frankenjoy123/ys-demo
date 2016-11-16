@@ -1,18 +1,15 @@
 package com.yunsoo.di.dao.repository.Impl;
 
 import com.yunsoo.di.dao.entity.EMREventEntity;
-import com.yunsoo.di.dao.entity.EMRUserEntity;
 import com.yunsoo.di.dao.repository.EMREventRepository;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,7 +104,7 @@ public class EMREventRepositoryImpl implements EMREventRepository {
             eventEntity.setProductKey((String) obj[5]);
             eventEntity.setKeyBatchId((String) obj[6]);
             if (obj[7]!=null){
-                eventEntity.setIsPriced(((BigInteger) obj[7]).intValue());
+                eventEntity.setIsPriced(((Number) obj[7]).intValue());
             }
             Timestamp timestamp= (Timestamp) obj[8];
             eventEntity.setEventDateTime(LocalDateTime.fromDateFields(timestamp).toDateTime());
@@ -180,7 +177,7 @@ public class EMREventRepositoryImpl implements EMREventRepository {
             query.setParameter(key, parameters.get(key));
         }
 
-        BigInteger value = (BigInteger) query.getSingleResult();
+        Number value = (Number) query.getSingleResult();
         return value.intValue();
 
     }
@@ -252,7 +249,7 @@ public class EMREventRepositoryImpl implements EMREventRepository {
         for (String key : parameters.keySet()) {
             query.setParameter(key, parameters.get(key));
         }
-        BigInteger value = (BigInteger) query.getSingleResult();
+        Number value = (Number) query.getSingleResult();
 
         return value.intValue();
 
