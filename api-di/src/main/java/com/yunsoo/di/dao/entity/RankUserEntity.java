@@ -18,11 +18,21 @@ public class RankUserEntity implements Serializable {
 
     private String orgId;
 
+    private String name;
+
     private int count;
 
     private String province;
 
     private String city;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getUserId() {
         return userId;
@@ -78,6 +88,7 @@ public class RankUserEntity implements Serializable {
         object.setUserId(rankUserEntity.getUserId());
         object.setYsId(rankUserEntity.getYsId());
         object.setOrgId(rankUserEntity.getOrgId());
+        object.setName(rankUserEntity.getName());
         object.setProvince(rankUserEntity.getProvince());
         object.setCity(rankUserEntity.getCity());
         return object;

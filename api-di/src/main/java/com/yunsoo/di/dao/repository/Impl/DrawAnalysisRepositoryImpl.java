@@ -55,4 +55,43 @@ public class DrawAnalysisRepositoryImpl implements DrawAnalysisRepository {
         }
         return list;
     }
+
+    @Override
+    public List<DrawReportEntity> getDrawPrizeRankBy(String marketingId, DateTime startDateTime, DateTime endDateTime) {
+        HashMap<String, Object> parameters = new HashMap<>();
+        String sql = "SELECT ev.value as rule_id, rl.comments, count(1) as count FROM di.user_event ev " +
+                "inner join di.mkt_draw_rule rl on ev.value=rl.id and rl.is_equal=0 " +
+                "where rl.marketing_id=:marketingId  " ;
+
+        parameters.put("marketingId",marketingId);
+
+        if (startDateTime!=null){
+            sql=sql+" and ev.created_datetime>=:startDateTime";
+            parameters.put("startDateTime", startDateTime.toString("yyyy-MM-dd"));
+        }
+
+        if (endDateTime!=null){
+            sql=sql+ " and ev.created_datetime<=:endDateTime";
+            parameters.put("endDateTime", endDateTime.toString("yyyy-MM-dd"));
+        }
+
+        sql=sql+" group by ev.value;";
+
+
+        Query query =  entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        List<Object[]> data = query.getResultList();
+        List<DrawReportEntity> list = new ArrayList<>();
+        for (Object[] d : data) {
+            DrawReportEntity entity = new DrawReportEntity();
+            entity.setId((String) d[0]);
+            entity.setDrawRuleName((String) d[1]);
+            entity.setCount(((Number) d[2]).intValue());
+            list.add(entity);
+        }
+        return list;
+    }
+
 }

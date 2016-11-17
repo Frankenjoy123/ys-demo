@@ -33,13 +33,27 @@ public class DrawAnalysisController {
             @RequestParam(value = "de") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endDate
     ) {
 
-
         DateTime startDateTime = startDate.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
         DateTime endDateTime = endDate.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
         List<DrawReportEntity> list = drawAnalysisRepository.getDrawReportBy(orgId,marketingId,orgBypass,startDateTime, endDateTime);
         return list.stream().map(DrawAnalysisController::toDrawAnalysisReport).collect(Collectors.toList());
 
     }
+
+    @RequestMapping(value = "prize_rank")
+    public List<DrawAnalysisReport> getDrawPrizeRankBy(
+            @RequestParam(value = "m_id") String marketingId,
+            @RequestParam(value = "ds",required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startDate,
+            @RequestParam(value = "de",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endDate
+    ) {
+
+        DateTime startDateTime = startDate==null?null:startDate.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+        DateTime endDateTime = endDate==null?null:endDate.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+        List<DrawReportEntity> list = drawAnalysisRepository.getDrawPrizeRankBy(marketingId,startDateTime, endDateTime);
+        return list.stream().map(DrawAnalysisController::toDrawAnalysisReport).collect(Collectors.toList());
+
+    }
+
 
     private static DrawAnalysisReport toDrawAnalysisReport(DrawReportEntity drawReportEntity) {
         DrawAnalysisReport report = new DrawAnalysisReport();

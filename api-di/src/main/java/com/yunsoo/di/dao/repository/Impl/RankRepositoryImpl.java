@@ -32,7 +32,7 @@ public class RankRepositoryImpl implements RankRepository {
         parameters.put("orgId", orgId);
         parameters.put("threshold",threshold);
 
-        StringBuilder builder=new StringBuilder("select t.count , t.user_id , t.ys_id, t.org_id, pc.province , pc.city  from " +
+        StringBuilder builder=new StringBuilder("select t.count , t.user_id , t.ys_id, t.org_id, u.name, pc.province , pc.city  from " +
                 "(SELECT count(1) as count, up.user_id, up.ys_id, up.org_id " +
                 "FROM di.di_user_product up where up.org_id=:orgId " );
 
@@ -75,8 +75,9 @@ public class RankRepositoryImpl implements RankRepository {
             rankUserEntity.setUserId((String) obj[1]);
             rankUserEntity.setYsId((String) obj[2]);
             rankUserEntity.setOrgId((String) obj[3]);
-            rankUserEntity.setProvince((String) obj[4]);
-            rankUserEntity.setCity((String) obj[5]);
+            rankUserEntity.setName((String) obj[4]);
+            rankUserEntity.setProvince((String) obj[5]);
+            rankUserEntity.setCity((String) obj[6]);
             list.add(rankUserEntity);
         }
 
