@@ -18,6 +18,9 @@ public class RankUserObject implements Serializable {
     @JsonProperty("org_id")
     private String orgId;
 
+    @JsonProperty("name")
+    private String name;
+
     @JsonProperty("count")
     private int count;
 
@@ -26,6 +29,14 @@ public class RankUserObject implements Serializable {
 
     @JsonProperty("city")
     private String city;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getUserId() {
         return userId;
