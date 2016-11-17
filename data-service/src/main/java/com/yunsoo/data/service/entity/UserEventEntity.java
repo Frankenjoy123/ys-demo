@@ -22,6 +22,9 @@ public class UserEventEntity {
     @Column(name = "product_key")
     private String productKey;
 
+    @Column(name = "product_base_id")
+    private String productBaseId;
+
     @Column(name = "type_code")
     private String typeCode;
 
@@ -54,6 +57,14 @@ public class UserEventEntity {
 
     public void setProductKey(String productKey) {
         this.productKey = productKey;
+    }
+
+    public String getProductBaseId() {
+        return productBaseId;
+    }
+
+    public void setProductBaseId(String productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
     public String getTypeCode() {
