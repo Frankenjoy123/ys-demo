@@ -24,6 +24,15 @@ public class DrawAnalysisController {
     @Autowired
     private DrawAnalysisRepository drawAnalysisRepository;
 
+    /**
+     *
+     * @param orgId org_id 为企业id
+     * @param marketingId m_id 为营销id
+     * @param orgBypass by
+     * @param startDate
+     * @param endDate
+     * @return
+     */
     @RequestMapping(value = "")
     public List<DrawAnalysisReport> getDrawAnalysisReportBy(
             @RequestParam(value = "org_id") String orgId,
