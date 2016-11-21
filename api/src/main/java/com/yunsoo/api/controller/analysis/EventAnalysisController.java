@@ -43,7 +43,7 @@ public class EventAnalysisController {
         orgId = AuthUtils.fixOrgId(orgId);
 
         LocalDate now = LocalDate.now();
-        if (createdDateTimeStart == null) {
+            if (createdDateTimeStart == null) {
             createdDateTimeStart = now.plusDays(-90);
         }
         if (createdDateTimeEnd == null) {

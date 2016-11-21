@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.di.service.EMRUserService;
 import com.yunsoo.api.domain.EMREventDomain;
 import com.yunsoo.api.domain.EMRUserDomain;
 import com.yunsoo.api.domain.EMRUserProductEventStasticsDomain;
@@ -31,6 +32,9 @@ public class EMRUserController {
     private EMRUserDomain emrUserDomain;
 
     @Autowired
+    private EMRUserService emrUserService;
+
+    @Autowired
     private UserBlockDomain userBlockDomain;
 
     @Autowired
@@ -49,7 +53,7 @@ public class EMRUserController {
                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        EMRUserObject emrUserObject = emrUserDomain.getEMRUser(orgId, userId, ysId);
+        EMRUserObject emrUserObject = emrUserService.getEMRUser(orgId, userId, ysId);
 
         EMRUser emrUser = new EMRUser(emrUserObject);
 
@@ -115,7 +119,7 @@ public class EMRUserController {
                                    HttpServletResponse response) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<EMRUserObject> entityPage = emrUserDomain.getEMRUserList(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStart, createdDateTimeEnd, userTags, wxUser, pageable);
+        Page<EMRUserObject> entityPage = emrUserService.getEMRUserList(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStart, createdDateTimeEnd, userTags, wxUser, pageable);
 
         return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
@@ -373,7 +377,7 @@ public class EMRUserController {
                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        EMRUserReportObject userReportObject = emrUserDomain.getEMRUserFunnelCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+        EMRUserReportObject userReportObject = emrUserService.getEMRUserFunnelCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
 
         return new EMRUserReport(userReportObject);
     }
