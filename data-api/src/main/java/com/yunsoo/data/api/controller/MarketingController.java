@@ -98,7 +98,7 @@ public class MarketingController {
 
     //get mktDrawPrize by product key and ysid, provide API-Rabbit
     @RequestMapping(value = "/drawprize/{key}/user/{id}", method = RequestMethod.GET)
-    public MktDrawPrizeObject getMktDrawPrizeByProductKey(@PathVariable(value = "key") String key, @PathVariable(value = "id") String id) {
+    public MktDrawPrizeObject getMktDrawPrizeByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "id") String id) {
 
         List<MktDrawRecordEntity> mktDrawRecordEntities = mktDrawRecordRepository.findByProductKeyAndYsidAndIsPrized(key, id, true);
         if (mktDrawRecordEntities.size() > 0) {
@@ -467,6 +467,12 @@ public class MarketingController {
         } else {
             return null;
         }
+    }
+
+    @RequestMapping(value = "/drawPrize/totalcount/marketing/{id}", method = RequestMethod.GET)
+    public Long countMktDrawPrizesByMarketingId(@PathVariable(value = "id") String marketingId) {
+        return mktDrawPrizeRepository.countByMarketingId(marketingId);
+
     }
 
 
