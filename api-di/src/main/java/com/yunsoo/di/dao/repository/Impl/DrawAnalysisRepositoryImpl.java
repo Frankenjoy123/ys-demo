@@ -98,7 +98,7 @@ public class DrawAnalysisRepositoryImpl implements DrawAnalysisRepository {
     public List<DrawReportEntity> getMappedDrawReportReportBy(String marketingId, DateTime startDateTime, DateTime endDateTime) {
         HashMap<String, Object> parameters = new HashMap<>();
         String sql = "select mdr.comments, mdr.id, sum(ifnull(ddp.count, 0))  from mkt_draw_rule mdr                  \n" +
-                "inner join marketing_arj_draw_rule mp on mdr.id = mp.draw_rule_id\n" +
+                "inner join marketing_arj_draw_rule mp on mdr.id = mp.draw_rule_id and mp.active = 1 \n" +
                 "inner join di_daily_draw_price ddp on ddp.draw_rule_id = mp.map_draw_rule_id  and ddp.draw_date >= :ds and ddp.draw_date <:de \n" +
                 "where mdr.marketing_id = :marketing_id \n" +
                 "group by mdr.id";
