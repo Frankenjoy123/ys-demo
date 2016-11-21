@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -24,18 +25,39 @@ public class DrawAnalysisController {
     @Autowired
     private DrawAnalysisRepository drawAnalysisRepository;
 
+    /**
+     * @param orgId       org_id 为企业id
+     * @param marketingId m_id 为营销id
+     * @param orgBypass   by
+     * @param startDate
+     * @param endDate
+     * @return
+     */
     @RequestMapping(value = "")
     public List<DrawAnalysisReport> getDrawAnalysisReportBy(
             @RequestParam(value = "org_id") String orgId,
             @RequestParam(value = "m_id") String marketingId,
             @RequestParam(value = "by", required = false) boolean orgBypass,
-            @RequestParam(value = "ds")@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startDate,
+            @RequestParam(value = "ds") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startDate,
             @RequestParam(value = "de") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endDate
     ) {
 
         DateTime startDateTime = startDate.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
         DateTime endDateTime = endDate.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
-        List<DrawReportEntity> list = drawAnalysisRepository.getDrawReportBy(orgId,marketingId,orgBypass,startDateTime, endDateTime);
+        List<DrawReportEntity> list = drawAnalysisRepository.getDrawReportBy(orgId, marketingId, orgBypass, startDateTime, endDateTime);
+
+
+        // 如果有mapping的数据，则汇总
+        List<DrawReportEntity> mappedList = drawAnalysisRepository.getMappedDrawReportReportBy(marketingId, startDateTime, endDateTime);
+        if (mappedList != null && !mappedList.isEmpty()) {
+            Map<String, Integer> mappings = mappedList.stream().collect(Collectors.toMap(DrawReportEntity::getId, DrawReportEntity::getCount));
+            list.stream().forEach(i -> {
+                if (mappings.containsKey(i.getId())) {
+                    i.setCount(i.getCount() + mappings.get(i.getId()));
+                }
+            });
+        }
+
         return list.stream().map(DrawAnalysisController::toDrawAnalysisReport).collect(Collectors.toList());
 
     }
@@ -43,13 +65,13 @@ public class DrawAnalysisController {
     @RequestMapping(value = "prize_rank")
     public List<DrawAnalysisReport> getDrawPrizeRankBy(
             @RequestParam(value = "m_id") String marketingId,
-            @RequestParam(value = "ds",required = false)@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startDate,
-            @RequestParam(value = "de",required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endDate
+            @RequestParam(value = "ds", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate startDate,
+            @RequestParam(value = "de", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate endDate
     ) {
 
-        DateTime startDateTime = startDate==null?null:startDate.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
-        DateTime endDateTime = endDate==null?null:endDate.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
-        List<DrawReportEntity> list = drawAnalysisRepository.getDrawPrizeRankBy(marketingId,startDateTime, endDateTime);
+        DateTime startDateTime = startDate == null ? null : startDate.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+        DateTime endDateTime = endDate == null ? null : endDate.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+        List<DrawReportEntity> list = drawAnalysisRepository.getDrawPrizeRankBy(marketingId, startDateTime, endDateTime);
         return list.stream().map(DrawAnalysisController::toDrawAnalysisReport).collect(Collectors.toList());
 
     }
