@@ -12,4 +12,6 @@ public interface DrawAnalysisRepository {
     public List<DrawReportEntity> getDrawReportBy(String orgId, String marketingId,boolean bypass, DateTime startDateTime, DateTime endDateTime);
 
     public List<DrawReportEntity> getDrawPrizeRankBy( String marketingId, DateTime startDateTime, DateTime endDateTime);
+
+    List<DrawReportEntity> getMappedDrawReportReportBy(String marketingId, DateTime startDateTime, DateTime endDateTime);
 }
