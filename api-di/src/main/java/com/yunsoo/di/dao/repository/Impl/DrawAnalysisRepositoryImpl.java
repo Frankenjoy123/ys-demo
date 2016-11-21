@@ -94,4 +94,32 @@ public class DrawAnalysisRepositoryImpl implements DrawAnalysisRepository {
         return list;
     }
 
+    @Override
+    public List<DrawReportEntity> getMappedDrawReportReportBy(String marketingId, DateTime startDateTime, DateTime endDateTime) {
+        HashMap<String, Object> parameters = new HashMap<>();
+        String sql = "select mdr.comments, mdr.id, sum(ifnull(ddp.count, 0))  from mkt_draw_rule mdr                  \n" +
+                "inner join marketing_arj_draw_rule mp on mdr.id = mp.draw_rule_id and mp.active = 1 \n" +
+                "inner join di_daily_draw_price ddp on ddp.draw_rule_id = mp.map_draw_rule_id  and ddp.draw_date >= :ds and ddp.draw_date <:de \n" +
+                "where mdr.marketing_id = :marketing_id \n" +
+                "group by mdr.id";
+
+        parameters.put("ds", startDateTime.toString("yyyy-MM-dd"));
+        parameters.put("de", endDateTime.toString("yyyy-MM-dd"));
+        parameters.put("marketing_id",marketingId);
+        Query query =  entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        List<Object[]> data = query.getResultList();
+        List<DrawReportEntity> list = new ArrayList<>();
+        for (Object[] d : data) {
+            DrawReportEntity entity = new DrawReportEntity();
+            entity.setDrawRuleName((String) d[0]);
+            entity.setId((String) d[1]);
+            entity.setCount(((Number) d[2]).intValue());
+            list.add(entity);
+        }
+        return list;
+    }
+
 }
