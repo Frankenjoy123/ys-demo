@@ -552,11 +552,6 @@ public class MarketingController {
 
         mktDrawPrizeObjectList.forEach(object -> {
             MktDrawPrize mktDrawPrize = new MktDrawPrize(object);
-            MktDrawRuleObject mktDrawRuleObject = marketingDomain.getDrawRuleById(object.getDrawRuleId());
-            MktConsumerRightObject mktConsumerRightObject = marketingDomain.getConsumerRightById(mktDrawRuleObject.getConsumerRightId());
-            if (mktConsumerRightObject != null) {
-                mktDrawPrize.setMktConsumerRight(new MktConsumerRight(mktConsumerRightObject));
-            }
             mktDrawPrizeList.add(mktDrawPrize);
         });
         weChatPrize.setWechatPrize(mktDrawPrizeList);
