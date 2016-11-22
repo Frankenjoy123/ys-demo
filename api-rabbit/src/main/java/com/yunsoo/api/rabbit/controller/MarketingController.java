@@ -10,7 +10,6 @@ import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
 import org.joda.time.DateTime;
@@ -430,10 +429,10 @@ public class MarketingController {
         if (product == null) {
             throw new NotFoundException("product can not be found by the key");
         }
-
-        MktDrawRecordObject currentRecord = marketingDomain.getMktDrawRecordByProductKey(key);
-        if(currentRecord != null)
-            throw new ConflictException("key already prized");
+        // one ysid has opportunity to draw for every product key
+//        MktDrawRecordObject currentRecord = marketingDomain.getMktDrawRecordByProductKey(key);
+//        if(currentRecord != null)
+//            throw new ConflictException("key already prized");
 
         MktDrawPrizeObject prize = new MktDrawPrizeObject();
         prize.setPrizeAccountName(mktDraw.getPrizeAccountName());
@@ -526,6 +525,33 @@ public class MarketingController {
 
         return mktDrawPrizeList;
     }
+
+    // query wechat prize top 10
+    @RequestMapping(value = "drawPrize/{id}/top10", method = RequestMethod.GET)
+    public WeChatPrize getTop10MarketingPrizeWeChatList(@PathVariable(value = "id") String marketingId, @RequestParam(value = "ys_id", required = false) String ysId) {
+        if (marketingId == null)
+            throw new BadRequestException("marketing id can not be null");
+
+        WeChatPrize weChatPrize = new WeChatPrize();
+        Long totalNumber = marketingDomain.getPrizeNumberByMarketingId(marketingId);
+        weChatPrize.setPrizeCount(totalNumber.intValue());
+        List<MktDrawPrizeObject> mktDrawPrizeObjectList = marketingDomain.getTop10PrizeList(marketingId, ysId);
+        List<MktDrawPrize> mktDrawPrizeList = new ArrayList<>();
+
+        mktDrawPrizeObjectList.forEach(object -> {
+            MktDrawPrize mktDrawPrize = new MktDrawPrize(object);
+            MktDrawRuleObject mktDrawRuleObject = marketingDomain.getDrawRuleById(object.getDrawRuleId());
+            MktConsumerRightObject mktConsumerRightObject = marketingDomain.getConsumerRightById(mktDrawRuleObject.getConsumerRightId());
+            if (mktConsumerRightObject != null) {
+                mktDrawPrize.setMktConsumerRight(new MktConsumerRight(mktConsumerRightObject));
+            }
+            mktDrawPrizeList.add(mktDrawPrize);
+        });
+        weChatPrize.setWechatPrize(mktDrawPrizeList);
+
+        return weChatPrize;
+    }
+
 
     private ProductObject getProductByKey(String key) {
         if (!KeyGenerator.validate(key)) {

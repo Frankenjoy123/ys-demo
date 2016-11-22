@@ -11,6 +11,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -130,6 +131,11 @@ public class MarketingDomain {
         }, marketingId);
 
     }
+
+    public Long getPrizeNumberByMarketingId(String marketingId) {
+        return dataApiClient.get("marketing/drawPrize/totalcount/marketing/{id}", Long.class, marketingId);
+    }
+
 
     public List<MktDrawPrizeObject> getTop10PrizeList(String marketingId, String ysId) {
         if(StringUtils.hasText(ysId)) {
@@ -493,6 +499,37 @@ public class MarketingDomain {
                 }
             }
             return null;
+        }
+        if (LookupCodes.MktType.DRAW04.equals(obj.getTypeCode())) {
+
+            List<MktDrawRuleObject> envelopeRuleList = getRuleList(marketId);
+            if (envelopeRuleList == null || envelopeRuleList.size() != 2 || envelopeRuleList.get(0).getAvailableQuantity() < 1) {
+                return null;
+            }
+            Integer probability = (int) (envelopeRuleList.get(0).getProbability() * 100);
+            Integer chance = (int) (Math.random() * 100) + 1;
+            if (chance <= probability) {
+                Double amountMin = envelopeRuleList.get(0).getAmount();
+                Double amountMax = envelopeRuleList.get(1).getAmount();
+                if (amountMin > amountMax) {
+                    Double temp = amountMin;
+                    amountMin = amountMax;
+                    amountMax = temp;
+                }
+
+                DecimalFormat df = new DecimalFormat("0.00");
+                double randomAmount = amountMin + Math.random() * (amountMax - amountMin);
+                randomAmount = new Double(df.format(randomAmount).toString());
+                if (randomAmount >= obj.getBalance()) {
+                    randomAmount = new Double(df.format(obj.getBalance()).toString());
+                }
+                MktDrawRuleObject envelopeMktDrawRuleObject = envelopeRuleList.get(0);
+                envelopeMktDrawRuleObject.setAmount(randomAmount);
+                return envelopeMktDrawRuleObject;
+
+            } else {
+                return null;
+            }
         }
         return null;
     }
