@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class EMRUserService {
         });
     }
 
-    public EMRUserReportObject getEMRUserFunnelCount(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd) {
+    public EMRUserReportObject getEMRUserFunnelCount(String orgId, String productBaseId, String province, String city, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Boolean wxUser) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("org_id", orgId)
                 .append("product_base_id", productBaseId)
@@ -62,6 +63,7 @@ public class EMRUserService {
                 .append("city", city)
                 .append("create_datetime_start", createdDateTimeStart)
                 .append("create_datetime_end", createdDateTimeEnd)
+                .append("wx_user",wxUser)
                 .build();
 
         return diApiClient.get("user/funnel" + query, new ParameterizedTypeReference<EMRUserReportObject>() {

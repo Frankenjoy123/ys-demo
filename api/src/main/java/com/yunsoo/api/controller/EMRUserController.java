@@ -378,10 +378,11 @@ public class EMRUserController {
                                          @RequestParam(value = "create_datetime_start", required = false)
                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
                                          @RequestParam(value = "create_datetime_end", required = false)
-                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
+                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                         @RequestParam(value = "wx_user", required = false) Boolean wxUser) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        EMRUserReportObject userReportObject = emrUserService.getEMRUserFunnelCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+        EMRUserReportObject userReportObject = emrUserService.getEMRUserFunnelCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd,wxUser);
 
         return new EMRUserReport(userReportObject);
     }
