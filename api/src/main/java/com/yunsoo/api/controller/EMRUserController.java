@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.di.service.EMREventService;
 import com.yunsoo.api.di.service.EMRUserService;
 import com.yunsoo.api.domain.EMREventDomain;
 import com.yunsoo.api.domain.EMRUserDomain;
@@ -41,6 +42,9 @@ public class EMRUserController {
     private EMREventDomain emrEventDomain;
 
     @Autowired
+    private EMREventService emrEventService;
+
+    @Autowired
     private EMRUserProductEventStasticsDomain emrUserProductEventStasticsDomain;
 
     @RequestMapping(value = "id", method = RequestMethod.GET)
@@ -65,10 +69,10 @@ public class EMRUserController {
 
         emrUser.setEmrUserProductEventStasticses(emrUserProductEventStasticses);
 
-        EMREventObject emrEventObject = emrEventDomain.getLatestEMREvent(orgId, userId, ysId);
+        EMREventObject emrEventObject = emrEventService.getLatestEMREvent(orgId, userId, ysId);
         emrUser.setEmrEvent(new EMREvent(emrEventObject));
 
-        PeriodUserConsumptionStatsObject periodUserConsumptionStatsObject = emrEventDomain.getPeriodUserConsumptionStatsObject(orgId, userId, ysId);
+        PeriodUserConsumptionStatsObject periodUserConsumptionStatsObject = emrEventService.getPeriodUserConsumptionStatsObject(orgId, userId, ysId);
         emrUser.setPeriodUserConsumptionStats(new PeriodUserConsumptionStats(periodUserConsumptionStatsObject));
 
         List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(userId, ysId, orgId);

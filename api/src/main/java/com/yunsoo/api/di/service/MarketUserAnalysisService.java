@@ -70,4 +70,5 @@ public class MarketUserAnalysisService {
         return diApiClient.get("market_user/tags", new ParameterizedTypeReference<List<LuTagObject>>() {
         });
     }
+
 }

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * Created by Xiaowu on 2016/11/18.
  */
 @RestController
-@RequestMapping("/bigdata2")
+@RequestMapping("/bigdata")
 public class EventAnalysisController {
     @Autowired
     private UserEventAnalysisService userEventAnalysisService;

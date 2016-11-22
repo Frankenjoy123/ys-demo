@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * Created by Xiaowu on 2016/11/21.
  */
 @RestController
-@RequestMapping("/bigdata2")
+@RequestMapping("/bigdata")
 public class UserProfileAnalysisController {
     @Autowired
     private UserProfileAnalysisService userProfileAnalysisService;
