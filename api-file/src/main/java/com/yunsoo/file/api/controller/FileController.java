@@ -33,11 +33,12 @@ public class FileController {
 
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<?> getFileByPath(@RequestParam(value = "path", required = true) String path) throws IOException {
+    public ResponseEntity<?> getFileByPath(@RequestParam(value = "path") String path,
+                                           @RequestParam(value = "bucket_name", required = false) String bucketName) throws IOException {
         if (StringUtils.isEmpty(path)) {
             throw new BadRequestException("path must not be null or empty");
         }
-        ResourceInputStream file = fileService.getFileByPath(path);
+        ResourceInputStream file = fileService.getFileByPath(path, bucketName);
         if (file == null) {
             throw new NotFoundException("file not found by path: " + path);
         }

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface FileService {
 
-    ResourceInputStream getFileByPath(String path);
+    ResourceInputStream getFileByPath(String path, String bucketName);
 
     void putFileToPath(String path, ResourceInputStream inputStream);
 
