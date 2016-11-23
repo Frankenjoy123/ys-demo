@@ -9,8 +9,8 @@ import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.util.KeyGenerator;
+import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.exception.ConflictException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
 import org.joda.time.DateTime;
@@ -61,18 +61,23 @@ public class MarketingController {
         }
     }
 
-    //获取Key所对应的抽奖记录by product key and ysid
+    //获取Key所对应的抽奖信息by product key and ysid
     @RequestMapping(value = "draw/{key}/user/{ysid}", method = RequestMethod.GET)
-    public MktDrawRecord getMktDrawRecordByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "ysid") String ysId) {
+    public MktDrawInfo getMktDrawRecordByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "ysid") String ysId) {
         if (key == null) {
             throw new BadRequestException("product key can not be null");
         }
+        MktDrawInfo mktDrawInfo = new MktDrawInfo();
         MktDrawRecordObject mktDrawRecordObject = marketingDomain.getMktDrawRecordByProductKeyAndUser(key, ysId);
         if (mktDrawRecordObject != null) {
-            return new MktDrawRecord(mktDrawRecordObject);
+            mktDrawInfo.setMktDrawRecord(new MktDrawRecord(mktDrawRecordObject));
+            MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKeyAndUser(key, ysId);
+            mktDrawInfo.setMktDrawPrize(new MktDrawPrize(mktDrawPrizeObject));
+            return mktDrawInfo;
         } else {
             return null;
         }
+
     }
 
 
@@ -430,10 +435,10 @@ public class MarketingController {
         if (product == null) {
             throw new NotFoundException("product can not be found by the key");
         }
-
-        MktDrawRecordObject currentRecord = marketingDomain.getMktDrawRecordByProductKey(key);
-        if(currentRecord != null)
-            throw new ConflictException("key already prized");
+        // one ysid has opportunity to draw for every product key
+//        MktDrawRecordObject currentRecord = marketingDomain.getMktDrawRecordByProductKey(key);
+//        if(currentRecord != null)
+//            throw new ConflictException("key already prized");
 
         MktDrawPrizeObject prize = new MktDrawPrizeObject();
         prize.setPrizeAccountName(mktDraw.getPrizeAccountName());
@@ -450,6 +455,12 @@ public class MarketingController {
         record.setYsid(mktDraw.getYsId());
         record.setUserId(mktDraw.getUserId());
 
+        // apply to no scan record id
+        if (!StringUtils.hasText(mktDraw.getScanRecordId())) {
+            String tempScanRecordId = ObjectIdGenerator.getNew();
+            record.setScanRecordId(tempScanRecordId);
+            prize.setScanRecordId(tempScanRecordId);
+        }
 
         MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingId, mktDraw.getScanRecordId(), key);
 
@@ -526,6 +537,28 @@ public class MarketingController {
 
         return mktDrawPrizeList;
     }
+
+    // query wechat prize top 10
+    @RequestMapping(value = "drawPrize/{id}/top10", method = RequestMethod.GET)
+    public WeChatPrize getTop10MarketingPrizeWeChatList(@PathVariable(value = "id") String marketingId, @RequestParam(value = "ys_id", required = false) String ysId) {
+        if (marketingId == null)
+            throw new BadRequestException("marketing id can not be null");
+
+        WeChatPrize weChatPrize = new WeChatPrize();
+        Long totalNumber = marketingDomain.getPrizeNumberByMarketingId(marketingId);
+        weChatPrize.setPrizeCount(totalNumber.intValue());
+        List<MktDrawPrizeObject> mktDrawPrizeObjectList = marketingDomain.getTop10PrizeList(marketingId, ysId);
+        List<MktDrawPrize> mktDrawPrizeList = new ArrayList<>();
+
+        mktDrawPrizeObjectList.forEach(object -> {
+            MktDrawPrize mktDrawPrize = new MktDrawPrize(object);
+            mktDrawPrizeList.add(mktDrawPrize);
+        });
+        weChatPrize.setWechatPrize(mktDrawPrizeList);
+
+        return weChatPrize;
+    }
+
 
     private ProductObject getProductByKey(String key) {
         if (!KeyGenerator.validate(key)) {

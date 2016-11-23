@@ -11,8 +11,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -69,7 +67,7 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
         for(Object[] obj : queryList)
         {
             String tagName = (String)obj[0];
-            int count = ((BigInteger)obj[1]).intValue();
+            int count = ((Number)obj[1]).intValue();
             UserProfileTagCountEntity item = new UserProfileTagCountEntity();
             item.setCount(count);
             item.setTag(tagName);
@@ -122,10 +120,10 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
             //合并null和unknown计数
             if (StringUtils.isEmpty((String) obj[0]) || ((String) obj[0]).equals(UNKNOWN)){
                 int unknownCount=deviceCountMap.getOrDefault(UNKNOWN, 0);
-                deviceCountMap.put(UNKNOWN,((BigInteger)obj[1]).intValue()+unknownCount);
+                deviceCountMap.put(UNKNOWN,((Number)obj[1]).intValue()+unknownCount);
             }
             else {
-                deviceCountMap.put((String) obj[0],((BigInteger)obj[1]).intValue());
+                deviceCountMap.put((String) obj[0],((Number)obj[1]).intValue());
             }
         }
 
@@ -170,8 +168,8 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
         List<UserProfileTagCountEntity> list = new ArrayList<>();
         for(Object[] obj : queryList)
         {
-            int gender = ((BigDecimal)obj[0]).intValue();
-            int count = ((BigInteger)obj[1]).intValue();
+            int gender = ((Number)obj[0]).intValue();
+            int count = ((Number)obj[1]).intValue();
             String genderString = null;
             switch (gender)
             {
@@ -236,8 +234,8 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
         timespanCount.put(UserProfileTagCountEntity.TimeSpan.T22_24, 0);
 
         for (Object[] data : queryList) {
-            int hourNum = ((Integer)data[0]).intValue();
-            int hourCount =((BigInteger)data[1]).intValue();
+            int hourNum = ((Number)data[0]).intValue();
+            int hourCount =((Number)data[1]).intValue();
             if (hourNum < 6) {
                 int count = timespanCount.get(UserProfileTagCountEntity.TimeSpan.T00_06);
                 count += hourCount;
@@ -317,7 +315,7 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
         {
             String province = (String)obj[0];
             String city = (String)obj[1];
-            int count = ((BigInteger)obj[2]).intValue();
+            int count = ((Number)obj[2]).intValue();
 
             UserProfileLocationCountEntity item = new UserProfileLocationCountEntity();
             item.setProvince(province);
@@ -346,7 +344,7 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
             MarketUserLocationAnalysisEntity entity = new MarketUserLocationAnalysisEntity();
             entity.setProvince(item[0] == null ? "未知地区" : (String) item[0]);
             entity.setCity(item[1] == null ? "未知地区" : (String) item[1]);
-            entity.setCount(((BigInteger) item[2]).intValue());
+            entity.setCount(((Number) item[2]).intValue());
             list.add(entity);
         }
         return list;

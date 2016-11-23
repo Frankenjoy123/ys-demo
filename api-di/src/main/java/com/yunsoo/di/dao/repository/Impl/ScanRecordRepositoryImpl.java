@@ -9,7 +9,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,8 +57,8 @@ public class ScanRecordRepositoryImpl implements ScanRecordRepository {
             entity.setProvince((String) d[0]);
             entity.setCity((String) d[1]);
             entity.setProductBaseId(productBaseId);
-            entity.setPv(((BigInteger) d[3]).intValue());
-            entity.setUv(((BigInteger) d[4]).intValue());
+            entity.setPv(((Number) d[3]).intValue());
+            entity.setUv(((Number) d[4]).intValue());
             list.add(entity);
         }
         return list;

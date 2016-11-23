@@ -45,6 +45,7 @@ public class UserEventController {
         UserEventEntity entity = new UserEventEntity();
         entity.setId(object.getId());
         entity.setProductKey(object.getProductKey());
+        entity.setProductBaseId(object.getProductBaseId());
         entity.setScanRecordId(object.getScanRecordId());
         entity.setTypeCode(object.getTypeCode());
         entity.setValue(object.getValue());

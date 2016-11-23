@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/event")
-public class EventController {
+public class EMREventController {
     @Autowired
     private EMREventRepository emrEventRepository;
 

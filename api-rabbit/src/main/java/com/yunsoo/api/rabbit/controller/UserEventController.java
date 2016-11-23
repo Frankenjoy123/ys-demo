@@ -29,6 +29,7 @@ public class UserEventController {
         userEventObject.setCreatedDateTime(DateTime.now());
         userEventObject.setValue(userEvent.getValue());
         userEventObject.setProductKey(userEvent.getProductKey());
+        userEventObject.setProductBaseId(userEvent.getProductBaseId());
         userEventObject.setTypeCode(userEvent.getTypeCode());
         userEventObject.setScanRecordId(userEvent.getScanRecordId());
 

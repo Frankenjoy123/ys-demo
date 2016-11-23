@@ -10,8 +10,6 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -40,7 +38,7 @@ public class JobRepositoryImpl implements JobRepository {
             JobEntity entity = new JobEntity();
             entity.setName((String) d[0]);
             entity.setStatus((String) d[1]);
-            entity.setErrors(((BigInteger) d[2]).intValue());
+            entity.setErrors(((Number) d[2]).intValue());
             Timestamp ts = (Timestamp)d[3];
             entity.setJobStartDateTime(new DateTime(ts.getTime()));
             if(d[4] != null ){
@@ -73,8 +71,8 @@ public class JobRepositoryImpl implements JobRepository {
             DailyJobReportEntity entity = new DailyJobReportEntity();
             entity.setDate(new LocalDate(((Date)d[0]).getTime()));
             entity.setJobName((String)d[1]);
-            entity.setSucceedCount(((BigDecimal) d[2]).intValue());
-            entity.setFailedCount(((BigDecimal) d[3]).intValue());
+            entity.setSucceedCount(((Number) d[2]).intValue());
+            entity.setFailedCount(((Number) d[3]).intValue());
             list.add(entity);
         }
         return list;

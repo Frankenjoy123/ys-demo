@@ -2,6 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.auth.dto.Organization;
 import com.yunsoo.api.auth.service.AuthOrganizationService;
+import com.yunsoo.api.di.service.MarketingService;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.payment.ParameterNames;
@@ -42,6 +43,9 @@ public class MarketingController {
 
     @Autowired
     private MarketingDomain marketingDomain;
+
+    @Autowired
+    private MarketingService marketingService;
 
     @Autowired
     private ProductBaseDomain productBaseDomain;
@@ -779,7 +783,7 @@ public class MarketingController {
         if (marketingId == null) {
             throw new BadRequestException("marketing id can not be null");
         }
-        List<MarketWinUserLocationAnalysisObject> mktWinUserLocationAnalysisObjectList = marketingDomain.getMarketWinUserLocationReportByMarketingId(marketingId);
+        List<MarketWinUserLocationAnalysisObject> mktWinUserLocationAnalysisObjectList = marketingService.getMarketWinUserLocationReportByMarketingId(marketingId);
         return mktWinUserLocationAnalysisObjectList.stream().map(MarketWinUserLocationAnalysis::new).collect(Collectors.toList());
     }
 

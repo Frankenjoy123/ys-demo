@@ -1,5 +1,6 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.di.service.EMREventService;
 import com.yunsoo.api.domain.EMREventDomain;
 import com.yunsoo.api.dto.EMREvent;
 import com.yunsoo.api.util.AuthUtils;
@@ -29,6 +30,9 @@ public class EMREventController {
     @Autowired
     private EMREventDomain emrEventDomain;
 
+    @Autowired
+    private EMREventService emrEventService;
+
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<EMREvent> queryEvent(@RequestParam(value = "org_id", required = false) String orgId,
                                      @RequestParam(value = "user_id", required = false) String userId,
@@ -42,7 +46,7 @@ public class EMREventController {
                                      HttpServletResponse response) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<EMREventObject> entityPage = emrEventDomain.getEMREventList(orgId, userId, ysId, eventDateTimeStart, eventDateTimeEnd, pageable);
+        Page<EMREventObject> entityPage = emrEventService.getEMREventList(orgId, userId, ysId, eventDateTimeStart, eventDateTimeEnd, pageable);
 
         return PageUtils.response(response, entityPage.map(EMREvent::new), pageable != null);
     }
