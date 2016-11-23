@@ -19,7 +19,7 @@ public class SimpleFileServiceImpl implements FileService {
     }
 
     @Override
-    public ResourceInputStream getFileByPath(String path) {
+    public ResourceInputStream getFileByPath(String path, String bucketName) {
         return null;
     }
 
