@@ -130,11 +130,11 @@ public class MarketingController {
         if (prizeResult) {
             mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
             mktDrawPrizeObject.setPaidDateTime(DateTime.now());
-            marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+            marketingDomain.updateWechatPrize(mktDrawPrizeObject);
             return true;
         } else {
             mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
-            marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+            marketingDomain.updateWechatPrize(mktDrawPrizeObject);
             return false;
         }
 

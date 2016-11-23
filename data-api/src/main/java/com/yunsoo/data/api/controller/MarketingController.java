@@ -826,6 +826,33 @@ public class MarketingController {
         return toMktDrawPrizeObject(newEntity);
     }
 
+    //update marketing draw prize when sending wechat red packets, provide: API-Rabbit
+    @RequestMapping(value = "/drawPrize/wechat", method = RequestMethod.PATCH)
+    public MktDrawPrizeObject updateWechatPrize(@RequestBody MktDrawPrizeObject mktDrawPrizeObject) {
+        if (mktDrawPrizeObject == null)
+            throw new BadRequestException("marketing prize object is null");
+
+        MktDrawPrizeObject temp = findMktDrawPrizeById(mktDrawPrizeObject.getDrawRecordId());
+        MktDrawPrizeEntity entity = toMktDrawPrizeEntity(temp);
+
+        if (mktDrawPrizeObject.getPrizeAccount() != null)
+            entity.setPrizeAccount(mktDrawPrizeObject.getPrizeAccount());
+        if (mktDrawPrizeObject.getPrizeAccountName() != null)
+            entity.setPrizeAccountName(mktDrawPrizeObject.getPrizeAccountName());
+        if (mktDrawPrizeObject.getMobile() != null)
+            entity.setMobile(mktDrawPrizeObject.getMobile());
+        if (mktDrawPrizeObject.getStatusCode() != null)
+            entity.setStatusCode(mktDrawPrizeObject.getStatusCode());
+        if (mktDrawPrizeObject.getPaidDateTime() != null)
+            entity.setPaidDateTime(mktDrawPrizeObject.getPaidDateTime());
+        if (LookupCodes.MktDrawPrizeStatus.PAID.equals(mktDrawPrizeObject.getStatusCode())) {
+            entity.setPaidDateTime(DateTime.now());
+        }
+        MktDrawPrizeEntity newEntity = mktDrawPrizeRepository.save(entity);
+
+        return toMktDrawPrizeObject(newEntity);
+    }
+
     //create marketing draw rule provide API
     @RequestMapping(value = "/drawRule", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)

@@ -117,6 +117,11 @@ public class MarketingDomain {
         dataApiClient.patch("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
     }
 
+    public void updateWechatPrize(MktDrawPrizeObject mktDrawPrizeObject) {
+        dataApiClient.patch("marketing/drawPrize/wechat", mktDrawPrizeObject, MktDrawPrizeObject.class);
+    }
+
+
     public void updateMktPrizeContact(MktPrizeContactObject mktPrizeContactObject) {
         dataApiClient.patch("marketing/drawPrize/{id}/contact", mktPrizeContactObject, mktPrizeContactObject.getMktPrizeId());
     }
