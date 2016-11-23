@@ -90,12 +90,13 @@ public class MarketingController {
 
     //send WeChat red packets
     @RequestMapping(value = "draw/{key}/prize/{id}", method = RequestMethod.GET)
-    public Boolean sendWeChatRedPackets(@PathVariable(value = "key") String key, @PathVariable(value = "id") String prizeId) {
-        if ((key == null) || (prizeId == null)) {
+    public Boolean sendWeChatRedPackets(@PathVariable(value = "key") String key, @PathVariable(value = "id") String ysid) {
+        if ((key == null) || (ysid == null)) {
             throw new BadRequestException("product key nor prize id can not be null");
         }
 
-        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByPrizeId(prizeId);
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKeyAndUser(key, ysid);
+        ;
         if (mktDrawPrizeObject == null) {
             throw new BadRequestException("prize record can not be found.");
         }
@@ -114,7 +115,7 @@ public class MarketingController {
         RestTemplate restTemplate = new RestTemplate();
 
         WeChatPrizeRequest weChatPrizeRequest = new WeChatPrizeRequest();
-        weChatPrizeRequest.setOrderId(prizeId);
+        weChatPrizeRequest.setOrderId(mktDrawPrizeObject.getDrawRecordId());
         weChatPrizeRequest.setMchName(marketingObject.getName());
         weChatPrizeRequest.setPrice(mktDrawPrizeObject.getAmount());
         weChatPrizeRequest.setOpenId(mktDrawPrizeObject.getPrizeAccount());
