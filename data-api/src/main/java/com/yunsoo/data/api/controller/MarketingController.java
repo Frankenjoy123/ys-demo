@@ -9,7 +9,6 @@ import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.*;
 import com.yunsoo.data.service.repository.*;
 import com.yunsoo.data.service.service.ProductService;
-import com.yunsoo.data.service.service.contract.Product;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -614,11 +613,11 @@ public class MarketingController {
     @RequestMapping(value = "/draw", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public MktDrawRecordObject createDrawRecord(@RequestBody MktDrawRecordObject mktDrawRecordObject) {
-        String productKey = mktDrawRecordObject.getProductKey();
-        Product product = productService.getByKey(productKey);
-        if (product == null) {
-            throw new NotFoundException("Product");
-        }
+//        String productKey = mktDrawRecordObject.getProductKey();
+//        Product product = productService.getByKey(productKey);
+//        if (product == null) {
+//            throw new NotFoundException("Product");
+//        }
 //        List<MktDrawRecordEntity> mktDrawRecordEntityList = mktDrawRecordRepository.findByProductKey(productKey);
 //        if (mktDrawRecordEntityList.size() > 0) {
 //            throw new ConflictException("This product has been already drawed.");
