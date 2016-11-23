@@ -546,6 +546,9 @@ public class MarketingController {
 
             prize.setDrawRuleId(mktDrawRule.getId());
             prize.setAmount(mktDrawRule.getAmount());
+            if (prize.getPrizeTypeCode().equals(LookupCodes.MktPrizeType.WEBCHAT)) {
+                prize.setPrizeAccount(saveRecord.getOauthOpenid());
+            }
             setAccount(prize);
             prize.setDrawRecordId(saveRecord.getId());
             marketingDomain.createMktDrawPrize(prize);
