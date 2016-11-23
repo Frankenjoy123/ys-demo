@@ -556,7 +556,7 @@ public class MarketingController {
             record.setIsPrized(false);
             marketingDomain.createMktDrawRecord(record);
 
-            return new MktDrawRule(mktDrawRuleObject);
+            return null;
         }
     }
 

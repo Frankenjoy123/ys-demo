@@ -31,7 +31,7 @@ yunsoo:
     expires_minutes: 5256000
     hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU
   wechat:
-    redpack_url: http://192.168.2.28:4480/wechat/redpack
+    redpack_url: http://dev-api.yunsu.co:4480/wechat/redpack
 
 ---
 spring:
@@ -56,6 +56,9 @@ yunsoo:
     key_api:
       base_url: http://dev-api.yunsu.co:4280/
   cache.type: local
+  wechat:
+    redpack_url: http://dev-api.yunsu.co:4480/wechat/redpack
+
 
 ---
 spring:
