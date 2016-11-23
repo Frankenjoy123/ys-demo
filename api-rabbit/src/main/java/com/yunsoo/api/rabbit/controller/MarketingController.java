@@ -141,7 +141,6 @@ public class MarketingController {
     }
 
 
-
     //获取Key所对应的兑奖情况
     @RequestMapping(value = "drawPrize/{key}", method = RequestMethod.GET)
     public MktDrawPrize getMktDrawPrizeByProductKey(@PathVariable String key) {
@@ -492,10 +491,10 @@ public class MarketingController {
 
         String key = mktDraw.getProductKey();
 
-        ProductObject product = productDomain.getProduct(key);
-        if (product == null) {
-            throw new NotFoundException("product can not be found by the key");
-        }
+//        ProductObject product = productDomain.getProduct(key);
+//        if (product == null) {
+//            throw new NotFoundException("product can not be found by the key");
+//        }
         // one ysid has opportunity to draw for every product key
 //        MktDrawRecordObject currentRecord = marketingDomain.getMktDrawRecordByProductKey(key);
 //        if(currentRecord != null)
