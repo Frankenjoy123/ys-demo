@@ -15,9 +15,13 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -34,6 +38,9 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/marketing")
 public class MarketingController {
 
+    @Value("${yunsoo.wechat.redpack_url}")
+    private String redPackUrl;
+
     @Autowired
     private MarketingDomain marketingDomain;
 
@@ -46,6 +53,7 @@ public class MarketingController {
 
     @Autowired
     private TokenAuthenticationService tokenAuthenticationService;
+
 
     //获取Key所对应的抽奖记录
     @RequestMapping(value = "draw/{key}", method = RequestMethod.GET)
@@ -79,6 +87,58 @@ public class MarketingController {
         }
 
     }
+
+    //send WeChat red packets
+    @RequestMapping(value = "draw/{key}/prize/{id}", method = RequestMethod.GET)
+    public Boolean sendWeChatRedPackets(@PathVariable(value = "key") String key, @PathVariable(value = "id") String prizeId) {
+        if ((key == null) || (prizeId == null)) {
+            throw new BadRequestException("product key nor prize id can not be null");
+        }
+
+        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByPrizeId(prizeId);
+        if (mktDrawPrizeObject == null) {
+            throw new BadRequestException("prize record can not be found.");
+        }
+        if (mktDrawPrizeObject.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.PAID)) {
+            throw new RestErrorResultException(new ErrorResult(5002, "prize had been sent"));
+        }
+        if (mktDrawPrizeObject.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.FAILED)) {
+            throw new RestErrorResultException(new ErrorResult(5004, "prize had been sent invoke error"));
+        }
+
+        MarketingObject marketingObject = marketingDomain.getMarketingById(mktDrawPrizeObject.getMarketingId());
+        if (marketingObject == null) {
+            throw new BadRequestException("marketing can not be found.");
+        }
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        WeChatPrizeRequest weChatPrizeRequest = new WeChatPrizeRequest();
+        weChatPrizeRequest.setOrderId(prizeId);
+        weChatPrizeRequest.setMchName(marketingObject.getName());
+        weChatPrizeRequest.setPrice(mktDrawPrizeObject.getAmount());
+        weChatPrizeRequest.setOpenId(mktDrawPrizeObject.getPrizeAccount());
+        weChatPrizeRequest.setWishing(marketingObject.getWishes());
+        weChatPrizeRequest.setRemark(marketingObject.getComments());
+        weChatPrizeRequest.setActionName(marketingObject.getName());
+
+        HttpEntity<WeChatPrizeRequest> requestEntity = new HttpEntity<WeChatPrizeRequest>(weChatPrizeRequest);
+        ResponseEntity<Boolean> result = restTemplate.postForEntity(redPackUrl, requestEntity, Boolean.class);
+
+        Boolean prizeResult = result.getBody();
+        if (prizeResult) {
+            mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+            mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+            marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+            return true;
+        } else {
+            mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
+            marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
+            return false;
+        }
+
+    }
+
 
 
     //获取Key所对应的兑奖情况
