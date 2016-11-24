@@ -21,7 +21,8 @@ import java.util.stream.Collectors;
 /**
  * Created by Dake Wang on 2016/2/15.
  */
-
+@RestController
+@RequestMapping("/bigdata2")
 public class AnalysisController {
     @Autowired
     private AnalysisDomain analysisDomain;

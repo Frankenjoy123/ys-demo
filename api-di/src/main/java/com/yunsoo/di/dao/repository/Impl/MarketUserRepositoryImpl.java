@@ -141,7 +141,8 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
         HashMap<String, Object> parameters = new HashMap<>();
 
         String sql = "SELECT ifnull(sex, 2) as gender, count(1) FROM di.mkt_draw_record dr " +
-                "LEFT JOIN di.di_user u ON dr.user_id=u.id "+
+                "inner join di.di_event e on e.event_id=dr.scan_record_id and e.name='scan' "+
+                "inner JOIN di.di_user u ON e.user_id=u.user_id and e.ys_id=u.ys_id and e.org_id=u.org_id "+
                 "where u.org_id = :orgId ";
 
         parameters.put("orgId", orgId);
@@ -196,9 +197,9 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
     public List<UserProfileTagCountEntity> queryMarketUserUsageAnalysis(String orgId, DateTime startTime, DateTime endTime, String marketingId) {
         HashMap<String, Object> parameters = new HashMap<>();
 
-        String sql = "select hour(convert_tz(dr.created_datetime,'+00:00','+08:00')) as hourNum, count(distinct dr.user_id) " +
+        String sql = "select hour(convert_tz(dr.created_datetime,'+00:00','+08:00')) as hourNum, count(1) " +
                 "FROM di.mkt_draw_record dr " +
-                "left join di.di_event e on dr.scan_record_id = e.event_id and e.name='scan' "+
+                "inner join di.di_event e on dr.scan_record_id = e.event_id and e.name='scan' "+
                 "where e.org_id = :orgId";
 
         parameters.put("orgId", orgId);
@@ -328,7 +329,8 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
 
     @Override
     public List<MarketUserLocationAnalysisEntity> queryRewardLocationReport(String marketingId) {
-        String sql = "select lu.province, lu.city, count(1) from di.mkt_draw_record dr LEFT JOIN di.di_event ev ON dr.scan_record_id=ev.event_id left join lu_province_city lu on ev.location_id = lu.id " +
+        String sql = "select lu.province, lu.city, count(1) from di.mkt_draw_record dr LEFT JOIN di.di_event ev ON dr.scan_record_id=ev.event_id  and e.name='scan' "
+                +"left join lu_province_city lu on ev.location_id = lu.id " +
                 " where dr.isPrized = 1 and dr.marketing_id =:marketingId " +
                 " group by lu.id ";
 

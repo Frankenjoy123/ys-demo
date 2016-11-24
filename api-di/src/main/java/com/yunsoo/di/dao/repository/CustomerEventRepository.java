@@ -14,11 +14,6 @@ public interface CustomerEventRepository {
                     DateTime createdDateTimeEnd ,
                     Boolean wxUser);
 
-    int[] wxCount(String orgId, String productBaseId,
-                  String province, String city,
-                  DateTime createdDateTimeStart,
-                  DateTime createdDateTimeEnd);
-
     int[] drawCount(String orgId, String productBaseId,
                     String province, String city,
                     DateTime createdDateTimeStart,

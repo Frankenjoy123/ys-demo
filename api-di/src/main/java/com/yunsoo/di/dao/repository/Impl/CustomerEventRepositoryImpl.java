@@ -29,11 +29,6 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
     }
 
     @Override
-    public int[] wxCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return scanQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, null);
-    }
-
-    @Override
     public int[] drawCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd ,Boolean wxUser) {
         return  drawQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, wxUser , 2);
     }
