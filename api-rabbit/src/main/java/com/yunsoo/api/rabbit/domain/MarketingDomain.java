@@ -53,6 +53,12 @@ public class MarketingDomain {
         return dataApiClient.get("marketing/draw/{key}/user/{id}", MktDrawRecordObject.class, key, ysId);
     }
 
+    // query marketing draw prize by product key and ysid and oauthOpenId
+    public MktDrawRecordObject getMktDrawRecordByProductKeyAndUserAndOauthOpenId(String key, String ysId, String oauthOpenId) {
+        return dataApiClient.get("marketing/draw/{key}/user/{id}" + "?oauth_openid=" + oauthOpenId, MktDrawRecordObject.class, key, ysId);
+    }
+
+
 
     public MktDrawPrizeObject getMktDrawPrizeByProductKey(String key) {
         return dataApiClient.get("marketing/drawprize/{key}", MktDrawPrizeObject.class, key);
@@ -62,6 +68,12 @@ public class MarketingDomain {
     public MktDrawPrizeObject getMktDrawPrizeByProductKeyAndUser(String key, String ysId) {
         return dataApiClient.get("marketing/drawprize/{key}/user/{id}", MktDrawPrizeObject.class, key, ysId);
     }
+
+    // query marketing draw prize by product key and ysid and oauthOpenId
+    public MktDrawPrizeObject getMktDrawPrizeByProductKeyAndUserAndOauthOpenId(String key, String ysId, String oauthOpenId) {
+        return dataApiClient.get("marketing/drawprize/{key}/user/{id}" + "?oauth_openid=" + oauthOpenId, MktDrawPrizeObject.class, key, ysId);
+    }
+
 
     public MktDrawPrizeObject getMktDrawPrizeByPrizeId(String prizeId) {
         return dataApiClient.get("marketing/drawPrize/record/{id}", MktDrawPrizeObject.class, prizeId);

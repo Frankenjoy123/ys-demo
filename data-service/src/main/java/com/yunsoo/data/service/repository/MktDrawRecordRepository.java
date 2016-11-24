@@ -19,6 +19,8 @@ public interface MktDrawRecordRepository extends FindOneAndSaveRepository<MktDra
 
     List<MktDrawRecordEntity> findByProductKeyAndYsid(String productKey, String ysid);
 
+    List<MktDrawRecordEntity> findByProductKeyAndOauthOpenid(String productKey, String oauthOpenid);
+
     List<MktDrawRecordEntity> findByYsidAndMarketingId(String ysId, String marketingId);
 
     List<MktDrawRecordEntity> findByMarketingIdAndUserIdAndIsPrized(String marketingId, String userId, Boolean isPrized);
@@ -26,6 +28,8 @@ public interface MktDrawRecordRepository extends FindOneAndSaveRepository<MktDra
     List<MktDrawRecordEntity> findByMarketingIdAndYsidAndIsPrized(String marketingId, String ysid, Boolean isPrized);
 
     List<MktDrawRecordEntity> findByProductKeyAndYsidAndIsPrized(String productKey, String ysid, Boolean isPrized);
+
+    List<MktDrawRecordEntity> findByProductKeyAndOauthOpenidAndIsPrized(String productKey, String oauthOpenid, Boolean isPrized);
 
     Long countByMarketingId(String marketingId);
 

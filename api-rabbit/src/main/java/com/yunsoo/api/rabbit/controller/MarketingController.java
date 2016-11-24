@@ -71,15 +71,19 @@ public class MarketingController {
 
     //获取Key所对应的抽奖信息by product key and ysid
     @RequestMapping(value = "draw/{key}/user/{ysid}", method = RequestMethod.GET)
-    public MktDrawInfo getMktDrawRecordByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "ysid") String ysId) {
+    public MktDrawInfo getMktDrawRecordByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "ysid") String ysId,
+                                                           @RequestParam(value = "oauth_openid") String oauthOpenId) {
         if (key == null) {
             throw new BadRequestException("product key can not be null");
         }
+        if (oauthOpenId == null) {
+            throw new BadRequestException("oauth openid can not be null");
+        }
         MktDrawInfo mktDrawInfo = new MktDrawInfo();
-        MktDrawRecordObject mktDrawRecordObject = marketingDomain.getMktDrawRecordByProductKeyAndUser(key, ysId);
+        MktDrawRecordObject mktDrawRecordObject = marketingDomain.getMktDrawRecordByProductKeyAndUserAndOauthOpenId(key, ysId, oauthOpenId);
         if (mktDrawRecordObject != null) {
             mktDrawInfo.setMktDrawRecord(new MktDrawRecord(mktDrawRecordObject));
-            MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKeyAndUser(key, ysId);
+            MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKeyAndUserAndOauthOpenId(key, ysId, oauthOpenId);
             mktDrawInfo.setMktDrawPrize(new MktDrawPrize(mktDrawPrizeObject));
             return mktDrawInfo;
         } else {

@@ -97,9 +97,15 @@ public class MarketingController {
 
     //get mktDrawPrize by product key and ysid, provide API-Rabbit
     @RequestMapping(value = "/drawprize/{key}/user/{id}", method = RequestMethod.GET)
-    public MktDrawPrizeObject getMktDrawPrizeByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "id") String id) {
+    public MktDrawPrizeObject getMktDrawPrizeByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "id") String id,
+                                                                 @RequestParam(value = "oauth_openid", required = false) String oauthOpenid) {
 
-        List<MktDrawRecordEntity> mktDrawRecordEntities = mktDrawRecordRepository.findByProductKeyAndYsidAndIsPrized(key, id, true);
+        List<MktDrawRecordEntity> mktDrawRecordEntities = new ArrayList<>();
+        if (!StringUtils.isEmpty(oauthOpenid)) {
+            mktDrawRecordEntities = mktDrawRecordRepository.findByProductKeyAndOauthOpenidAndIsPrized(key, oauthOpenid, true);
+        } else {
+            mktDrawRecordEntities = mktDrawRecordRepository.findByProductKeyAndYsidAndIsPrized(key, id, true);
+        }
         if (mktDrawRecordEntities.size() > 0) {
             MktDrawRecordEntity mktDrawRecordEntity = mktDrawRecordEntities.get(0);
             String scanRecordId = mktDrawRecordEntity.getScanRecordId();
@@ -136,8 +142,9 @@ public class MarketingController {
 
     // query marketing draw record by product key and ysid
     @RequestMapping(value = "/draw/{key}/user/{id}", method = RequestMethod.GET)
-    public MktDrawRecordObject getMktDrawRecordByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "id") String id) {
-        List<MktDrawRecordEntity> entities = mktDrawRecordRepository.findByProductKeyAndYsid(key, id);
+    public MktDrawRecordObject getMktDrawRecordByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "id") String id,
+                                                                   @RequestParam(value = "oauth_openid") String oauthOpenId) {
+        List<MktDrawRecordEntity> entities = mktDrawRecordRepository.findByProductKeyAndOauthOpenid(key, oauthOpenId);
         if (entities.size() > 0) {
             MktDrawRecordEntity entity = entities.get(0);
             return toMktDrawRecordObject(entity);
