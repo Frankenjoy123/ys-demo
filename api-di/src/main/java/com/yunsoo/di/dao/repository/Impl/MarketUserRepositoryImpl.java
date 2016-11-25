@@ -329,7 +329,7 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
 
     @Override
     public List<MarketUserLocationAnalysisEntity> queryRewardLocationReport(String marketingId) {
-        String sql = "select lu.province, lu.city, count(1) from di.mkt_draw_record dr LEFT JOIN di.di_event ev ON dr.scan_record_id=ev.event_id  and e.name='scan' "
+        String sql = "select lu.province, lu.city, count(1) from di.mkt_draw_record dr LEFT JOIN di.di_event ev ON dr.scan_record_id=ev.event_id  and ev.name='scan' "
                 +"left join lu_province_city lu on ev.location_id = lu.id " +
                 " where dr.isPrized = 1 and dr.marketing_id =:marketingId " +
                 " group by lu.id ";
