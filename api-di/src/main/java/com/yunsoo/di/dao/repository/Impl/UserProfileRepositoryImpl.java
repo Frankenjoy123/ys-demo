@@ -138,7 +138,6 @@ public class UserProfileRepositoryImpl implements UserProfileRepository{
         }
         List<Object[]> queryList = query.getResultList();
         HashMap<String , Integer> deviceCountMap=new LinkedHashMap<>();
-        List<UserProfileTagCountEntity> list = new ArrayList<>();
 
         for(Object[] obj : queryList)
         {
