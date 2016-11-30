@@ -17,6 +17,9 @@ public class PageTrackInfo {
     @JsonProperty("ys_id")
     private String ysId;
 
+    @JsonProperty("page_id")
+    private String pageId;
+
     @JsonProperty("province")
     private String province;
 
@@ -105,5 +108,13 @@ public class PageTrackInfo {
 
     public void setActionData(String actionData) {
         this.actionData = actionData;
+    }
+
+    public String getPageId() {
+        return pageId;
+    }
+
+    public void setPageId(String pageId) {
+        this.pageId = pageId;
     }
 }

@@ -33,7 +33,7 @@ public class PageTrackerController {
     private static final String YS_ID = "ys_id";
     private static final String CURR_URL = "c_url";
     private static final String ACTION = "action";
-    private static final String ACTION_DATA = "action_data";
+    private static final String PAGE_ID = "page_id";
     private static final String[] LU_PROVINCES = new String[]{"黑龙江", "海南",
             "福建",
             "河南",
@@ -95,6 +95,7 @@ public class PageTrackerController {
         String ysId = getEventData(requestData, YS_ID);
         String url = getEventData(requestData, CURR_URL);
         String action = getEventData(requestData, ACTION);
+        String pageId = getEventData(requestData, PAGE_ID);
 
         if (StringUtils.isEmpty(url)) {
             throw new BadRequestException("c_url不能为空");
@@ -145,12 +146,13 @@ public class PageTrackerController {
         trackInfo.setUrl(url);
         trackInfo.setUserAgent(userAgent);
         trackInfo.setYsId(ysId);
+        trackInfo.setPageId(pageId);
 
         pageTrackService.trackPageView(trackInfo);
     }
 
     private String getActionData(Map<String, String[]> data) {
-        String[] fieldDBRequired = new String[]{YS_ID, CURR_URL, ACTION};
+        String[] fieldDBRequired = new String[]{YS_ID, CURR_URL, ACTION, PAGE_ID};
         List<String> actionDataList = data.entrySet().stream().filter(m -> {
             String key = m.getKey();
             return !Arrays.asList(fieldDBRequired).contains(key);

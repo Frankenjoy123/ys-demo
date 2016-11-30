@@ -23,6 +23,9 @@ public class PageTrackInfoEntity {
     @Column(name = "action_data")
     private String actionData;
 
+    @Column(name = "page_id")
+    private String pageId;
+
     @Column(name = "url")
     private String url;
 
@@ -134,5 +137,13 @@ public class PageTrackInfoEntity {
 
     public void setCreatedDateTime(DateTime createdDateTime) {
         this.createdDateTime = createdDateTime;
+    }
+
+    public String getPageId() {
+        return pageId;
+    }
+
+    public void setPageId(String pageId) {
+        this.pageId = pageId;
     }
 }
