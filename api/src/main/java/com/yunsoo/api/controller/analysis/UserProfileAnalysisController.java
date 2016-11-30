@@ -11,6 +11,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -109,8 +110,21 @@ public class UserProfileAnalysisController {
     private MarketUserCategoryAndValueReport getUserDeviceReport(String orgId) {
 
         List<UserProfileTagCountObject> list = userProfileAnalysisService.getUserProfileDeviceReport(orgId);
-        Map<String, Integer> quantityMap = list.stream().collect(Collectors.toMap(UserProfileTagCountObject::getTag, t->t.getCount()));
+        Map<String, Integer> quantityMap = list.stream()
+                .collect(Collectors.groupingBy(u->{
+                    if (u.getTag().equalsIgnoreCase("iOS")) {
+                        return "iPhone";
+                    }
+                    else if (StringUtils.isEmpty(u.getTag())||u.getTag().equalsIgnoreCase("Unknown")||u.getTag().equalsIgnoreCase("Mac OS X")) {
+                        return "其他";
+                    }
+                    return u.getTag();
 
+                }, Collectors.summingInt(UserProfileTagCountObject::getCount)))
+                .entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (k, v) -> {
+                    throw new IllegalStateException();
+                }, LinkedHashMap::new));
         List<LuTagObject> tags = marketUserAnalysisService.getTags();
         List<String> categories = tags.stream().filter(t -> t.getCategory() == 3).map(LuTagObject::getTagName).collect(Collectors.toList());
         List<Integer> values = tags.stream().filter(t -> t.getCategory() == 3).map(t -> {

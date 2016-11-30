@@ -3,8 +3,11 @@ package com.yunsoo.auth.service;
 import com.yunsoo.auth.api.util.AuthUtils;
 import com.yunsoo.auth.api.util.PageUtils;
 import com.yunsoo.auth.dao.entity.ApplicationEntity;
+import com.yunsoo.auth.dao.entity.ApplicationVersionEntity;
 import com.yunsoo.auth.dao.repository.ApplicationRepository;
+import com.yunsoo.auth.dao.repository.ApplicationVersionRepository;
 import com.yunsoo.auth.dto.Application;
+import com.yunsoo.auth.dto.ApplicationVersion;
 import com.yunsoo.common.web.client.Page;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +29,21 @@ public class ApplicationService {
     @Autowired
     private ApplicationRepository applicationRepository;
 
+    @Autowired
+    private ApplicationVersionRepository applicationVersionRepository;
 
     public Application getById(String appId) {
         if (StringUtils.isEmpty(appId)) {
             return null;
         }
         return toApplication(applicationRepository.findOne(appId));
+    }
+
+    public ApplicationVersion getCurrentAppVersion(String appId){
+        if (StringUtils.isEmpty(appId)){
+            return null;
+        }
+        return ApplicationVersionEntity.toApplicationVersion(applicationVersionRepository.query(appId));
     }
 
     public Page<Application> getList(String typeCode, Pageable pageable) {
@@ -98,4 +110,5 @@ public class ApplicationService {
         application.setModifiedDateTime(entity.getModifiedDateTime());
         return application;
     }
+
 }

@@ -2,6 +2,7 @@ package com.yunsoo.auth.api.controller;
 
 import com.yunsoo.auth.api.util.PageUtils;
 import com.yunsoo.auth.dto.Application;
+import com.yunsoo.auth.dto.ApplicationVersion;
 import com.yunsoo.auth.service.ApplicationService;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -46,6 +47,15 @@ public class ApplicationController {
             throw new NotFoundException("application not found by [id:" + appId + "]");
         }
         return application.getName();
+    }
+
+    @RequestMapping(value = "{appId}/version", method = RequestMethod.GET)
+    public ApplicationVersion getCurrentAppVersion(@PathVariable("appId") String appId) {
+        ApplicationVersion applicationVersion = applicationService.getCurrentAppVersion(appId);
+        if (applicationVersion == null) {
+            throw new NotFoundException("current application version not found by [appId:" + appId + "]");
+        }
+        return applicationVersion;
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
