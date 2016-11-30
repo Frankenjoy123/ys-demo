@@ -136,6 +136,7 @@ public class AccountService {
             entity.setCreatedAccountId(AuthUtils.getCurrentAccount().getId());
         }
         entity.setCreatedDateTime(DateTime.now());
+        entity.setTypeCode(Constants.AccountType.ENTERPRISE);
         return toAccount(accountRepository.save(entity));
     }
 

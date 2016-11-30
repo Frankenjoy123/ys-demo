@@ -3,20 +3,19 @@ package com.yunsoo.third.api;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
+import com.yunsoo.third.dao.entity.ThirdMobileVerificationCodeEntity;
 import com.yunsoo.third.dao.entity.ThirdSmsTemplateEntity;
 import com.yunsoo.third.dao.repository.SMSTemplateRepository;
-import com.yunsoo.third.dto.juhe.JuheIPResult;
-import com.yunsoo.third.dto.juhe.JuheSMSResult;
+import com.yunsoo.third.dto.juhe.*;
 import com.yunsoo.third.service.JuheService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -32,8 +31,6 @@ public class JuheController {
     @Autowired
     private JuheService juheService;
 
-
-
     @RequestMapping(value = "/ip", method = RequestMethod.GET)
     public JuheIPResult getLocationByIp(@RequestParam("ip") String ip){
         JuheIPResult result = juheService.getIP(ip);
@@ -45,43 +42,44 @@ public class JuheController {
         }
     }
 
-    @RequestMapping(value = "/sms", method = RequestMethod.POST)
-    public boolean sendSMS(@RequestParam("mobile") String mobile, @RequestParam("temp_name") String tempName, @RequestParam(value = "variables", required = false) String... variables) {
-
-        ThirdSmsTemplateEntity templateEntity = juheService.getSMSTemplate(tempName);
-        if (templateEntity == null)
-            throw new NotFoundException("the related template not found");
-        String[] keys = templateEntity.getVariable().split(",");
-        if (keys.length != variables.length)
-            throw new BadRequestException("error parameter variables");
-
-        HashMap<String, String> map = new HashMap<>();
-        int index = 0;
-        for (String key : keys) {
-            map.put(key, variables[index]);
-            index++;
-        }
-        try {
-            JuheSMSResult result = juheService.sendSMS(mobile, String.valueOf(templateEntity.getSupplierId()), map);
-            if (result.getErrorCode() == 0) {
-                return true;
-            }
-            else{
-                log.error("send sms message error. reason: " + result.getReason()  + "mobile: " + mobile + ", temp_name: " + tempName + ", variables: " + variables.toString());
-                return false;
-            }
-
-        } catch (UnsupportedEncodingException e) {
-            throw new UnprocessableEntityException("encode paramenter error for sms sending in juhe");
-        }
+    @RequestMapping(value = "/{mobile}/sms_send", method = RequestMethod.POST)
+    public boolean sendVerificationCode(@PathVariable("mobile") String mobile, @RequestParam("temp_name") String tempName){
+        String ver_code = String.valueOf((int)((Math.random() * 9 + 1) * 100000));
+        return juheService.sendVerificationCode(mobile, tempName, ver_code);
     }
 
-    @RequestMapping(value = "/sms/verify", method = RequestMethod.GET)
-    public boolean VerifyCode(@RequestParam("mobile") String mobile, @RequestParam("verification_code") String verificationCode) {
+
+    @RequestMapping(value = "/{mobile}/sms_verify", method = RequestMethod.POST)
+    public boolean VerifyCode(@PathVariable("mobile") String mobile, @RequestParam("verification_code") String verificationCode) {
         if ((mobile == null) || (verificationCode == null)) {
             throw new BadRequestException("mobile phone or verification code can not be null");
         }
         return juheService.verifySMSCode(mobile, verificationCode);
     }
+
+    @RequestMapping(value = "/{mobile}/location", method = RequestMethod.GET)
+    public JuheMobileLocationResult.LocationResultObject getMobileLocation(@PathVariable("mobile") String mobile){
+        return juheService.getMobileLocation(mobile);
+    }
+
+    //充值
+    @RequestMapping(value = "/{mobile}/mobile_fee", method = RequestMethod.GET)
+    public JuheMobileOrderResult.OrderResultObject mobileOrder (@PathVariable("mobile") String mobile,
+                                                                @RequestParam("amount") int amount,
+                                                                @RequestParam("order_id") String id){
+        return juheService.mobileOrder(mobile, amount, id);
+    }
+
+    @RequestMapping(value = "/{mobile}/mobile_data", method = RequestMethod.GET)
+    public JuheMobileDataResult.DataResultObject mobileDataFlow (@PathVariable("mobile") String mobile,
+                                   @RequestParam("data_flow_id") Integer dataFlowId, @RequestParam("order_id") String id){
+
+        return juheService.mobileDataFlow(mobile, dataFlowId, id);
+
+    }
+
+
+
+
 
 }
