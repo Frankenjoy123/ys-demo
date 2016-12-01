@@ -5,12 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
-import org.hibernate.annotations.Type;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
@@ -19,9 +15,6 @@ import java.io.Serializable;
  * Descriptions:
  */
 public class ApplicationVersion implements Serializable {
-
-    @JsonProperty("id")
-    private int id;
 
     @JsonProperty("app_id")
     private String appId;
@@ -42,14 +35,6 @@ public class ApplicationVersion implements Serializable {
 
     @JsonProperty("status_code")
     private String statusCode;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getAppId() {
         return appId;

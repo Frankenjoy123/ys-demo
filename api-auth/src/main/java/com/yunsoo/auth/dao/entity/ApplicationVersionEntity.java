@@ -18,8 +18,10 @@ import javax.persistence.*;
 public class ApplicationVersionEntity {
 
     @Id
+    @GeneratedValue(generator = "idGenerator")
+    @GenericGenerator(name = "idGenerator", strategy = IdGenerator.CLASS)
     @Column(name = "id")
-    private int id;
+    private String id;
 
     @Column(name = "app_id")
     private String appId;
@@ -40,11 +42,11 @@ public class ApplicationVersionEntity {
     @Column(name = "status_code")
     private String statusCode;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -96,12 +98,11 @@ public class ApplicationVersionEntity {
         this.statusCode = statusCode;
     }
 
-    public static ApplicationVersion toApplicationVersion(ApplicationVersionEntity entity){
-        if (entity==null){
+    public static ApplicationVersion toApplicationVersion(ApplicationVersionEntity entity) {
+        if (entity == null) {
             return null;
         }
-        ApplicationVersion applicationVersion=new ApplicationVersion();
-        applicationVersion.setId(entity.getId());
+        ApplicationVersion applicationVersion = new ApplicationVersion();
         applicationVersion.setAppId(entity.getAppId());
         applicationVersion.setVersionCode(entity.getVersionCode());
         applicationVersion.setComments(entity.getComments());
