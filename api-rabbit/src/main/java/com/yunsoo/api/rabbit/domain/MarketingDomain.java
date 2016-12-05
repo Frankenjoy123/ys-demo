@@ -48,6 +48,16 @@ public class MarketingDomain {
         return dataApiClient.get("marketing/draw/{key}", MktDrawRecordObject.class, key);
     }
 
+    public MarketingObject createMarketing(MarketingObject marketingObject) {
+        marketingObject.setId(null);
+        return dataApiClient.post("marketing", marketingObject, MarketingObject.class);
+    }
+
+    public MktDrawRuleObject createMktDrawRuleList(List<MktDrawRuleObject> mktDrawRuleObjectList) {
+        return dataApiClient.post("marketing/drawRule/list", mktDrawRuleObjectList, MktDrawRuleObject.class);
+    }
+
+
     // query marketing draw record by product key and ysid
     public MktDrawRecordObject getMktDrawRecordByProductKeyAndUser(String key, String ysId) {
         return dataApiClient.get("marketing/draw/{key}/user/{id}", MktDrawRecordObject.class, key, ysId);
