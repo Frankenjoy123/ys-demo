@@ -99,6 +99,9 @@ public class MarketingController {
         MarketingObject marketingObject = marketing.toMarketingObject();
         marketingObject.setCreatedDateTime(DateTime.now());
         marketingObject.setTypeCode(LookupCodes.MktType.DRAW04);
+        if (marketing.getBudget() != null) {
+            marketingObject.setBalance(marketing.getBudget());
+        }
         MarketingObject mktObject = marketingDomain.createMarketing(marketingObject);
 
         return new Marketing(mktObject);
