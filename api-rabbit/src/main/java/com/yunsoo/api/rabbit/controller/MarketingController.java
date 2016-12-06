@@ -102,6 +102,7 @@ public class MarketingController {
         if (marketing.getBudget() != null) {
             marketingObject.setBalance(marketing.getBudget());
         }
+        marketingObject.setQuantity((marketing.getBudget().intValue()));
         MarketingObject mktObject = marketingDomain.createMarketing(marketingObject);
 
         return new Marketing(mktObject);
