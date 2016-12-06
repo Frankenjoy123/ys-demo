@@ -122,6 +122,8 @@ public class MarketingController {
                 throw new NotFoundException("marketing can not be found by the id");
             }
             MktDrawRuleObject mktDrawRuleObject = mktDrawRule.toMktDrawRuleObject();
+            mktDrawRuleObject.setTotalQuantity(marketingObject.getQuantity());
+            mktDrawRuleObject.setAvailableQuantity(marketingObject.getQuantity());
             mktDrawRuleObject.setCreatedDateTime(DateTime.now());
             mktDrawRuleObjectList.add(mktDrawRuleObject);
         }
