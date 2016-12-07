@@ -89,6 +89,55 @@ public class MarketingController {
 
     }
 
+    //create marketing plan for micro shop sending wechat red packets
+    @RequestMapping(value = "marketing/draw04", method = RequestMethod.POST)
+    public Marketing createMarketing(@RequestParam(value = "openid") String openid,
+                                     @RequestBody Marketing marketing) {
+        if (!StringUtils.hasText(openid)) {
+            throw new BadRequestException("seller openid should not be empty.");
+        }
+        MktSellerObject mktSellerObject = marketingDomain.getMktSellerByOpenid(openid);
+        if (mktSellerObject == null) {
+            throw new BadRequestException("seller openid invalid.");
+        }
+        MarketingObject marketingObject = marketing.toMarketingObject();
+        marketingObject.setCreatedDateTime(DateTime.now());
+        marketingObject.setTypeCode(LookupCodes.MktType.DRAW04);
+        if (marketing.getBudget() != null) {
+            marketingObject.setBalance(marketing.getBudget());
+        }
+        marketingObject.setOrgId(mktSellerObject.getOrgId());
+        marketingObject.setQuantity((marketing.getBudget().intValue()));
+        MarketingObject mktObject = marketingDomain.createMarketing(marketingObject);
+
+        return new Marketing(mktObject);
+    }
+
+    //create marketing draw rules for micro shop sending wechat red packets
+    @RequestMapping(value = "drawRule/draw04/list", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public MktDrawRule createMktDrawRuleList(@RequestBody List<MktDrawRule> mktDrawRuleList) {
+        if (mktDrawRuleList == null || mktDrawRuleList.size() == 0) {
+            throw new BadRequestException("marketing draw rule list can not be null");
+        }
+        List<MktDrawRuleObject> mktDrawRuleObjectList = new ArrayList<>();
+        for (MktDrawRule mktDrawRule : mktDrawRuleList) {
+            String marketingId = mktDrawRule.getMarketingId();
+            MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+            if (marketingObject == null) {
+                throw new NotFoundException("marketing can not be found by the id");
+            }
+            MktDrawRuleObject mktDrawRuleObject = mktDrawRule.toMktDrawRuleObject();
+            mktDrawRuleObject.setTotalQuantity(marketingObject.getQuantity());
+            mktDrawRuleObject.setAvailableQuantity(marketingObject.getQuantity());
+            mktDrawRuleObject.setCreatedDateTime(DateTime.now());
+            mktDrawRuleObjectList.add(mktDrawRuleObject);
+        }
+
+        MktDrawRuleObject newMktDrawRuleObject = marketingDomain.createMktDrawRuleList(mktDrawRuleObjectList);
+        return new MktDrawRule(newMktDrawRuleObject);
+    }
+
     //send WeChat red packets
     @RequestMapping(value = "draw/{key}/prize/{id}", method = RequestMethod.GET)
     public Boolean sendWeChatRedPackets(@PathVariable(value = "key") String key, @PathVariable(value = "id") String ysid) {

@@ -11,6 +11,9 @@ public class PageTrackInfo {
     @JsonProperty("action")
     private String action;
 
+    @JsonProperty("page_id")
+    private String pageId;
+
     @JsonProperty("url")
     private String url;
 
@@ -105,5 +108,13 @@ public class PageTrackInfo {
 
     public void setActionData(String actionData) {
         this.actionData = actionData;
+    }
+
+    public String getPageId() {
+        return pageId;
+    }
+
+    public void setPageId(String pageId) {
+        this.pageId = pageId;
     }
 }

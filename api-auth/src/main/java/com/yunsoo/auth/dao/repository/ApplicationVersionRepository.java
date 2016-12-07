@@ -10,8 +10,8 @@ import org.springframework.data.repository.query.Param;
  * Created on:   2016-11-29
  * Descriptions:
  */
-public interface ApplicationVersionRepository extends CrudRepository<ApplicationVersionEntity,Integer> {
+public interface ApplicationVersionRepository extends CrudRepository<ApplicationVersionEntity, Integer> {
 
     @Query("from ApplicationVersionEntity where appId=:appId and versionCode = (select max(versionCode) from ApplicationVersionEntity where appId=:appId) ")
-    ApplicationVersionEntity query(@Param("appId")String appId);
+    ApplicationVersionEntity query(@Param("appId") String appId);
 }

@@ -37,6 +37,9 @@ public class Marketing {
     @JsonProperty("type_code")
     private String typeCode;
 
+    @JsonProperty("budget")
+    private Double budget;
+
     @JsonProperty("prize_type_code")
     private String prizeTypeCode;
 
@@ -110,6 +113,14 @@ public class Marketing {
 
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public Double getBudget() {
+        return budget;
+    }
+
+    public void setBudget(Double budget) {
+        this.budget = budget;
     }
 
     public String getPrizeTypeCode() {
@@ -188,6 +199,7 @@ public class Marketing {
             this.setOrgId(object.getOrgId());
             this.setProductBaseId(object.getProductBaseId());
             this.setTypeCode(object.getTypeCode());
+            this.setBudget(object.getBudget());
             this.setPrizeTypeCode(object.getPrizeTypeCode());
             this.setQuantity(object.getQuantity());
             this.setStartDateTime(object.getStartDateTime());
@@ -206,6 +218,7 @@ public class Marketing {
         object.setOrgId(this.getOrgId());
         object.setProductBaseId(this.getProductBaseId());
         object.setTypeCode(this.getTypeCode());
+        object.setBudget(this.getBudget());
         object.setPrizeTypeCode(this.getPrizeTypeCode());
         object.setQuantity(this.getQuantity());
         object.setStartDateTime(this.getStartDateTime());

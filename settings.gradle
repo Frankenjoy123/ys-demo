@@ -10,7 +10,7 @@ include 'processor'     //4080
 include 'api-file'      //4180
 include 'api-key'       //4280
 include 'api-di'        //4380
-include 'api-third'        //4480
+include 'api-third'     //4480
 
 include 'api-rabbit'    //5080
 

@@ -63,7 +63,7 @@ public interface ProductKeyBatchRepository extends CrudRepository<ProductKeyBatc
             "and productKeyTypeCodes != 'package'" +
             "and statusCode in ('creating', 'available') " +
             "and (:productBaseId is null or o.productBaseId = :productBaseId) " +
-            "and createdDateTime >=:startTime and createdDateTime <= :endTime")
+            "and createdDateTime >=:startTime and createdDateTime < :endTime")
     List<ProductKeyBatchEntity> queryDailyKeyUsageReport(@Param("orgId") String orgId,
                                                          @Param("productBaseId") String productBaseId, @Param("startTime") DateTime startTime, @Param("endTime") DateTime endTime);
 

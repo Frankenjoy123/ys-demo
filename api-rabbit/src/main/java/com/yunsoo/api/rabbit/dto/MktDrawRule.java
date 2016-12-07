@@ -25,6 +25,9 @@ public class MktDrawRule {
     @JsonProperty("amount")
     private Double amount;
 
+    @JsonProperty("probability")
+    private double probability;
+
     @JsonProperty("comments")
     private String comments;
 
@@ -78,6 +81,14 @@ public class MktDrawRule {
         this.amount = amount;
     }
 
+    public double getProbability() {
+        return probability;
+    }
+
+    public void setProbability(double probability) {
+        this.probability = probability;
+    }
+
     public String getComments() {
         return comments;
     }
@@ -121,6 +132,7 @@ public class MktDrawRule {
             this.setConsumerRightId(object.getConsumerRightId());
             this.setPrizeTypeCode(object.getPrizeTypeCode());
             this.setAmount(object.getAmount());
+            this.setProbability(object.getProbability());
             this.setComments(object.getComments());
             this.setAppliedEnv(object.getAppliedEnv());
             this.setIsEqual(object.getIsEqual());
@@ -134,6 +146,7 @@ public class MktDrawRule {
         object.setConsumerRightId(this.getConsumerRightId());
         object.setPrizeTypeCode(this.getPrizeTypeCode());
         object.setAmount(this.getAmount());
+        object.setProbability(this.getProbability());
         object.setComments(this.getComments());
         object.setAppliedEnv(this.getAppliedEnv());
         object.setIsEqual(this.getIsEqual());
