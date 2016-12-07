@@ -4,16 +4,20 @@ import com.yunsoo.api.rabbit.Constants;
 import com.yunsoo.api.rabbit.auth.dto.Organization;
 import com.yunsoo.api.rabbit.auth.service.AuthOrganizationService;
 import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
-import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.domain.UserFollowDomain;
 import com.yunsoo.api.rabbit.domain.UserScanDomain;
 import com.yunsoo.api.rabbit.dto.ScanRequest;
 import com.yunsoo.api.rabbit.dto.ScanResponse;
+import com.yunsoo.api.rabbit.key.dto.Product;
+import com.yunsoo.api.rabbit.key.service.ProductService;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
 import com.yunsoo.api.rabbit.security.UserAuthentication;
 import com.yunsoo.api.rabbit.util.IpUtils;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.*;
+import com.yunsoo.common.data.object.ProductBaseObject;
+import com.yunsoo.common.data.object.UserOrganizationFollowingObject;
+import com.yunsoo.common.data.object.UserProductFollowingObject;
+import com.yunsoo.common.data.object.UserScanRecordObject;
 import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.client.Page;
@@ -32,12 +36,6 @@ import java.util.List;
  * Created by:   Zhe
  * Created on:   2015/2/27
  * Descriptions: Allow anonymous visit.
- * <p>
- * ErrorCode
- * 40001    :   查询码不能为空
- * 40002    :   查询参数UserId不能为空
- * 40401    :   User not found!
- * 40402    :   ProductKey not found!
  */
 
 @RestController
@@ -51,10 +49,10 @@ public class ScanController {
     private UserFollowDomain userFollowDomain;
 
     @Autowired
-    private ProductDomain productDomain;
+    private ProductBaseDomain productBaseDomain;
 
     @Autowired
-    private ProductBaseDomain productBaseDomain;
+    private ProductService productService;
 
     @Autowired
     private AuthOrganizationService authOrganizationService;
@@ -76,14 +74,14 @@ public class ScanController {
         String userId = userAuthentication != null ? userAuthentication.getDetails().getId() : Constants.Ids.ANONYMOUS_USER_ID;
 
         //search product by key
-        ProductObject productObject = getProductByKey(key);
+        Product product = getProductByKey(key);
 
         //save scan record
         UserScanRecordObject userScanRecordObject = saveScanRecord(
                 key,
                 userId,
-                productObject.getProductBaseId(),
-                productObject.getProductKeyBatchId(),
+                product.getProductBaseId(),
+                product.getKeyBatchId(),
                 appId,
                 deviceId,
                 ip,
@@ -92,21 +90,21 @@ public class ScanController {
         ScanResponse scanResponse = new ScanResponse();
 
         //get product info
-        ProductBaseObject productBaseObject = getProductBaseById(productObject.getProductBaseId());
-        ScanResponse.Product product = new ScanResponse.Product();
-        product.setId(productBaseObject.getId());
-        product.setName(productBaseObject.getName());
-        product.setDescription(productBaseObject.getDescription());
+        ProductBaseObject productBaseObject = getProductBaseById(product.getProductBaseId());
+        ScanResponse.Product productResponse = new ScanResponse.Product();
+        productResponse.setId(productBaseObject.getId());
+        productResponse.setName(productBaseObject.getName());
+        productResponse.setDescription(productBaseObject.getDescription());
         if (StringUtils.hasText(productBaseObject.getImage())) {
-            product.setImageUrl(productBaseDomain.getProductBaseImageUrl(productBaseObject.getImage()));
+            productResponse.setImageUrl(productBaseDomain.getProductBaseImageUrl(productBaseObject.getImage()));
         }
-        product.setShelfLife(productBaseObject.getShelfLife());
-        product.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
+        productResponse.setShelfLife(productBaseObject.getShelfLife());
+        productResponse.setShelfLifeInterval(productBaseObject.getShelfLifeInterval());
         //specific product info
-        product.setKey(key);
-        product.setStatusCode(productObject.getProductStatusCode());
-        product.setManufacturingDatetime(productObject.getManufacturingDateTime());
-        scanResponse.setProduct(product);
+        productResponse.setKey(key);
+        productResponse.setStatusCode(product.getStatusCode());
+        productResponse.setManufacturingDatetime(product.getManufacturingDateTime());
+        scanResponse.setProduct(productResponse);
 
         //get organization info
         scanResponse.setOrganization(toOrganization(getOrganizationById(productBaseObject.getOrgId())));
@@ -115,7 +113,7 @@ public class ScanController {
         scanResponse.setScanRecord(toScanRecord(userScanRecordObject));
 
         //get security info
-        scanResponse.setSecurity(getSecurityInfo(productObject));
+        scanResponse.setSecurity(getSecurityInfo(product));
 
         //social info
         ScanResponse.Social social = new ScanResponse.Social();
@@ -123,12 +121,12 @@ public class ScanController {
             // ensure user following the company, and set the followed status in result.
             userFollowDomain.ensureUserOrganizationFollowing(userId, productBaseObject.getOrgId());
             // ensure user following the product
-            userFollowDomain.ensureUserProductFollowing(userId, productObject.getProductBaseId());
+            userFollowDomain.ensureUserProductFollowing(userId, product.getProductBaseId());
             social.setOrgFollowing(true);
             social.setProductFollowing(true);
         } else {
             UserOrganizationFollowingObject userOrganizationFollowingObject = userFollowDomain.getUserOrganizationFollowingByUserIdAndOrgId(userId, productBaseObject.getOrgId());
-            UserProductFollowingObject userProductFollowingObject = userFollowDomain.getUserProductFollowingByUserIdAndProductBaseId(userId, productObject.getProductBaseId());
+            UserProductFollowingObject userProductFollowingObject = userFollowDomain.getUserProductFollowingByUserIdAndProductBaseId(userId, product.getProductBaseId());
             social.setOrgFollowing(userOrganizationFollowingObject != null);
             social.setProductFollowing(userProductFollowingObject != null);
         }
@@ -138,15 +136,15 @@ public class ScanController {
     }
 
 
-    private ProductObject getProductByKey(String key) {
+    private Product getProductByKey(String key) {
         if (!KeyGenerator.validate(key)) {
             throw new NotFoundException("product not found");
         }
-        ProductObject productObject = productDomain.getProduct(key);
-        if (productObject == null || productObject.getProductBaseId() == null) {
+        Product product = productService.getProductByKey(key);
+        if (product == null || product.getProductBaseId() == null) {
             throw new NotFoundException("product not found");
         }
-        return productObject;
+        return product;
     }
 
     private ProductBaseObject getProductBaseById(String productBaseId) {
@@ -195,12 +193,12 @@ public class ScanController {
         return userScanDomain.createScanRecord(userScanRecordObject);
     }
 
-    private ScanResponse.Security getSecurityInfo(ProductObject productObject) {
+    private ScanResponse.Security getSecurityInfo(Product product) {
         ScanResponse.Security security = null;
-        if (LookupCodes.ProductKeyType.QR_SECURE.equals(productObject.getProductKeyTypeCode())) {
+        if (LookupCodes.ProductKeyType.QR_SECURE.equals(product.getKeyTypeCode())) {
             //防伪码
             security = new ScanResponse.Security();
-            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 1));
+            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(product.getKey(), new PageRequest(0, 1));
             List<UserScanRecordObject> userScanRecordObjects = userScanRecordObjectPage.getContent();
             int scanCount = userScanRecordObjectPage.getCount() == null ? 0 : userScanRecordObjectPage.getCount();
             security.setScanCount(scanCount);

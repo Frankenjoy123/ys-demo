@@ -7,6 +7,8 @@ import com.yunsoo.api.rabbit.domain.*;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
 import com.yunsoo.api.rabbit.dto.WebScanRequest;
 import com.yunsoo.api.rabbit.dto.WebScanResponse;
+import com.yunsoo.api.rabbit.key.dto.Product;
+import com.yunsoo.api.rabbit.key.service.ProductService;
 import com.yunsoo.api.rabbit.third.dto.WeChatAccessToken;
 import com.yunsoo.api.rabbit.third.service.WeChatService;
 import com.yunsoo.api.rabbit.util.IpUtils;
@@ -43,6 +45,9 @@ public class WebScanController {
     private ProductDomain productDomain;
 
     @Autowired
+    private ProductService productService;
+
+    @Autowired
     private ProductBaseDomain productBaseDomain;
 
     @Autowired
@@ -65,27 +70,27 @@ public class WebScanController {
     public WebScanResponse getKeyScan(@PathVariable(value = "key") String key) {
 
         //search product by key
-        ProductObject productObject = getProductByKey(key);
-        WebScanResponse webScanResponse = getBasicInfo(productObject.getProductBaseId());
+        Product product = getProductByKey(key);
+        WebScanResponse webScanResponse = getBasicInfo(product.getProductBaseId());
 
         //product info specific
-        WebScanResponse.Product product = webScanResponse.getProduct();
-        product.setBatchId(productObject.getProductKeyBatchId());
-        product.setKey(key);
-        product.setStatusCode(productObject.getProductStatusCode());
-        product.setManufacturingDatetime(productObject.getManufacturingDateTime());
-        product.setKeyDetails(productObject.getDetails());
+        WebScanResponse.Product productResponse = webScanResponse.getProduct();
+        productResponse.setBatchId(product.getKeyBatchId());
+        productResponse.setKey(key);
+        productResponse.setStatusCode(product.getStatusCode());
+        productResponse.setManufacturingDatetime(product.getManufacturingDateTime());
+        productResponse.setKeyDetails(product.getDetails());
 
-        ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(productObject.getProductKeyBatchId());
+        ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(product.getKeyBatchId());
         if (productKeyBatchObject != null) {
-            String productKeyBatchDetails = productDomain.getProductKeyBatchDetails(productKeyBatchObject.getOrgId(), productObject.getProductKeyBatchId());
-            product.setBatchDetails(productKeyBatchDetails);
+            String productKeyBatchDetails = productDomain.getProductKeyBatchDetails(productKeyBatchObject.getOrgId(), product.getKeyBatchId());
+            productResponse.setBatchDetails(productKeyBatchDetails);
             //marketing info
             webScanResponse.setMarketing(getMarketingInfo(productKeyBatchObject.getMarketingId()));
         }
 
         //security info
-        webScanResponse.setSecurity(getSecurityInfo(productObject));
+        webScanResponse.setSecurity(getSecurityInfo(product));
 
         webScanResponse.setWeChatAccessToken(getUserAccessToken());
 
@@ -107,13 +112,13 @@ public class WebScanController {
         validateWebScanRequest(webScanRequest, httpServletRequest, ysid, userAgent);
 
         //search product by key
-        ProductObject productObject = getProductByKey(key);
+        Product product = getProductByKey(key);
 
         //save scan record
         UserScanRecordObject userScanRecordObject = saveScanRecord(
                 key,
-                productObject.getProductBaseId(),
-                productObject.getProductKeyBatchId(),
+                product.getProductBaseId(),
+                product.getKeyBatchId(),
                 appId,
                 deviceId,
                 webScanRequest);
@@ -123,7 +128,7 @@ public class WebScanController {
             setCookie(httpServletResponse, webScanRequest.getYsid());
         }
 
-        ProductBaseObject productBaseObject = getProductBaseById(productObject.getProductBaseId());
+        ProductBaseObject productBaseObject = getProductBaseById(product.getProductBaseId());
         String ysId = userScanRecordObject.getYsid();
         String userId = userScanRecordObject.getUserId();
 
@@ -149,21 +154,21 @@ public class WebScanController {
     @RequestMapping(value = "/key/{key}", method = RequestMethod.GET)
     public WebScanResponse getProductKeyScan(@PathVariable(value = "key") String key) {
         //search product by key
-        ProductObject productObject = getProductByKey(key);
-        ProductBaseObject productBaseObject = getProductBaseById(productObject.getProductBaseId());
+        Product product = getProductByKey(key);
+        ProductBaseObject productBaseObject = getProductBaseById(product.getProductBaseId());
         WebScanResponse webScanResponse = new WebScanResponse();
 
         //product info specific
-        WebScanResponse.Product product = new WebScanResponse.Product();
-        product.setId(productObject.getProductBaseId());
-        product.setBatchId(productObject.getProductKeyBatchId());
-        product.setKey(key);
-        product.setStatusCode(productObject.getProductStatusCode());
-        product.setManufacturingDatetime(productObject.getManufacturingDateTime());
-        product.setWebTemplateName(productBaseObject.getWebTemplateName());
-        webScanResponse.setProduct(product);
+        WebScanResponse.Product productResponse = new WebScanResponse.Product();
+        productResponse.setId(product.getProductBaseId());
+        productResponse.setBatchId(product.getKeyBatchId());
+        productResponse.setKey(key);
+        productResponse.setStatusCode(product.getStatusCode());
+        productResponse.setManufacturingDatetime(product.getManufacturingDateTime());
+        productResponse.setWebTemplateName(productBaseObject.getWebTemplateName());
+        webScanResponse.setProduct(productResponse);
 
-        ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(productObject.getProductKeyBatchId());
+        ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(product.getKeyBatchId());
         if (productKeyBatchObject != null) {
             webScanResponse.setMarketing(getMarketingInfo(productKeyBatchObject.getMarketingId()));
 
@@ -173,7 +178,7 @@ public class WebScanController {
         }
 
         //security info
-        webScanResponse.setSecurity(getSecurityInfo(productObject));
+        webScanResponse.setSecurity(getSecurityInfo(product));
 
         webScanResponse.setWeChatAccessToken(getUserAccessToken());
 
@@ -248,15 +253,15 @@ public class WebScanController {
         }
     }
 
-    private ProductObject getProductByKey(String key) {
+    private Product getProductByKey(String key) {
         if (!KeyGenerator.validate(key)) {
             throw new NotFoundException("product not found");
         }
-        ProductObject productObject = productDomain.getProduct(key);
-        if (productObject == null || productObject.getProductBaseId() == null) {
+        Product product = productService.getProductByKey(key);
+        if (product == null || product.getProductBaseId() == null) {
             throw new NotFoundException("product not found");
         }
-        return productObject;
+        return product;
     }
 
     private ProductBaseObject getProductBaseById(String productBaseId) {
@@ -316,12 +321,12 @@ public class WebScanController {
         return marketing;
     }
 
-    private WebScanResponse.Security getSecurityInfo(ProductObject productObject) {
+    private WebScanResponse.Security getSecurityInfo(Product product) {
         WebScanResponse.Security security = null;
-        if (LookupCodes.ProductKeyType.QR_SECURE.equals(productObject.getProductKeyTypeCode())) {
+        if (LookupCodes.ProductKeyType.QR_SECURE.equals(product.getKeyTypeCode())) {
             //防伪码
             security = new WebScanResponse.Security();
-            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(productObject.getProductKey(), new PageRequest(0, 1000));
+            Page<UserScanRecordObject> userScanRecordObjectPage = userScanDomain.getScanRecordsByProductKey(product.getKey(), new PageRequest(0, 1000));
             List<UserScanRecordObject> userScanRecordObjects = userScanRecordObjectPage.getContent();
             security.setScanCount(userScanRecordObjectPage.getCount() == null ? 0 : userScanRecordObjectPage.getCount());
             if (userScanRecordObjects.size() > 0) {
@@ -387,7 +392,7 @@ public class WebScanController {
         return scanRecord;
     }
 
-    private WeChatAccessToken getUserAccessToken(){
+    private WeChatAccessToken getUserAccessToken() {
         //todo: add the mapping of orgId and appId
         WeChatAccessToken weChatAccessToken = weChatService.getUserAccessTokenByAppId(null);
         return weChatAccessToken;

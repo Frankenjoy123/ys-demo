@@ -1,15 +1,14 @@
 package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.MarketingDomain;
-import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.*;
-import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.api.rabbit.key.dto.Product;
+import com.yunsoo.api.rabbit.key.service.ProductService;
 import com.yunsoo.api.rabbit.third.service.JuheService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.error.ErrorResult;
-import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -50,6 +49,9 @@ public class MarketingController {
 
     @Autowired
     private JuheService juheService;
+
+    @Autowired
+    private ProductService productService;
 
 
     //获取Key所对应的抽奖记录
@@ -258,7 +260,6 @@ public class MarketingController {
         marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
 
 
-
         return new MktPrizeContact(newObject);
     }
 
@@ -353,13 +354,13 @@ public class MarketingController {
             mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.SUBMIT);
             mktDrawPrizeObject.setDrawRecordId(currentPrize.getDrawRecordId());
 
-            if(currentPrize.getPrizeTypeCode() == null)
+            if (currentPrize.getPrizeTypeCode() == null)
                 currentPrize.setPrizeTypeCode(LookupCodes.MktPrizeType.WEBCHAT);
 
-            if(StringUtils.hasText(mktDrawPrizeObject.getMobile()))
+            if (StringUtils.hasText(mktDrawPrizeObject.getMobile()))
                 currentPrize.setMobile(mktDrawPrizeObject.getMobile());
 
-            switch (currentPrize.getPrizeTypeCode()){
+            switch (currentPrize.getPrizeTypeCode()) {
                 case LookupCodes.MktPrizeType.MOBILE_FEE:
                     marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
                     boolean isMobileFeeSuccess = marketingDomain.createMobileOrder(currentPrize);
@@ -387,7 +388,7 @@ public class MarketingController {
                     mktDrawPrizeObject.setPaidDateTime(DateTime.now());
                     break;
                 case LookupCodes.MktPrizeType.WEBCHAT:
-                    if(LookupCodes.MktDrawPrizeStatus.PAID.equals(mktDrawPrize.getStatusCode())) {
+                    if (LookupCodes.MktDrawPrizeStatus.PAID.equals(mktDrawPrize.getStatusCode())) {
                         mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
                         mktDrawPrizeObject.setPaidDateTime(DateTime.now());
                     }
@@ -398,7 +399,7 @@ public class MarketingController {
 
             marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
 
-            if(mktDrawPrize.getYsid() != null) {
+            if (mktDrawPrize.getYsid() != null) {
                 MktDrawRecordObject record = marketingDomain.getMktDrawRecordByProductKey(mktDrawPrize.getProductKey());
                 record.setYsid(mktDrawPrize.getYsid());
                 marketingDomain.updateMktDrawRecord(record);
@@ -490,9 +491,11 @@ public class MarketingController {
         }
 
         //search product by key
-        ProductObject productObject = getProductByKey(key);
-
-        ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(productObject.getProductKeyBatchId());
+        Product product = productService.getProductByKey(key);
+        if (product == null) {
+            throw new NotFoundException("product not found");
+        }
+        ProductKeyBatchObject productKeyBatchObject = productDomain.getProductKeyBatch(product.getKeyBatchId());
 
         if (productKeyBatchObject != null) {
             //marketing info
@@ -522,7 +525,7 @@ public class MarketingController {
     public boolean sendPrizeSMS(@PathVariable(value = "key") String productKey,
                                 @RequestParam(value = "mobile") String mobile) {
         MktDrawPrizeObject prize = marketingDomain.getMktDrawPrizeByProductKey(productKey);
-        if(prize == null)
+        if (prize == null)
             throw new NotFoundException("prize for product key not found");
         return juheService.sendVerificationCode(mobile, LookupCodes.SMSTemplate.SENDPRIZE);
     }
@@ -539,7 +542,7 @@ public class MarketingController {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
-        if(mktDraw == null)
+        if (mktDraw == null)
             throw new BadRequestException("prize content can not be null");
 
         String key = mktDraw.getProductKey();
@@ -579,7 +582,7 @@ public class MarketingController {
 
         if (mktDrawRuleObject != null) {
             record.setIsPrized(true);
-            if(mktDrawRuleObject.getPrizeTypeCode() != null)
+            if (mktDrawRuleObject.getPrizeTypeCode() != null)
                 prize.setPrizeTypeCode(mktDrawRuleObject.getPrizeTypeCode());
             else
                 prize.setPrizeTypeCode(LookupCodes.MktPrizeType.WEBCHAT);
@@ -634,7 +637,7 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "drawPrize/{id}/top", method = RequestMethod.GET)
-    public List<MktDrawPrize> getTop10MarketingPrizeList(@PathVariable(value = "id") String marketingId, @RequestParam(value = "ys_id", required = false)String ysId) {
+    public List<MktDrawPrize> getTop10MarketingPrizeList(@PathVariable(value = "id") String marketingId, @RequestParam(value = "ys_id", required = false) String ysId) {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
@@ -676,28 +679,15 @@ public class MarketingController {
     }
 
 
-    private ProductObject getProductByKey(String key) {
-        if (!KeyGenerator.validate(key)) {
-            throw new NotFoundException("product not found");
-        }
-        ProductObject productObject = productDomain.getProduct(key);
-        if (productObject == null || productObject.getProductBaseId() == null) {
-            throw new NotFoundException("product not found");
-        }
-        return productObject;
-    }
-
-
-    private void setAccount(MktDrawPrizeObject prize){
+    private void setAccount(MktDrawPrizeObject prize) {
         prize.setAccountType(prize.getPrizeTypeCode());
 
-        if(LookupCodes.MktPrizeType.MOBILE_FEE.equals(prize.getPrizeTypeCode()) || LookupCodes.MktPrizeType.MOBILE_DATA.equals(prize.getPrizeTypeCode()) ){
+        if (LookupCodes.MktPrizeType.MOBILE_FEE.equals(prize.getPrizeTypeCode()) || LookupCodes.MktPrizeType.MOBILE_DATA.equals(prize.getPrizeTypeCode())) {
             prize.setAccountType("mobile");
             prize.setPrizeAccountName("手机用户");
-        }
-        else if (LookupCodes.MktPrizeType.COUPON.equals(prize.getPrizeTypeCode())){
-            if(prize.getPrizeAccountName() == null)
-            prize.setPrizeAccountName("手机用户");
+        } else if (LookupCodes.MktPrizeType.COUPON.equals(prize.getPrizeTypeCode())) {
+            if (prize.getPrizeAccountName() == null)
+                prize.setPrizeAccountName("手机用户");
         }
     }
 

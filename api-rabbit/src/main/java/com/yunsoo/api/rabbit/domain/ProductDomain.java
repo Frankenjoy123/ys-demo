@@ -3,12 +3,9 @@ package com.yunsoo.api.rabbit.domain;
 import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.rabbit.file.service.FileService;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
-import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
@@ -34,16 +31,6 @@ public class ProductDomain {
     @Autowired
     private FileService fileService;
 
-    private Log log = LogFactory.getLog(this.getClass());
-
-    //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT.toString(),#key)")
-    public ProductObject getProduct(String key) {
-        try {
-            return dataApiClient.get("product/{key}", ProductObject.class, key);
-        } catch (NotFoundException ex) {
-            return null;
-        }
-    }
 
     //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT_BATCH.toString(),#productKeyBatchId)")
     public ProductKeyBatchObject getProductKeyBatch(String productKeyBatchId) {

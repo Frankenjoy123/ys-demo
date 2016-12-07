@@ -4,14 +4,13 @@ import com.yunsoo.api.rabbit.auth.service.AuthOrganizationService;
 import com.yunsoo.api.rabbit.domain.OrgBrandDomain;
 import com.yunsoo.api.rabbit.domain.OrganizationDomain;
 import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
-import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.Organization;
 import com.yunsoo.api.rabbit.dto.ProductBase;
+import com.yunsoo.api.rabbit.key.dto.Product;
+import com.yunsoo.api.rabbit.key.service.ProductService;
 import com.yunsoo.api.rabbit.util.PageUtils;
 import com.yunsoo.common.data.object.OrgBrandObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
-import com.yunsoo.common.data.object.ProductObject;
-import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -35,9 +34,6 @@ import java.util.List;
 public class OrganizationController {
 
     @Autowired
-    private ProductDomain productDomain;
-
-    @Autowired
     private AuthOrganizationService authOrganizationService;
 
     @Autowired
@@ -48,6 +44,10 @@ public class OrganizationController {
 
     @Autowired
     private OrgBrandDomain orgBrandDomain;
+
+    @Autowired
+    private ProductService productService;
+
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
     public Organization getOrganizationById(@PathVariable(value = "id") String id) {
@@ -73,8 +73,11 @@ public class OrganizationController {
     @RequestMapping(value = "/{key}/brand/contactMobile", method = RequestMethod.GET)
     public String getBrandPhoneById(@PathVariable(value = "key") String key) {
 
-        ProductObject productObject = getProductByKey(key);
-        ProductBaseObject productBaseObject = getProductBaseById(productObject.getProductBaseId());
+        Product product = productService.getProductByKey(key);
+        if (product == null) {
+            throw new NotFoundException("product not found");
+        }
+        ProductBaseObject productBaseObject = getProductBaseById(product.getProductBaseId());
         OrgBrandObject brandObject = orgBrandDomain.getOrgBrandById(productBaseObject.getOrgId());
 
         if (brandObject == null) {
@@ -100,17 +103,6 @@ public class OrganizationController {
         return builder.body(new InputStreamResource(resourceInputStream));
     }
 
-
-    private ProductObject getProductByKey(String key) {
-        if (!KeyGenerator.validate(key)) {
-            throw new NotFoundException("product not found");
-        }
-        ProductObject productObject = productDomain.getProduct(key);
-        if (productObject == null || productObject.getProductBaseId() == null) {
-            throw new NotFoundException("product not found");
-        }
-        return productObject;
-    }
 
     private ProductBaseObject getProductBaseById(String productBaseId) {
         if (!ObjectIdGenerator.validate(productBaseId)) {
