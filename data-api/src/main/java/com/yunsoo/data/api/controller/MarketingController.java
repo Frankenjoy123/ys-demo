@@ -63,6 +63,9 @@ public class MarketingController {
     @Autowired
     private MktDrawPrizeReportRepository mktDrawPrizeReportRepository;
 
+    @Autowired
+    private MktSellerRepository mktSellerRepository;
+
 
     @Autowired
     private ProductService productService;
@@ -152,6 +155,18 @@ public class MarketingController {
             return null;
         }
     }
+
+    //get marketing plan by id, provide API
+    @RequestMapping(value = "/seller/wechat/{openid}", method = RequestMethod.GET)
+    public MktSellerObject getMktSellerByOpenid(@PathVariable String openid) {
+
+        MktSellerEntity entity = mktSellerRepository.findOne(openid);
+        if (entity == null) {
+            throw new NotFoundException("marketing wechat seller not found by [openid: " + openid + ']');
+        }
+        return toMktSellerObject(entity);
+    }
+
 
 
     //query marketing plan, provide API
@@ -1433,6 +1448,23 @@ public class MarketingController {
         object.setRuleName(entity.getRuleName());
         object.setGravatarUrl(entity.getGravatarUrl());
         object.setOauthOpenid(entity.getOauthOpenid());
+        return object;
+    }
+
+    private MktSellerObject toMktSellerObject(MktSellerEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        MktSellerObject object = new MktSellerObject();
+        object.setOpenid(entity.getOpenid());
+        object.setOrgId(entity.getOrgId());
+        object.setName(entity.getName());
+        object.setSex(entity.getSex());
+        object.setCity(entity.getCity());
+        object.setProvince(entity.getProvince());
+        object.setCountry(entity.getCountry());
+        object.setGravatarUrl(entity.getGravatarUrl());
+        object.setShopUrl(entity.getShopUrl());
         return object;
     }
 

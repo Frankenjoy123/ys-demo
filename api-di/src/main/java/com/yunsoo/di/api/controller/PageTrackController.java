@@ -12,6 +12,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,18 +39,18 @@ public class PageTrackController {
     @RequestMapping(value = "/daily_report", method = RequestMethod.GET)
     public List<PageViewDaily> track(@RequestParam(value = "host_url") String hostUrl, @RequestParam(value = "date_from")
                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate dateFrom,
-                      @RequestParam(value = "date_end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate dateEnd)
-    {
+                      @RequestParam(value = "date_end") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate dateEnd) throws UnsupportedEncodingException {
+        String decodedHostUrl = URLDecoder.decode(hostUrl, "UTF-8");
         DateTime startDateTime = dateFrom.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
         DateTime endDateTime = dateEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
-        List<PageViewDailyEntity> entities =  pageTrackRepository.query(hostUrl, startDateTime, endDateTime);
+        List<PageViewDailyEntity> entities =  pageTrackRepository.query(decodedHostUrl, startDateTime, endDateTime);
         return entities.stream().map(PageTrackController::toPageViewDaily).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/page_view_total", method = RequestMethod.GET)
-    public int[] track(@RequestParam(value = "host_url") String hostUrl)
-    {
-        int[] data =  pageTrackRepository.totalPageView(hostUrl);
+    public int[] track(@RequestParam(value = "host_url") String hostUrl) throws UnsupportedEncodingException {
+        String decodedHostUrl = URLDecoder.decode(hostUrl, "UTF-8");
+        int[] data =  pageTrackRepository.totalPageView(decodedHostUrl);
         return data;
     }
 
