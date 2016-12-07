@@ -30,7 +30,8 @@ yunsoo:
       base_url: http://dev-api.yunsu.co:4280/
     di_api:
       base_url: http://dev-api.yunsu.co:4380/
-
+    third_api:
+      base_url: http://dev-api.yunsu.co:4480/
   product_key_base_url: http://dev.yunsu.co:7080/
   alipay:
     pid: 2088121812016826
