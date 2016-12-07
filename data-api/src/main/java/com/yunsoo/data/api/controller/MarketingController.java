@@ -68,7 +68,7 @@ public class MarketingController {
 
 
     @Autowired
-    private ProductService productService;
+    private MktPrizeCostRepository costRepository;
 
     //get marketing plan by id, provide API
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
