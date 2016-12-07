@@ -20,6 +20,6 @@ public class WechatController {
 
     @RequestMapping(value = "token", method = RequestMethod.GET)
     public WeChatAccessToken getWechatToken(){
-        return new WeChatAccessToken(domain.getUserAccessTokenByOrgId(Constants.Ids.YUNSU_ORGID));
+        return domain.getUserAccessTokenByAppId(null);
     }
 }

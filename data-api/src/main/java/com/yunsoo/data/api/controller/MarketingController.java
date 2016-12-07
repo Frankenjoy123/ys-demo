@@ -63,9 +63,8 @@ public class MarketingController {
     @Autowired
     private MktDrawPrizeReportRepository mktDrawPrizeReportRepository;
 
-
     @Autowired
-    private ProductService productService;
+    private MktPrizeCostRepository costRepository;
 
     //get marketing plan by id, provide API
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -1080,6 +1079,23 @@ public class MarketingController {
             marketingObjectList.add(object);
         }
         return marketingObjectList;
+    }
+
+    @RequestMapping(value = "/cost", method = RequestMethod.POST)
+    public MktPrizeCostObject savePrizeCost(@RequestBody MktPrizeCostObject costObject){
+        if(costObject != null) {
+            MktPrizeCostEntity entity = new MktPrizeCostEntity();
+            entity.setType(costObject.getType());
+            entity.setName(costObject.getName());
+            entity.setOrderId(costObject.getOrderId());
+            entity.setMobile(costObject.getMobile());
+            entity.setDrawRecordId(costObject.getDrawRecordId());
+            entity.setCost(costObject.getCost());
+            costRepository.save(entity);
+            return  costObject;
+        }
+
+        return null;
     }
 
 

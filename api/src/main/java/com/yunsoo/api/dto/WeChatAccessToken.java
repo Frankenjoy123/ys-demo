@@ -3,7 +3,6 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.object.UserAccessTokenObject;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
@@ -49,11 +48,5 @@ public class WeChatAccessToken{
         this.expiredDatetime = expiredDatetime;
     }
 
-    public WeChatAccessToken(){}
 
-    public WeChatAccessToken(UserAccessTokenObject object){
-        this.jsapiTicket = object.getJsapiTicket();
-        this.accessToken = object.getAccessToken();
-        this.expiredDatetime = object.getExpiredDatetime();
-    }
 }

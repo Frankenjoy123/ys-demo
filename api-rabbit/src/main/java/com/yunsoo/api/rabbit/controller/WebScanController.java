@@ -5,9 +5,10 @@ import com.yunsoo.api.rabbit.auth.dto.Organization;
 import com.yunsoo.api.rabbit.auth.service.AuthOrganizationService;
 import com.yunsoo.api.rabbit.domain.*;
 import com.yunsoo.api.rabbit.dto.ProductCategory;
-import com.yunsoo.api.rabbit.dto.UserAccessToken;
 import com.yunsoo.api.rabbit.dto.WebScanRequest;
 import com.yunsoo.api.rabbit.dto.WebScanResponse;
+import com.yunsoo.api.rabbit.third.dto.WeChatAccessToken;
+import com.yunsoo.api.rabbit.third.service.WeChatService;
 import com.yunsoo.api.rabbit.util.IpUtils;
 import com.yunsoo.api.rabbit.util.YSIDGenerator;
 import com.yunsoo.common.data.LookupCodes;
@@ -57,9 +58,7 @@ public class WebScanController {
     private UserBlockDomain userBlockDomain;
 
     @Autowired
-    private UserAccessTokenDomain userAccessTokenDomain;
-
-
+    private WeChatService weChatService;
     //region 一物一码
 
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
@@ -88,18 +87,7 @@ public class WebScanController {
         //security info
         webScanResponse.setSecurity(getSecurityInfo(productObject));
 
-//        Map<String, Object> config = organizationConfigDomain.getConfig(productKeyBatchObject.getOrgId(), false);
-//        String appId = config.get("webchat.app_id").toString();
-//        String secret = config.get("webchat.app_secret").toString();
-
-        String appId = "wx89c1685a0c14e8bf"; //todo: put in to config
-        String secret = "c1e1d31f" + "ac7e0e31" + "a64417ec" + "ef3b3682"; //todo: put in to config
-
-        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject("2k0r1l55i2rs5544wz5", appId, secret);
-        UserAccessToken userAccessToken = new UserAccessToken(userAccessTokenObject);
-        userAccessToken.setAppId(appId);
-
-        webScanResponse.setUserAccessToken(userAccessToken);
+        webScanResponse.setWeChatAccessToken(getUserAccessToken());
 
         return webScanResponse;
     }
@@ -187,18 +175,7 @@ public class WebScanController {
         //security info
         webScanResponse.setSecurity(getSecurityInfo(productObject));
 
-//        Map<String, Object> config = organizationConfigDomain.getConfig(productKeyBatchObject.getOrgId(), false);
-//        String appId = config.get("webchat.app_id").toString();
-//        String secret = config.get("webchat.app_secret").toString();
-
-        String appId = "wx89c1685a0c14e8bf"; //todo: put in to config
-        String secret = "c1e1d31f" + "ac7e0e31" + "a64417ec" + "ef3b3682"; //todo: put in to config
-
-        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject("2k0r1l55i2rs5544wz5", appId, secret);
-        UserAccessToken userAccessToken = new UserAccessToken(userAccessTokenObject);
-        userAccessToken.setAppId(appId);
-
-        webScanResponse.setUserAccessToken(userAccessToken);
+        webScanResponse.setWeChatAccessToken(getUserAccessToken());
 
         return webScanResponse;
     }
@@ -218,18 +195,7 @@ public class WebScanController {
         //marketing info
         webScanResponse.setMarketing(null);
 
-//        Map<String, Object> config = organizationConfigDomain.getConfig(webScanResponse.getOrganization().getId(), false);
-//        String appId = config.get("webchat.app_id").toString();
-//        String secret = config.get("webchat.app_secret").toString();
-
-        String appId = "wx89c1685a0c14e8bf"; //todo: put in to config
-        String secret = "c1e1d31f" + "ac7e0e31" + "a64417ec" + "ef3b3682"; //todo: put in to config
-
-        UserAccessTokenObject userAccessTokenObject = userAccessTokenDomain.getUserAccessTokenObject("2k0r1l55i2rs5544wz5", appId, secret);
-        UserAccessToken userAccessToken = new UserAccessToken(userAccessTokenObject);
-        userAccessToken.setAppId(appId);
-
-        webScanResponse.setUserAccessToken(userAccessToken);
+        webScanResponse.setWeChatAccessToken(getUserAccessToken());
 
         return webScanResponse;
     }
@@ -419,6 +385,12 @@ public class WebScanController {
         scanRecord.setDetails(userScanRecordObject.getDetails());
         scanRecord.setCreatedDateTime(userScanRecordObject.getCreatedDateTime());
         return scanRecord;
+    }
+
+    private WeChatAccessToken getUserAccessToken(){
+        //todo: add the mapping of orgId and appId
+        WeChatAccessToken weChatAccessToken = weChatService.getUserAccessTokenByAppId(null);
+        return weChatAccessToken;
     }
 
 }

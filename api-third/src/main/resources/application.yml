@@ -75,6 +75,6 @@ spring:
 yunsoo:
   environment: dev
   wechat:
-    refresh_token: false
+    refresh_token: true
     key_file: /opt/bin/wechat_keys/apiclient_cert.p12
 

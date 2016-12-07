@@ -2,8 +2,9 @@ package com.yunsoo.api.thread;
 
 import com.yunsoo.api.cache.OperationCache;
 import com.yunsoo.api.client.DataApiClient;
+import com.yunsoo.api.client.ThirdApiClient;
 import com.yunsoo.common.data.object.OperationLogObject;
-import com.yunsoo.common.data.object.juhe.IPResultObject;
+import com.yunsoo.api.dto.IPResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class OperationThread implements Runnable {
 
     @Autowired
     private DataApiClient client;
+
+    @Autowired
+    private ThirdApiClient thirdApiClient;
 
     @Override
     public void run() {
@@ -41,9 +45,9 @@ public class OperationThread implements Runnable {
 
     private OperationLogObject createLog(OperationLogObject log) {
         if (log.getIp() != null) {
-            IPResultObject ipResultObject = client.get("juhe/ip?ip={ip}", IPResultObject.class, log.getIp());
+            IPResult ipResultObject = thirdApiClient.get("juhe/ip?ip={ip}", IPResult.class, log.getIp());
             if (ipResultObject != null)
-                log.setLocation(ipResultObject.getResult().getArea());
+                log.setLocation(ipResultObject.getArea());
         }
 
 

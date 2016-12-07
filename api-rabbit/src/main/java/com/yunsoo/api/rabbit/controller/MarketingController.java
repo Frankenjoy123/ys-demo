@@ -5,6 +5,7 @@ import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.security.TokenAuthenticationService;
+import com.yunsoo.api.rabbit.third.service.JuheService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.error.ErrorResult;
@@ -48,11 +49,7 @@ public class MarketingController {
     private ProductDomain productDomain;
 
     @Autowired
-    private ProductBaseDomain productBaseDomain;
-
-
-    @Autowired
-    private TokenAuthenticationService tokenAuthenticationService;
+    private JuheService juheService;
 
 
     //获取Key所对应的抽奖记录
@@ -310,10 +307,13 @@ public class MarketingController {
             if(currentPrize.getPrizeTypeCode() == null)
                 currentPrize.setPrizeTypeCode(LookupCodes.MktPrizeType.WEBCHAT);
 
+            if(StringUtils.hasText(mktDrawPrizeObject.getMobile()))
+                currentPrize.setMobile(mktDrawPrizeObject.getMobile());
+
             switch (currentPrize.getPrizeTypeCode()){
                 case LookupCodes.MktPrizeType.MOBILE_FEE:
                     marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
-                    boolean isMobileFeeSuccess = marketingDomain.createMobileOrder(mktDrawPrizeObject.getDrawRecordId());
+                    boolean isMobileFeeSuccess = marketingDomain.createMobileOrder(currentPrize);
                     if (!isMobileFeeSuccess) {
                         mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
                         result = false;
@@ -324,7 +324,7 @@ public class MarketingController {
                     break;
                 case LookupCodes.MktPrizeType.MOBILE_DATA:
                     marketingDomain.updateMktDrawPrize(mktDrawPrizeObject);
-                    boolean isMobileDataSuccess = marketingDomain.createMobileDataFlow(mktDrawPrizeObject.getDrawRecordId());
+                    boolean isMobileDataSuccess = marketingDomain.createMobileDataFlow(currentPrize);
                     if (!isMobileDataSuccess) {
                         mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
                         result = false;
@@ -475,14 +475,14 @@ public class MarketingController {
         MktDrawPrizeObject prize = marketingDomain.getMktDrawPrizeByProductKey(productKey);
         if(prize == null)
             throw new NotFoundException("prize for product key not found");
-        return marketingDomain.sendVerificationCode(mobile, LookupCodes.SMSTemplate.SENDPRIZE);
+        return juheService.sendVerificationCode(mobile, LookupCodes.SMSTemplate.SENDPRIZE);
     }
 
     @RequestMapping(value = "drawPrize/smsverfiy", method = RequestMethod.PUT)
     public boolean validatePrizeVerificationCode(@RequestParam(value = "mobile") String mobile,
                                                  @RequestParam(value = "verification_code") String verificationCode) {
 
-        return marketingDomain.validateVerificationCode(mobile, verificationCode);
+        return juheService.validateVerificationCode(mobile, verificationCode);
     }
 
     @RequestMapping(value = "drawPrize/{id}/random", method = RequestMethod.POST)

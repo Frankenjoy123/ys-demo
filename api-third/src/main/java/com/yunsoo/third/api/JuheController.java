@@ -1,11 +1,6 @@
 package com.yunsoo.third.api;
 
 import com.yunsoo.common.web.exception.BadRequestException;
-import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.common.web.exception.UnprocessableEntityException;
-import com.yunsoo.third.dao.entity.ThirdMobileVerificationCodeEntity;
-import com.yunsoo.third.dao.entity.ThirdSmsTemplateEntity;
-import com.yunsoo.third.dao.repository.SMSTemplateRepository;
 import com.yunsoo.third.dto.juhe.*;
 import com.yunsoo.third.service.JuheService;
 import org.apache.commons.logging.Log;
@@ -13,11 +8,6 @@ import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.logging.Logger;
 
 /**
  * Created by yan on 11/2/2016.
@@ -32,10 +22,10 @@ public class JuheController {
     private JuheService juheService;
 
     @RequestMapping(value = "/ip", method = RequestMethod.GET)
-    public JuheIPResult getLocationByIp(@RequestParam("ip") String ip){
+    public JuheIPResult.IPObject getLocationByIp(@RequestParam("ip") String ip){
         JuheIPResult result = juheService.getIP(ip);
         if(result.getErrorCode() == 0)
-            return  result;
+            return  result.getResult();
         else{
             log.error("get ip error. reason: " + result.getReason()  + ". ip: " + ip);
             return null;
@@ -45,7 +35,7 @@ public class JuheController {
     @RequestMapping(value = "/{mobile}/sms_send", method = RequestMethod.POST)
     public boolean sendVerificationCode(@PathVariable("mobile") String mobile, @RequestParam("temp_name") String tempName){
         String ver_code = String.valueOf((int)((Math.random() * 9 + 1) * 100000));
-        return juheService.sendVerificationCode(mobile, tempName, ver_code);
+        return juheService.sendVerificationCode(mobile, tempName, "juhe", ver_code);
     }
 
 
@@ -63,16 +53,17 @@ public class JuheController {
     }
 
     //充值
-    @RequestMapping(value = "/{mobile}/mobile_fee", method = RequestMethod.GET)
+    @RequestMapping(value = "/{mobile}/mobile_fee", method = RequestMethod.POST)
     public JuheMobileOrderResult.OrderResultObject mobileOrder (@PathVariable("mobile") String mobile,
                                                                 @RequestParam("amount") int amount,
                                                                 @RequestParam("order_id") String id){
         return juheService.mobileOrder(mobile, amount, id);
     }
 
-    @RequestMapping(value = "/{mobile}/mobile_data", method = RequestMethod.GET)
+    @RequestMapping(value = "/{mobile}/mobile_data", method = RequestMethod.POST)
     public JuheMobileDataResult.DataResultObject mobileDataFlow (@PathVariable("mobile") String mobile,
-                                   @RequestParam("data_flow_id") Integer dataFlowId, @RequestParam("order_id") String id){
+                                                                 @RequestParam("data_flow_id") Integer dataFlowId,
+                                                                 @RequestParam("order_id") String id){
 
         return juheService.mobileDataFlow(mobile, dataFlowId, id);
 

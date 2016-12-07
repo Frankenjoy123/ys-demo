@@ -1,10 +1,10 @@
 package com.yunsoo.api.controller.analysis;
 
-import com.yunsoo.api.client.DataApiClient;
+import com.yunsoo.api.client.ThirdApiClient;
 import com.yunsoo.api.di.dto.PageTrackInfo;
 import com.yunsoo.api.di.service.PageTrackService;
 import com.yunsoo.api.util.IpUtils;
-import com.yunsoo.common.data.object.juhe.IPResultObject;
+import com.yunsoo.api.dto.IPResult;
 import com.yunsoo.common.web.exception.BadRequestException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -81,7 +81,7 @@ public class PageTrackerController {
     };
 
     @Autowired
-    private DataApiClient dataApiClient;
+    private ThirdApiClient thirdApiClient;
 
     @Autowired
     protected PageTrackService pageTrackService;
@@ -111,9 +111,9 @@ public class PageTrackerController {
         String address = null;
 
         try {
-            IPResultObject ipResultObject = dataApiClient.get("juhe/ip?ip={ip}", IPResultObject.class, ip);
-            if (ipResultObject.getErrorCode() == 0) {
-                String addr = ipResultObject.getResult().getArea();
+            IPResult ipResultObject = thirdApiClient.get("juhe/ip?ip={ip}", IPResult.class, ip);
+            if (ipResultObject != null) {
+                String addr = ipResultObject.getArea();
                 address = addr;
                 Optional<String> provinceTmp = Arrays.asList(LU_PROVINCES).stream().filter(addr::contains).findFirst();
                 if (provinceTmp.isPresent()) {

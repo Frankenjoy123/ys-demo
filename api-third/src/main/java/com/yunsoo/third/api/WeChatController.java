@@ -43,8 +43,17 @@ public class WeChatController {
     }
 
     @RequestMapping(value = "token", method = RequestMethod.GET)
-      public WeChatAccessToken getWeWhatToken() {
-        return new WeChatAccessToken(weChatService.getAccessTokenFromDB(null));
+    public WeChatAccessToken getWeChatToken(@RequestParam(value = "app_id", required = false) String appId) {
+        if(StringUtils.hasText(appId))
+            return new WeChatAccessToken(weChatService.getAccessTokenFromDB(appId, null));
+        return new WeChatAccessToken(weChatService.getAccessTokenFromDB(null, null));
+    }
+
+    @RequestMapping(value = "openid_list", method = RequestMethod.GET)
+    public WeChatOpenIdList getOpenIdList(@RequestParam("app_id") String appId, @RequestParam("app_secret") String appSecret){
+        WeChatAccessToken token = getWeChatToken(appId);
+
+        return weChatService.getOpenIdList(token);
     }
 
     @RequestMapping(value = "jssdk/config", method = RequestMethod.GET)

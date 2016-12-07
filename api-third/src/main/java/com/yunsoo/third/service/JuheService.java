@@ -31,7 +31,7 @@ public class JuheService {
 
     private RestTemplate template;
 
-    private final int expiredTime = 2;
+    private final int expiredTime = 15;
 
     @Value("${yunsoo.juhe.openId}")
     private String openId;
@@ -61,8 +61,8 @@ public class JuheService {
         template = new RestTemplate();
     }
 
-    public ThirdSmsTemplateEntity getSMSTemplate(String tempName){
-        return smsTemplateRepository.findByNameAndSupplier(tempName, "juhe");
+    public ThirdSmsTemplateEntity getSMSTemplate(String tempName, String supplierName){
+        return smsTemplateRepository.findByNameAndSupplier(tempName, supplierName);
     }
 
     //话费充值
@@ -108,7 +108,7 @@ public class JuheService {
     }
 
     //set the ver_code as the first variable
-    public boolean sendVerificationCode(String mobile, String tempName, String... variables){
+    public boolean sendVerificationCode(String mobile, String tempName, String supplierName, String... variables){
         ThirdMobileVerificationCodeEntity mobileVerificationCodeEntity = new ThirdMobileVerificationCodeEntity();
         mobileVerificationCodeEntity.setMobile(mobile);
         mobileVerificationCodeEntity.setVerificationCode(variables[0]);
@@ -116,7 +116,7 @@ public class JuheService {
         mobileVerificationCodeEntity.setCreatedDateTime(DateTime.now());
         mobileVerificationCodeRepository.save(mobileVerificationCodeEntity);
 
-        ThirdSmsTemplateEntity templateEntity = getSMSTemplate(tempName);
+        ThirdSmsTemplateEntity templateEntity = getSMSTemplate(tempName, supplierName);
         if (templateEntity == null)
             throw new NotFoundException("the related template not found");
         String[] keys = templateEntity.getVariable().split(",");

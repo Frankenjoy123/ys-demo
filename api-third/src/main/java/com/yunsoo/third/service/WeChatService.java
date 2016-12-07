@@ -91,19 +91,29 @@ public class WeChatService {
         if(!StringUtils.hasText(secret))
             secret = this.appSecret;
 
-        WeChatAccessToken accessToken = weChatClient.get("cgi-bin/token?grant_type=client_credential&appid=" + appId + "&secret=" + secret, WeChatAccessToken.class);
+        WeChatToken accessToken = weChatClient.get("cgi-bin/token?grant_type=client_credential&appid=" + appId + "&secret=" + secret, WeChatToken.class);
         if (accessToken.getErrorCode() == 0) {
-            WeChatAccessToken jsApi_ticket = weChatClient.get("cgi-bin/ticket/getticket?access_token=" + accessToken.getAccessToken() + "&type=jsapi", WeChatAccessToken.class);
+            WeChatJSTicket jsApi_ticket = weChatClient.get("cgi-bin/ticket/getticket?access_token=" + accessToken.getAccessToken() + "&type=jsapi", WeChatJSTicket.class);
             if (jsApi_ticket.getErrorCode() == 0) {
+                ThirdWeChatAccessTokenEntity token = weChatAccessTokenRepository.findTop1ByAppIdOrderByUpdatedDateTimeDesc(appId);
+                if(token == null) {
+                    token = new ThirdWeChatAccessTokenEntity();
+                    token.setUpdatedDateTime(DateTime.now());
+                    token.setAppId(appId);
+                    token.setAccessToken(accessToken.getAccessToken());
+                    token.setJsapiTicket(jsApi_ticket.getTicket());
+                    token.setExpiredDatetime(DateTime.now().plusSeconds(jsApi_ticket.getExpiresIn().intValue() - 200));
+                    weChatAccessTokenRepository.save(token);
+                }
+                else{
+                    token.setUpdatedDateTime(DateTime.now());
+                    token.setAccessToken(accessToken.getAccessToken());
+                    token.setJsapiTicket(jsApi_ticket.getTicket());
+                    token.setExpiredDatetime(DateTime.now().plusSeconds(jsApi_ticket.getExpiresIn().intValue() - 200));
+                    weChatAccessTokenRepository.save(token);
+                }
 
-                ThirdWeChatAccessTokenEntity token = new ThirdWeChatAccessTokenEntity();
-                token.setUpdatedDateTime(DateTime.now());
-                token.setAppId(appId);
-                token.setAccessToken(accessToken.getAccessToken());
-                token.setJsapiTicket(jsApi_ticket.getTicket());
-                token.setExpiredDatetime(DateTime.now().plusSeconds(jsApi_ticket.getExpiresIn().intValue() - 200));
-                weChatAccessTokenRepository.save(token);
-               return token;
+                return token;
             }
         }
 
@@ -155,12 +165,12 @@ public class WeChatService {
         return null;
     }
 
-    public ThirdWeChatAccessTokenEntity getAccessTokenFromDB(String appId){
+    public ThirdWeChatAccessTokenEntity getAccessTokenFromDB(String appId, String appSecret){
         if(!StringUtils.hasText(appId))
             appId = this.appId;
         ThirdWeChatAccessTokenEntity token = weChatAccessTokenRepository.findTop1ByAppIdOrderByUpdatedDateTimeDesc(appId);
-        if(token.getExpiredDatetime().compareTo(DateTime.now()) <= 0){
-            return saveWeChatAccessTicketFromWeChat(appId, null);
+        if (token == null || token.getExpiredDatetime() == null || token.getExpiredDatetime().isBeforeNow()) {
+            return saveWeChatAccessTicketFromWeChat(appId, appSecret);
         }
 
         return token;
@@ -305,4 +315,13 @@ public class WeChatService {
         }
     }
 
+    public WeChatOpenIdList getOpenIdList(WeChatAccessToken token){
+        if(token != null) {
+            String url = "cgi-bin/user/get?access_token={token}";
+            WeChatOpenIdList list = weChatClient.get(url, WeChatOpenIdList.class, token.getAccessToken());
+            return list;
+        }
+
+        return null;
+    }
 }
