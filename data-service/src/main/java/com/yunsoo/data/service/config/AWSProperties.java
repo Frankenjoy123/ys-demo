@@ -20,8 +20,6 @@ public class AWSProperties {
     @NotNull(message = "region not configured")
     private String region;
 
-    private DynamoDB dynamodb;
-
     @NotNull(message = "s3 not configured")
     private S3 s3;
 
@@ -34,34 +32,12 @@ public class AWSProperties {
         this.region = region;
     }
 
-    public DynamoDB getDynamodb() {
-        return dynamodb;
-    }
-
-    public void setDynamodb(DynamoDB dynamodb) {
-        this.dynamodb = dynamodb;
-    }
-
     public S3 getS3() {
         return s3;
     }
 
     public void setS3(S3 s3) {
         this.s3 = s3;
-    }
-
-
-    public static class DynamoDB {
-
-        private String endpoint;
-
-        public String getEndpoint() {
-            return endpoint;
-        }
-
-        public void setEndpoint(String endpoint) {
-            this.endpoint = endpoint;
-        }
     }
 
 
