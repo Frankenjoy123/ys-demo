@@ -5,8 +5,7 @@ import com.yunsoo.key.dao.entity.ProductTraceEntity;
 import com.yunsoo.key.dao.model.ProductTraceModel;
 import com.yunsoo.key.dao.repository.ProductTraceRepository;
 import com.yunsoo.key.dto.ProductTrace;
-import com.yunsoo.key.service.ProductKeyTraceService;
-import com.yunsoo.key.service.ProductPackageService;
+import com.yunsoo.key.service.ProductTraceService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +14,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by yan on 10/11/2016.
+ * Created by:   yan
+ * Created on:   10/11/2016
+ * Descriptions:
  */
 @Service
-public class ProductTraceServiceImpl implements ProductKeyTraceService {
+public class ProductTraceServiceImpl implements ProductTraceService {
 
     @Autowired
     ProductTraceDao productTraceDao;

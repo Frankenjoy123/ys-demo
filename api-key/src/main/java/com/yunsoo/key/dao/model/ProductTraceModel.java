@@ -10,7 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by yan on 10/10/2016.
+ * Created by:   yan
+ * Created on:   10/10/2016
+ * Descriptions:
  */
 @DynamoDBTable(tableName = "product_trace")
 public class ProductTraceModel {

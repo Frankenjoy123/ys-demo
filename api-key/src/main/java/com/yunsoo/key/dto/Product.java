@@ -48,6 +48,9 @@ public class Product implements Serializable {
     @JsonProperty("manufacturing_datetime")
     private DateTime manufacturingDateTime;
 
+    @JsonProperty("serial_no")
+    private String serialNo;
+
     @JsonProperty("details")
     private String details;
 
@@ -122,6 +125,14 @@ public class Product implements Serializable {
 
     public void setManufacturingDateTime(DateTime manufacturingDateTime) {
         this.manufacturingDateTime = manufacturingDateTime;
+    }
+
+    public String getSerialNo() {
+        return serialNo;
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
     }
 
     public String getDetails() {

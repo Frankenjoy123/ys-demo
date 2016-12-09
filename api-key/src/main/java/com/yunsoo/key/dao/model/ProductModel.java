@@ -41,6 +41,7 @@ public class ProductModel {
     private String productBaseId;
     private String productStatusCode;
     private Long manufacturingDateTimeValue;
+    private String serialNo;
     private String details;
 
 
@@ -132,6 +133,15 @@ public class ProductModel {
 
     public void setManufacturingDateTimeValue(Long manufacturingDateTimeValue) {
         this.manufacturingDateTimeValue = manufacturingDateTimeValue;
+    }
+
+    @DynamoDBAttribute(attributeName = "sn") //serial no
+    public String getSerialNo() {
+        return serialNo;
+    }
+
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
     }
 
     @DynamoDBAttribute(attributeName = "details") //details
