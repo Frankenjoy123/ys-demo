@@ -166,6 +166,20 @@ public class MarketingController {
         return toMktSellerObject(entity);
     }
 
+    //get wechat marketing plan by openid, provide API-rabbit
+    @RequestMapping(value = "/seller/wechat/marketing/{openid}", method = RequestMethod.GET)
+    public List<MarketingObject> getWechatMarketingByOpenid(@PathVariable String openid) {
+
+        MktSellerEntity entity = mktSellerRepository.findOne(openid);
+        if (entity == null) {
+            throw new NotFoundException("marketing wechat seller not found by [openid: " + openid + ']');
+        }
+        String orgId = entity.getOrgId();
+        List<MarketingEntity> entities = marketingRepository.findByOrgIdAndTypeCodeOrderByCreatedDateTimeDesc(orgId, LookupCodes.MktType.DRAW04);
+        return entities.stream().map(this::toMarketingObject).collect(Collectors.toList());
+    }
+
+
 
 
     //query marketing plan, provide API

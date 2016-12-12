@@ -20,6 +20,8 @@ public interface MarketingRepository extends CrudRepository<MarketingEntity, Str
 
     Page<MarketingEntity> findByOrgIdAndStatusCodeOrderByCreatedDateTimeDesc(String orgId, String statusCode, Pageable pageable);
 
+    List<MarketingEntity> findByOrgIdAndTypeCodeOrderByCreatedDateTimeDesc(String orgId, String typeCode);
+
     Long countByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodes);
 
     @Query("select m.id from MarketingEntity m where orgId = ?1")

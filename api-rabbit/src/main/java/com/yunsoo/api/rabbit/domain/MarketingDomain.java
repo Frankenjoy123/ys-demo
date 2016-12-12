@@ -68,6 +68,12 @@ public class MarketingDomain {
         return dataApiClient.get("marketing/seller/wechat/{openid}", MktSellerObject.class, openid);
     }
 
+    public List<MarketingObject> getWechatMarketingByOpenid(String openid) {
+        return dataApiClient.get("marketing/seller/wechat/marketing/{openid}", new ParameterizedTypeReference<List<MarketingObject>>() {
+        }, openid);
+    }
+
+
 
     // query marketing draw record by product key and ysid
     public MktDrawRecordObject getMktDrawRecordByProductKeyAndUser(String key, String ysId) {
@@ -142,6 +148,12 @@ public class MarketingDomain {
         mktPrizeContactObject.setCreatedDateTime(DateTime.now());
         mktPrizeContactObject.setModifiedDateTime(null);
         return dataApiClient.post("marketing/drawPrize/{id}/contact", mktPrizeContactObject, MktPrizeContactObject.class, mktPrizeContactObject.getMktPrizeId());
+    }
+
+    public void updateWechatMarketing(String marketingId) {
+        MarketingObject marketingObject = getMarketingById(marketingId);
+        marketingObject.setStatusCode(LookupCodes.MktStatus.PAID);
+        dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
     }
 
 
