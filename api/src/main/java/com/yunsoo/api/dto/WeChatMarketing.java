@@ -82,6 +82,9 @@ public class WeChatMarketing {
     @JsonProperty("prize_num")
     private Integer prizeNum;
 
+    @JsonProperty("probability")
+    private Double probability;
+
     public String getId() {
         return id;
     }
@@ -240,6 +243,14 @@ public class WeChatMarketing {
 
     public void setPrizeNum(Integer prizeNum) {
         this.prizeNum = prizeNum;
+    }
+
+    public Double getProbability() {
+        return probability;
+    }
+
+    public void setProbability(Double probability) {
+        this.probability = probability;
     }
 
     public WeChatMarketing(MarketingObject object) {

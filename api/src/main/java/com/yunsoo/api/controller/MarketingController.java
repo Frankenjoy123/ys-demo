@@ -472,6 +472,7 @@ public class MarketingController {
             }
             weChatMarketing.setAmountMin(amountMin);
             weChatMarketing.setAmountMax(amountMax);
+            weChatMarketing.setProbability(mktDrawRuleObjectList.get(0).getProbability());
             Long prizeQuantity = marketingDomain.countMktDrawPrizesByMarketingId(object.getId());
             weChatMarketing.setPrizeNum(prizeQuantity.intValue());
             weChatMarketingList.add(weChatMarketing);
