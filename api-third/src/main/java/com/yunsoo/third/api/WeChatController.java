@@ -57,9 +57,9 @@ public class WeChatController {
     }
 
     @RequestMapping(value = "jssdk/config", method = RequestMethod.GET)
-    public WeChatConfig getWeChatConfig(@RequestParam("url") String url,
+    public WeChatConfig getWeChatConfig(@RequestParam("url") String url,@RequestParam(value = "app_id", required = false) String appId,
                                         @RequestParam(value = "nonce_str", required = false) String nonceString) {
-        return weChatService.getWechatConfig(url, nonceString);
+        return weChatService.getWechatConfig(null, url, nonceString);
     }
 
     @RequestMapping(value = "jssdk/pay_config", method = RequestMethod.GET)

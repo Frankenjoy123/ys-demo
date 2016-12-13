@@ -58,7 +58,7 @@ yunsoo:
   environment: local
   client:
     auth_api:
-      base_url: http://dev.yunsu.co/api/auth
+      base_url: http://localhost:6180/
     data_api:
       base_url: http://dev-api.yunsu.co:3080/
     processor:
@@ -66,7 +66,7 @@ yunsoo:
     file_api:
       base_url: http://dev-api.yunsu.co:4180/
     key_api:
-      base_url: http://localhost:4280/
+      base_url: http://dev-api.yunsu.co:4280/
     di_api:
       base_url: http://dev-api.yunsu.co:4380/
     third_api:
