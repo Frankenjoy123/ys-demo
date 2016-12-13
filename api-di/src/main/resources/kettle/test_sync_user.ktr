@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>test_sync_user</name>
+    <name>&#x540c;&#x6b65;&#x7528;&#x6237;</name>
     <description/>
     <extended_description/>
     <trans_version/>
@@ -138,70 +138,37 @@
     </attributes>
   </connection>
   <order>
-  <hop> <from>Block this step until steps finish</from><to>Execute SQL script</to><enabled>Y</enabled> </hop>
-  <hop> <from>Table input 2</from><to>Insert &#x2f; Update</to><enabled>Y</enabled> </hop>
-  <hop> <from>get max id or max modified_datetime</from><to>Table input 2</to><enabled>Y</enabled> </hop>
-  <hop> <from>get max id or max modified_datetime</from><to>Block this step until steps finish</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x6293;&#x53d6;&#x7528;&#x6237;&#x4fe1;&#x606f;</from><to>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x7528;&#x6237;&#x4fe1;&#x606f;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x83b7;&#x53d6;&#x7528;&#x6237;&#x8868;&#x7684;&#x6700;&#x5927;&#x503c;</from><to>&#x6293;&#x53d6;&#x7528;&#x6237;&#x4fe1;&#x606f;</to><enabled>Y</enabled> </hop>
   </order>
   <step>
-    <name>Block this step until steps finish</name>
-    <type>BlockUntilStepsFinish</type>
+    <name>&#x6293;&#x53d6;&#x7528;&#x6237;&#x4fe1;&#x606f;</name>
+    <type>TableInput</type>
     <description/>
-    <distribute>Y</distribute>
+    <distribute>N</distribute>
     <custom_distribution/>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
            <schema_name/>
            </partitioning>
-    <steps>
-      <step>
-        <name>Insert &#x2f; Update</name>
-        <CopyNr>0</CopyNr>
-        </step>
-      </steps>
+    <connection>dev data</connection>
+    <sql>SELECT &#x2a; FROM &#x60;user&#x60; WHERE id &#x3e; &#x3f; or modified_datetime &#x3e;&#x3d; &#x3f; order by id</sql>
+    <limit>0</limit>
+    <lookup>&#x83b7;&#x53d6;&#x7528;&#x6237;&#x8868;&#x7684;&#x6700;&#x5927;&#x503c;</lookup>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>560</xloc>
-      <yloc>224</yloc>
+      <xloc>416</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Execute SQL script</name>
-    <type>ExecSQL</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>dev di</connection>
-    <execute_each_row>Y</execute_each_row>
-    <single_statement>N</single_statement>
-    <replace_variables>Y</replace_variables>
-    <quoteString>Y</quoteString>
-    <sql>update ys_table_sync_task  set last_sync_id &#x3d; &#x28;select max&#x28;id&#x29; from &#x60;user&#x60;&#x29;, last_sync_time &#x3d;&#x28;select max&#x28;modified_datetime&#x29; from &#x60;user&#x60;&#x29;, last_complete_time &#x3d; now&#x28;&#x29; where table_name &#x3d; &#x27;user&#x27;&#x3b;</sql>
-    <set_params>N</set_params>
-    <insert_field/>
-    <update_field/>
-    <delete_field/>
-    <read_field/>
-    <arguments>
-    </arguments>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>720</xloc>
-      <yloc>224</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Insert &#x2f; Update</name>
+    <name>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x7528;&#x6237;&#x4fe1;&#x606f;</name>
     <type>InsertUpdate</type>
     <description/>
     <distribute>Y</distribute>
@@ -318,33 +285,7 @@
     </step>
 
   <step>
-    <name>Table input 2</name>
-    <type>TableInput</type>
-    <description/>
-    <distribute>N</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>dev data</connection>
-    <sql>SELECT &#x2a; FROM &#x60;user&#x60; WHERE id &#x3e; &#x3f; or modified_datetime &#x3e;&#x3d; &#x3f; order by id</sql>
-    <limit>0</limit>
-    <lookup>get max id or max modified_datetime</lookup>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>416</xloc>
-      <yloc>112</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>get max id or max modified_datetime</name>
+    <name>&#x83b7;&#x53d6;&#x7528;&#x6237;&#x8868;&#x7684;&#x6700;&#x5927;&#x503c;</name>
     <type>TableInput</type>
     <description/>
     <distribute>N</distribute>
@@ -355,7 +296,7 @@
            <schema_name/>
            </partitioning>
     <connection>dev di</connection>
-    <sql>SELECT max&#x28;id&#x29;, max&#x28;modified_datetime&#x29; FROM &#x60;user&#x60; </sql>
+    <sql>SELECT ifnull&#x28;max&#x28;id&#x29;,&#x27;00000&#x27;&#x29;, ifnull&#x28;max&#x28;modified_datetime&#x29;,&#x27;1970-1-1&#x27;&#x29; FROM &#x60;user&#x60; </sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>

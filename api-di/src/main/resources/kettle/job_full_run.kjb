@@ -52,7 +52,7 @@
 <size_limit_lines/>
 <interval/>
 <timeout_days/>
-<field><id>ID_JOB</id><enabled>Y</enabled><name>ID_JOB</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>JOBNAME</id><enabled>Y</enabled><name>JOBNAME</name></field><field><id>STATUS</id><enabled>Y</enabled><name>STATUS</name></field><field><id>LINES_READ</id><enabled>Y</enabled><name>LINES_READ</name></field><field><id>LINES_WRITTEN</id><enabled>Y</enabled><name>LINES_WRITTEN</name></field><field><id>LINES_UPDATED</id><enabled>Y</enabled><name>LINES_UPDATED</name></field><field><id>LINES_INPUT</id><enabled>Y</enabled><name>LINES_INPUT</name></field><field><id>LINES_OUTPUT</id><enabled>Y</enabled><name>LINES_OUTPUT</name></field><field><id>LINES_REJECTED</id><enabled>Y</enabled><name>LINES_REJECTED</name></field><field><id>ERRORS</id><enabled>Y</enabled><name>ERRORS</name></field><field><id>STARTDATE</id><enabled>Y</enabled><name>STARTDATE</name></field><field><id>ENDDATE</id><enabled>Y</enabled><name>ENDDATE</name></field><field><id>LOGDATE</id><enabled>Y</enabled><name>LOGDATE</name></field><field><id>DEPDATE</id><enabled>Y</enabled><name>DEPDATE</name></field><field><id>REPLAYDATE</id><enabled>Y</enabled><name>REPLAYDATE</name></field><field><id>LOG_FIELD</id><enabled>Y</enabled><name>LOG_FIELD</name></field><field><id>EXECUTING_SERVER</id><enabled>N</enabled><name>EXECUTING_SERVER</name></field><field><id>EXECUTING_USER</id><enabled>N</enabled><name>EXECUTING_USER</name></field><field><id>START_JOB_ENTRY</id><enabled>N</enabled><name>START_JOB_ENTRY</name></field><field><id>CLIENT</id><enabled>N</enabled><name>CLIENT</name></field></job-log-table>
+<field><id>ID_JOB</id><enabled>Y</enabled><name>ID_JOB</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>JOBNAME</id><enabled>Y</enabled><name>JOBNAME</name></field><field><id>STATUS</id><enabled>Y</enabled><name>STATUS</name></field><field><id>LINES_READ</id><enabled>N</enabled><name>LINES_READ</name></field><field><id>LINES_WRITTEN</id><enabled>N</enabled><name>LINES_WRITTEN</name></field><field><id>LINES_UPDATED</id><enabled>N</enabled><name>LINES_UPDATED</name></field><field><id>LINES_INPUT</id><enabled>N</enabled><name>LINES_INPUT</name></field><field><id>LINES_OUTPUT</id><enabled>N</enabled><name>LINES_OUTPUT</name></field><field><id>LINES_REJECTED</id><enabled>N</enabled><name>LINES_REJECTED</name></field><field><id>ERRORS</id><enabled>Y</enabled><name>ERRORS</name></field><field><id>STARTDATE</id><enabled>Y</enabled><name>STARTDATE</name></field><field><id>ENDDATE</id><enabled>Y</enabled><name>ENDDATE</name></field><field><id>LOGDATE</id><enabled>Y</enabled><name>LOGDATE</name></field><field><id>DEPDATE</id><enabled>Y</enabled><name>DEPDATE</name></field><field><id>REPLAYDATE</id><enabled>Y</enabled><name>REPLAYDATE</name></field><field><id>LOG_FIELD</id><enabled>Y</enabled><name>LOG_FIELD</name></field><field><id>EXECUTING_SERVER</id><enabled>N</enabled><name>EXECUTING_SERVER</name></field><field><id>EXECUTING_USER</id><enabled>N</enabled><name>EXECUTING_USER</name></field><field><id>START_JOB_ENTRY</id><enabled>N</enabled><name>START_JOB_ENTRY</name></field><field><id>CLIENT</id><enabled>N</enabled><name>CLIENT</name></field></job-log-table>
 <jobentry-log-table><connection/>
 <schema/>
 <table/>
@@ -93,11 +93,11 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>672</xloc>
-      <yloc>208</yloc>
+      <xloc>640</xloc>
+      <yloc>192</yloc>
       </entry>
     <entry>
-      <name>Transformation</name>
+      <name>&#x5168;&#x8868;&#x5237;&#x65b0;&#x626b;&#x7801;&#x6570;&#x636e;&#x548c;&#x4e2d;&#x5956;&#x6570;&#x636e;</name>
       <description/>
       <type>TRANS</type>
       <specification_method>filename</specification_method>
@@ -127,13 +127,13 @@
       <draw>Y</draw>
       <nr>0</nr>
       <xloc>432</xloc>
-      <yloc>208</yloc>
+      <yloc>192</yloc>
       </entry>
   </entries>
   <hops>
     <hop>
       <from>START</from>
-      <to>Transformation</to>
+      <to>&#x5168;&#x8868;&#x5237;&#x65b0;&#x626b;&#x7801;&#x6570;&#x636e;&#x548c;&#x4e2d;&#x5956;&#x6570;&#x636e;</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -141,7 +141,7 @@
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>Transformation</from>
+      <from>&#x5168;&#x8868;&#x5237;&#x65b0;&#x626b;&#x7801;&#x6570;&#x636e;&#x548c;&#x4e2d;&#x5956;&#x6570;&#x636e;</from>
       <to>Success</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>

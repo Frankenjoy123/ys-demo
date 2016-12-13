@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>event_user_tr</name>
+    <name>&#x6bcf;&#x9694;5&#x5206;&#x949f;&#x6267;&#x884c;</name>
     <description/>
     <extended_description/>
     <trans_version/>
@@ -77,8 +77,8 @@
   <notepads>
     <notepad>
       <note>&#x6c47;&#x603b;&#x4e8b;&#x4ef6;&#x8868;&#xd;&#xa;</note>
-      <xloc>48</xloc>
-      <yloc>64</yloc>
+      <xloc>32</xloc>
+      <yloc>16</yloc>
       <width>70</width>
       <heigth>43</heigth>
       <fontname>Microsoft YaHei UI</fontname>
@@ -98,8 +98,8 @@
     </notepad>
     <notepad>
       <note>&#x6c47;&#x603b;&#x4ea7;&#x54c1;&#x4fe1;&#x606f;</note>
-      <xloc>48</xloc>
-      <yloc>176</yloc>
+      <xloc>32</xloc>
+      <yloc>112</yloc>
       <width>82</width>
       <heigth>26</heigth>
       <fontname>Microsoft YaHei UI</fontname>
@@ -119,8 +119,8 @@
     </notepad>
     <notepad>
       <note>&#x6c47;&#x603b;&#x7528;&#x6237;&#x4fe1;&#x606f;&#xd;&#xa;&#xd;&#xa;</note>
-      <xloc>48</xloc>
-      <yloc>336</yloc>
+      <xloc>0</xloc>
+      <yloc>304</yloc>
       <width>82</width>
       <heigth>60</heigth>
       <fontname>Microsoft YaHei UI</fontname>
@@ -141,7 +141,7 @@
     <notepad>
       <note>&#x6c47;&#x603b;&#x7528;&#x6237;&#x624b;&#x673a;&#x53f7;&#x7801;&#xd;&#xa;TODO&#x3a; &#x4ee5;&#x540e;&#x4f1a;&#x7528;modified&#x65f6;&#x95f4;&#x4f5c;&#x4e3a;&#x5224;&#x65ad;&#xd;&#xa;&#xd;&#xa;</note>
       <xloc>16</xloc>
-      <yloc>448</yloc>
+      <yloc>480</yloc>
       <width>225</width>
       <heigth>76</heigth>
       <fontname>Microsoft YaHei UI</fontname>
@@ -192,16 +192,19 @@
     </attributes>
   </connection>
   <order>
-  <hop> <from>get max scan event id</from><to>get new scan data</to><enabled>Y</enabled> </hop>
-  <hop> <from>get new scan data</from><to>Table output</to><enabled>Y</enabled> </hop>
-  <hop> <from>get max user product id</from><to>get new product </to><enabled>Y</enabled> </hop>
-  <hop> <from>get new product </from><to>Filter rows</to><enabled>Y</enabled> </hop>
-  <hop> <from>Filter rows</from><to>Insert &#x2f; Update</to><enabled>Y</enabled> </hop>
-  <hop> <from>Filter rows</from><to>Dummy &#x28;do nothing&#x29;</to><enabled>Y</enabled> </hop>
-  <hop> <from>get user max scan id</from><to>get new user scan data</to><enabled>Y</enabled> </hop>
-  <hop> <from>get new user scan data</from><to>Insert &#x2f; update wx user</to><enabled>Y</enabled> </hop>
-  <hop> <from>get user phone</from><to>Insert &#x2f; update user phone</to><enabled>Y</enabled> </hop>
-  <hop> <from>get user max  draw price id</from><to>get user phone</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x83b7;&#x5f97;&#x4ea7;&#x54c1;&#x626b;&#x7801;&#x6700;&#x5927;&#x503c;</from><to>&#x83b7;&#x5f97;&#x65b0;&#x7684;&#x4ea7;&#x54c1;&#x4fe1;&#x606f;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x83b7;&#x5f97;&#x65b0;&#x7684;&#x4ea7;&#x54c1;&#x4fe1;&#x606f;</from><to>&#x8fc7;&#x6ee4;&#x6389;&#x7a7a;&#x7684;&#x4ea7;&#x54c1;&#x6d41;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x8fc7;&#x6ee4;&#x6389;&#x7a7a;&#x7684;&#x4ea7;&#x54c1;&#x6d41;</from><to>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x7528;&#x6237;&#x4ea7;&#x54c1;&#x8868;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x8fc7;&#x6ee4;&#x6389;&#x7a7a;&#x7684;&#x4ea7;&#x54c1;&#x6d41;</from><to>Dummy &#x28;do nothing&#x29;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x83b7;&#x5f97;&#x7528;&#x6237;&#x626b;&#x7801;&#x6570;&#x636e;</from><to>&#x6293;&#x53d6;&#x6700;&#x65b0;&#x7684;&#x7528;&#x6237;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x6293;&#x53d6;&#x6700;&#x65b0;&#x7684;&#x7528;&#x6237;</from><to>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x7528;&#x6237;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x6293;&#x53d6;&#x6700;&#x65b0;&#x7684;&#x624b;&#x673a;&#x53f7;&#x7801;</from><to>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x7528;&#x6237;&#x624b;&#x673a;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x83b7;&#x5f97;&#x7528;&#x6237;&#x624b;&#x673a;&#x914d;&#x7f6e;&#x6700;&#x5927;&#x503c;</from><to>&#x6293;&#x53d6;&#x6700;&#x65b0;&#x7684;&#x624b;&#x673a;&#x53f7;&#x7801;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x83b7;&#x5f97;&#x6700;&#x5927;&#x626b;&#x63cf;id</from><to>&#x8bfb;&#x53d6;&#x626b;&#x63cf;&#x6570;&#x636e;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x8bfb;&#x53d6;&#x626b;&#x63cf;&#x6570;&#x636e;</from><to>&#x63d2;&#x5165;di_event</to><enabled>Y</enabled> </hop>
+  <hop> <from>Dummy &#x28;do nothing&#x29; 2</from><to>&#x83b7;&#x5f97;&#x6700;&#x5927;&#x626b;&#x63cf;id</to><enabled>Y</enabled> </hop>
+  <hop> <from>Dummy &#x28;do nothing&#x29; 2</from><to>&#x83b7;&#x5f97;&#x4ea7;&#x54c1;&#x626b;&#x7801;&#x6700;&#x5927;&#x503c;</to><enabled>Y</enabled> </hop>
+  <hop> <from>Dummy &#x28;do nothing&#x29; 2</from><to>&#x83b7;&#x5f97;&#x7528;&#x6237;&#x626b;&#x7801;&#x6570;&#x636e;</to><enabled>Y</enabled> </hop>
   </order>
   <step>
     <name>Dummy &#x28;do nothing&#x29;</name>
@@ -223,8 +226,8 @@
     </step>
 
   <step>
-    <name>Filter rows</name>
-    <type>FilterRows</type>
+    <name>Dummy &#x28;do nothing&#x29; 2</name>
+    <type>Dummy</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -233,27 +236,17 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-<send_true_to>Dummy &#x28;do nothing&#x29;</send_true_to>
-<send_false_to>Insert &#x2f; Update</send_false_to>
-    <compare>
-<condition>
- <negated>N</negated>
- <leftvalue>product_key</leftvalue>
- <function>IS NULL</function>
- <rightvalue/>
- </condition>
-    </compare>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>400</xloc>
-      <yloc>256</yloc>
+      <xloc>80</xloc>
+      <yloc>224</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Insert &#x2f; Update</name>
-    <type>InsertUpdate</type>
+    <name>&#x6293;&#x53d6;&#x6700;&#x65b0;&#x7684;&#x624b;&#x673a;&#x53f7;&#x7801;</name>
+    <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -263,143 +256,138 @@
            <schema_name/>
            </partitioning>
     <connection>dev di</connection>
-    <commit>2000</commit>
-    <update_bypassed>Y</update_bypassed>
-    <lookup>
-      <schema>di</schema>
-      <table>di_user_product</table>
-      <key>
-        <name>product_key</name>
-        <field>product_key</field>
-        <condition>&#x3d;</condition>
-        <name2/>
-      </key>
-      <value>
-        <name>scan_record_id</name>
-        <rename>scan_record_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>product_key</name>
-        <rename>product_key</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>user_id</name>
-        <rename>user_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>ys_id</name>
-        <rename>ys_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>org_id</name>
-        <rename>org_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>product_base_id</name>
-        <rename>product_base_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>time_id</name>
-        <rename>time_id</rename>
-        <update>Y</update>
-      </value>
-    </lookup>
+    <sql>select &#xd;&#xa;ifnull&#x28;mdr.user_id,&#x27;&#x27;&#x29; as &#x27;user_id&#x27;, case when isnull&#x28;mdr.user_id&#x29; then mdr.ysid else &#x27;&#x27; end as &#x27;ys_id&#x27; , pb.org_id, mdp.mobile, mdp.draw_record_id, mdp.created_datetime&#xd;&#xa;from mkt_draw_prize mdp&#xd;&#xa;inner join mkt_draw_record mdr on mdp.scan_record_id &#x3d; mdr.scan_record_id&#xd;&#xa;inner join product_base pb on mdr.product_base_id &#x3d; pb.id&#xd;&#xa;where mdp.mobile is not null and mdp.draw_record_id &#x3e;&#x3d; &#x3f; order by mdp.draw_record_id</sql>
+    <limit>0</limit>
+    <lookup>&#x83b7;&#x5f97;&#x7528;&#x6237;&#x624b;&#x673a;&#x914d;&#x7f6e;&#x6700;&#x5927;&#x503c;</lookup>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>480</xloc>
-      <yloc>160</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Insert &#x2f; update user phone</name>
-    <type>InsertUpdate</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>dev di</connection>
-    <commit>1000</commit>
-    <update_bypassed>Y</update_bypassed>
-    <lookup>
-      <schema>di</schema>
-      <table>di_user_phone</table>
-      <key>
-        <name>user_id</name>
-        <field>user_id</field>
-        <condition>&#x3d;</condition>
-        <name2/>
-      </key>
-      <key>
-        <name>ys_id</name>
-        <field>ys_id</field>
-        <condition>&#x3d;</condition>
-        <name2/>
-      </key>
-      <key>
-        <name>org_id</name>
-        <field>org_id</field>
-        <condition>&#x3d;</condition>
-        <name2/>
-      </key>
-      <key>
-        <name>draw_record_id</name>
-        <field>draw_price_id</field>
-        <condition>&#x3d;</condition>
-        <name2/>
-      </key>
-      <value>
-        <name>user_id</name>
-        <rename>user_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>ys_id</name>
-        <rename>ys_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>org_id</name>
-        <rename>org_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>phone</name>
-        <rename>mobile</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>draw_price_id</name>
-        <rename>draw_record_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>created_datetime</name>
-        <rename>created_datetime</rename>
-        <update>Y</update>
-      </value>
-    </lookup>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>736</xloc>
+      <xloc>512</xloc>
       <yloc>448</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Insert &#x2f; update wx user</name>
+    <name>&#x6293;&#x53d6;&#x6700;&#x65b0;&#x7684;&#x7528;&#x6237;</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>dev di</connection>
+    <sql>SELECT case when usr.user_id &#x3d; &#x27;0020000000000000000&#x27; then &#x27;&#x27; else usr.user_id END as &#x27;user_id&#x27;, &#xd;&#xa;case when usr.user_id &#x3d; &#x27;0020000000000000000&#x27; then usr.ysid else &#x27;&#x27; END as &#x27;ys_id&#x27;, pb.org_id, u.name,&#xd;&#xa;u.phone, u.email,u.age, u.sex, u.gravatar_url, u.oauth_openid as &#x27;wx_openid&#x27;,ifnull&#x28;lpc.id,10000&#x29; as &#x27;location_id&#x27;, min&#x28;usr.created_datetime&#x29; as &#x27;join_datetime&#x27;, max&#x28;usr.id&#x29; as &#x27;latest_scan_id&#x27;&#xd;&#xa;from user_scan_record usr&#xd;&#xa;inner join product_base pb on usr.product_base_id &#x3d; pb.id &#xd;&#xa;left join lu_province_city lpc on&#xd;&#xa; &#x28;lpc.city &#x3d; usr.city  or lpc.city &#x3d; concat&#x28;usr.city,&#x27;&#x5e02;&#x27;&#x29; or &#x28;length&#x28;usr.city&#x29; &#x3e;0 and lpc.city like concat&#x28;usr.city,&#x27;&#x25;&#x27;&#x29;&#x29; &#xd;&#xa;or &#x28;&#x28;usr.province &#x3d; lpc.province or usr.province &#x3d; concat&#x28;lpc.province, &#x27;&#x7701;&#x27;&#x29;&#x29; and length&#x28;usr.city&#x29;&#x3d;0 and lpc.city &#x3d; &#x27;&#x672a;&#x77e5;&#x57ce;&#x5e02;&#x27;&#x29;&#xd;&#xa; &#x29;&#xd;&#xa;left join &#x60;user&#x60; u on u.id &#x3d; usr.user_id&#xd;&#xa;where usr.id &#x3e; &#x3f; group by org_id, user_id, ys_id order by latest_scan_id</sql>
+    <limit>0</limit>
+    <lookup>&#x83b7;&#x5f97;&#x7528;&#x6237;&#x626b;&#x7801;&#x6570;&#x636e;</lookup>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>368</xloc>
+      <yloc>336</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x63d2;&#x5165;di_event</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>dev di</connection>
+    <schema>di</schema>
+    <table>di_event</table>
+    <commit>1000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+        <field>
+          <column_name>name</column_name>
+          <stream_name>name</stream_name>
+        </field>
+        <field>
+          <column_name>user_id</column_name>
+          <stream_name>user_id</stream_name>
+        </field>
+        <field>
+          <column_name>ys_id</column_name>
+          <stream_name>ys_id</stream_name>
+        </field>
+        <field>
+          <column_name>org_id</column_name>
+          <stream_name>org_id</stream_name>
+        </field>
+        <field>
+          <column_name>event_datetime</column_name>
+          <stream_name>event_datetime</stream_name>
+        </field>
+        <field>
+          <column_name>event_id</column_name>
+          <stream_name>event_id</stream_name>
+        </field>
+        <field>
+          <column_name>time_id</column_name>
+          <stream_name>time_id</stream_name>
+        </field>
+        <field>
+          <column_name>location_id</column_name>
+          <stream_name>location_id</stream_name>
+        </field>
+        <field>
+          <column_name>user_agent_id</column_name>
+          <stream_name>user_agent_id</stream_name>
+        </field>
+        <field>
+          <column_name>product_base_id</column_name>
+          <stream_name>product_base_id</stream_name>
+        </field>
+        <field>
+          <column_name>key_batch_id</column_name>
+          <stream_name>product_key_batch_id</stream_name>
+        </field>
+        <field>
+          <column_name>product_key</column_name>
+          <stream_name>product_key</stream_name>
+        </field>
+        <field>
+          <column_name>ip</column_name>
+          <stream_name>ip</stream_name>
+        </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>752</xloc>
+      <yloc>80</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x7528;&#x6237;</name>
     <type>InsertUpdate</type>
     <description/>
     <distribute>Y</distribute>
@@ -508,8 +496,8 @@
     </step>
 
   <step>
-    <name>Table output</name>
-    <type>TableOutput</type>
+    <name>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x7528;&#x6237;&#x4ea7;&#x54c1;&#x8868;</name>
+    <type>InsertUpdate</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -519,83 +507,64 @@
            <schema_name/>
            </partitioning>
     <connection>dev di</connection>
-    <schema>di</schema>
-    <table>di_event</table>
-    <commit>5000</commit>
-    <truncate>N</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
-    <specify_fields>Y</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
-    <fields>
-        <field>
-          <column_name>name</column_name>
-          <stream_name>name</stream_name>
-        </field>
-        <field>
-          <column_name>user_id</column_name>
-          <stream_name>user_id</stream_name>
-        </field>
-        <field>
-          <column_name>ys_id</column_name>
-          <stream_name>ys_id</stream_name>
-        </field>
-        <field>
-          <column_name>org_id</column_name>
-          <stream_name>org_id</stream_name>
-        </field>
-        <field>
-          <column_name>event_datetime</column_name>
-          <stream_name>event_datetime</stream_name>
-        </field>
-        <field>
-          <column_name>event_id</column_name>
-          <stream_name>event_id</stream_name>
-        </field>
-        <field>
-          <column_name>time_id</column_name>
-          <stream_name>time_id</stream_name>
-        </field>
-        <field>
-          <column_name>location_id</column_name>
-          <stream_name>location_id</stream_name>
-        </field>
-        <field>
-          <column_name>user_agent_id</column_name>
-          <stream_name>user_agent_id</stream_name>
-        </field>
-        <field>
-          <column_name>product_base_id</column_name>
-          <stream_name>product_base_id</stream_name>
-        </field>
-        <field>
-          <column_name>key_batch_id</column_name>
-          <stream_name>product_key_batch_id</stream_name>
-        </field>
-        <field>
-          <column_name>product_key</column_name>
-          <stream_name>product_key</stream_name>
-        </field>
-    </fields>
+    <commit>2000</commit>
+    <update_bypassed>Y</update_bypassed>
+    <lookup>
+      <schema>di</schema>
+      <table>di_user_product</table>
+      <key>
+        <name>product_key</name>
+        <field>product_key</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>scan_record_id</name>
+        <rename>scan_record_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>product_key</name>
+        <rename>product_key</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>user_id</name>
+        <rename>user_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>ys_id</name>
+        <rename>ys_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>org_id</name>
+        <rename>org_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>product_base_id</name>
+        <rename>product_base_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>time_id</name>
+        <rename>time_id</rename>
+        <update>Y</update>
+      </value>
+    </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>448</xloc>
-      <yloc>64</yloc>
+      <xloc>544</xloc>
+      <yloc>160</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>get max scan event id</name>
-    <type>TableInput</type>
+    <name>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x7528;&#x6237;&#x624b;&#x673a;</name>
+    <type>InsertUpdate</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -605,22 +574,76 @@
            <schema_name/>
            </partitioning>
     <connection>dev di</connection>
-    <sql>SELECT ifnull&#x28;max&#x28;event_id&#x29;,&#x27;00000000&#x27;&#x29; as &#x27;max_scan_record_id&#x27; FROM di_event WHERE name&#x3d;&#x27;scan&#x27;</sql>
-    <limit>0</limit>
-    <lookup/>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
+    <commit>1000</commit>
+    <update_bypassed>Y</update_bypassed>
+    <lookup>
+      <schema>di</schema>
+      <table>di_user_phone</table>
+      <key>
+        <name>user_id</name>
+        <field>user_id</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>ys_id</name>
+        <field>ys_id</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>org_id</name>
+        <field>org_id</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>draw_record_id</name>
+        <field>draw_price_id</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>user_id</name>
+        <rename>user_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>ys_id</name>
+        <rename>ys_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>org_id</name>
+        <rename>org_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>phone</name>
+        <rename>mobile</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>draw_price_id</name>
+        <rename>draw_record_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>created_datetime</name>
+        <rename>created_datetime</rename>
+        <update>Y</update>
+      </value>
+    </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>208</xloc>
-      <yloc>64</yloc>
+      <xloc>736</xloc>
+      <yloc>448</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>get max user product id</name>
+    <name>&#x83b7;&#x5f97;&#x4ea7;&#x54c1;&#x626b;&#x7801;&#x6700;&#x5927;&#x503c;</name>
     <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -646,7 +669,7 @@
     </step>
 
   <step>
-    <name>get new product </name>
+    <name>&#x83b7;&#x5f97;&#x65b0;&#x7684;&#x4ea7;&#x54c1;&#x4fe1;&#x606f;</name>
     <type>TableInput</type>
     <description/>
     <distribute>N</distribute>
@@ -659,7 +682,7 @@
     <connection>dev di</connection>
     <sql>select min&#x28;usr.id&#x29; as &#x27;scan_record_id&#x27;, usr.product_key, &#xd;&#xa;case when usr.user_id &#x3d; &#x27;0020000000000000000&#x27; then &#x27;&#x27; else usr.user_id END as &#x27;user_id&#x27;, &#xd;&#xa;case when usr.user_id &#x3d; &#x27;0020000000000000000&#x27; then usr.ysid else &#x27;&#x27; END as &#x27;ys_id&#x27;, pb.org_id,usr.product_base_id,t.id as &#x27;time_id&#x27;&#xd;&#xa; from user_scan_record usr&#xd;&#xa;inner join product_base pb on usr.product_base_id &#x3d; pb.id &#xd;&#xa;inner join di_time t on t.id &#x3d; date_format&#x28;convert_tz&#x28;usr.created_datetime,&#x27;&#x2b;00&#x3a;00&#x27;,&#x27;&#x2b;08&#x3a;00&#x27;&#x29;,&#x27;&#x25;Y&#x25;m&#x25;d&#x25;H&#x27;&#x29;&#xd;&#xa;where usr.id &#x3e; &#x3f; group by usr.product_key order by usr.id</sql>
     <limit>0</limit>
-    <lookup>get max user product id</lookup>
+    <lookup>&#x83b7;&#x5f97;&#x4ea7;&#x54c1;&#x626b;&#x7801;&#x6700;&#x5927;&#x503c;</lookup>
     <execute_each_row>N</execute_each_row>
     <variables_active>N</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
@@ -672,7 +695,7 @@
     </step>
 
   <step>
-    <name>get new scan data</name>
+    <name>&#x83b7;&#x5f97;&#x6700;&#x5927;&#x626b;&#x63cf;id</name>
     <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -683,48 +706,22 @@
            <schema_name/>
            </partitioning>
     <connection>dev di</connection>
-    <sql>SELECT &#x27;scan&#x27; as &#x60;name&#x60;, case when usr.user_id &#x3d; &#x27;0020000000000000000&#x27; then &#x27;&#x27; else usr.user_id END as &#x27;user_id&#x27;, &#xd;&#xa;case when usr.user_id &#x3d; &#x27;0020000000000000000&#x27; then usr.ysid else &#x27;&#x27; END as &#x27;ys_id&#x27;, pb.org_id,&#xd;&#xa;usr.created_datetime as &#x27;event_datetime&#x27;, usr.id as &#x27;event_id&#x27;, t.id as &#x27;time_id&#x27;, lpc.id as &#x27;location_id&#x27;,lua.id as &#x27;user_agent_id&#x27;,  pb.id as product_base_id, &#xd;&#xa;usr.product_key_batch_id,&#xd;&#xa;usr.product_key&#xd;&#xa;from user_scan_record usr&#xd;&#xa;inner join product_base pb on usr.product_base_id &#x3d; pb.id  &#xd;&#xa;inner join di_time t on t.id &#x3d; date_format&#x28;convert_tz&#x28;usr.created_datetime,&#x27;&#x2b;00&#x3a;00&#x27;,&#x27;&#x2b;08&#x3a;00&#x27;&#x29;,&#x27;&#x25;Y&#x25;m&#x25;d&#x25;H&#x27;&#x29;&#xd;&#xa;left join lu_province_city lpc on&#xd;&#xa; &#x28;lpc.city &#x3d; usr.city  or lpc.city &#x3d; concat&#x28;usr.city,&#x27;&#x5e02;&#x27;&#x29; or &#x28;length&#x28;usr.city&#x29; &#x3e;0 and lpc.city like concat&#x28;usr.city,&#x27;&#x25;&#x27;&#x29;&#x29; &#xd;&#xa;or &#x28;&#x28;usr.province &#x3d; lpc.province or usr.province &#x3d; concat&#x28;lpc.province, &#x27;&#x7701;&#x27;&#x29;&#x29; and length&#x28;usr.city&#x29;&#x3d;0 and lpc.city &#x3d; &#x27;&#x672a;&#x77e5;&#x57ce;&#x5e02;&#x27;&#x29;&#xd;&#xa; &#x29;&#xd;&#xa;left join lu_user_agent lua on lua.user_agent &#x3d; usr.user_agent &#xd;&#xa;where usr.id &#x3e; &#x3f; order by usr.id</sql>
+    <sql>SELECT ifnull&#x28;max&#x28;event_id&#x29;,&#x27;00000000&#x27;&#x29; as &#x27;max_scan_record_id&#x27; FROM di_event WHERE name&#x3d;&#x27;scan&#x27;</sql>
     <limit>0</limit>
-    <lookup>get max scan event id</lookup>
+    <lookup/>
     <execute_each_row>N</execute_each_row>
     <variables_active>N</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>336</xloc>
-      <yloc>64</yloc>
+      <xloc>192</xloc>
+      <yloc>80</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>get new user scan data</name>
-    <type>TableInput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>dev di</connection>
-    <sql>SELECT case when usr.user_id &#x3d; &#x27;0020000000000000000&#x27; then &#x27;&#x27; else usr.user_id END as &#x27;user_id&#x27;, &#xd;&#xa;case when usr.user_id &#x3d; &#x27;0020000000000000000&#x27; then usr.ysid else &#x27;&#x27; END as &#x27;ys_id&#x27;, pb.org_id, u.name,&#xd;&#xa;u.phone, u.email,u.age, u.sex, u.gravatar_url, u.oauth_openid as &#x27;wx_openid&#x27;,lpc.id as &#x27;location_id&#x27;, min&#x28;usr.created_datetime&#x29; as &#x27;join_datetime&#x27;, max&#x28;usr.id&#x29; as &#x27;latest_scan_id&#x27;&#xd;&#xa;from user_scan_record usr&#xd;&#xa;inner join product_base pb on usr.product_base_id &#x3d; pb.id &#xd;&#xa;left join lu_province_city lpc on&#xd;&#xa; &#x28;lpc.city &#x3d; usr.city  or lpc.city &#x3d; concat&#x28;usr.city,&#x27;&#x5e02;&#x27;&#x29; or &#x28;length&#x28;usr.city&#x29; &#x3e;0 and lpc.city like concat&#x28;usr.city,&#x27;&#x25;&#x27;&#x29;&#x29; &#xd;&#xa;or &#x28;&#x28;usr.province &#x3d; lpc.province or usr.province &#x3d; concat&#x28;lpc.province, &#x27;&#x7701;&#x27;&#x29;&#x29; and length&#x28;usr.city&#x29;&#x3d;0 and lpc.city &#x3d; &#x27;&#x672a;&#x77e5;&#x57ce;&#x5e02;&#x27;&#x29;&#xd;&#xa; &#x29;&#xd;&#xa;left join &#x60;user&#x60; u on u.id &#x3d; usr.user_id&#xd;&#xa;where usr.id &#x3e; &#x3f; group by org_id, user_id, ys_id order by latest_scan_id</sql>
-    <limit>0</limit>
-    <lookup>get user max scan id</lookup>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>368</xloc>
-      <yloc>336</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>get user max  draw price id</name>
+    <name>&#x83b7;&#x5f97;&#x7528;&#x6237;&#x624b;&#x673a;&#x914d;&#x7f6e;&#x6700;&#x5927;&#x503c;</name>
     <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -743,14 +740,14 @@
     <lazy_conversion_active>N</lazy_conversion_active>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>320</xloc>
+      <xloc>256</xloc>
       <yloc>448</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>get user max scan id</name>
+    <name>&#x83b7;&#x5f97;&#x7528;&#x6237;&#x626b;&#x7801;&#x6570;&#x636e;</name>
     <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -776,7 +773,7 @@
     </step>
 
   <step>
-    <name>get user phone</name>
+    <name>&#x8bfb;&#x53d6;&#x626b;&#x63cf;&#x6570;&#x636e;</name>
     <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -787,16 +784,45 @@
            <schema_name/>
            </partitioning>
     <connection>dev di</connection>
-    <sql>select &#xd;&#xa;ifnull&#x28;mdr.user_id,&#x27;&#x27;&#x29; as &#x27;user_id&#x27;, case when isnull&#x28;mdr.user_id&#x29; then mdr.ysid else &#x27;&#x27; end as &#x27;ys_id&#x27; , pb.org_id, mdp.mobile, mdp.draw_record_id, mdp.created_datetime&#xd;&#xa;from mkt_draw_prize mdp&#xd;&#xa;inner join mkt_draw_record mdr on mdp.scan_record_id &#x3d; mdr.scan_record_id&#xd;&#xa;inner join product_base pb on mdr.product_base_id &#x3d; pb.id&#xd;&#xa;where mdp.mobile is not null and mdp.draw_record_id &#x3e;&#x3d; &#x3f; order by mdp.draw_record_id</sql>
+    <sql>SELECT &#x27;scan&#x27; as &#x60;name&#x60;, case when usr.user_id &#x3d; &#x27;0020000000000000000&#x27; then &#x27;&#x27; else usr.user_id END as &#x27;user_id&#x27;, &#xd;&#xa;case when usr.user_id &#x3d; &#x27;0020000000000000000&#x27; then usr.ysid else &#x27;&#x27; END as &#x27;ys_id&#x27;, pb.org_id,&#xd;&#xa;usr.created_datetime as &#x27;event_datetime&#x27;, usr.id as &#x27;event_id&#x27;, t.id as &#x27;time_id&#x27;, &#xd;&#xa;ifnull&#x28;lpc.id,10000&#x29; as &#x27;location_id&#x27;,lua.id as &#x27;user_agent_id&#x27;,  pb.id as product_base_id, &#xd;&#xa;usr.product_key_batch_id,&#xd;&#xa;usr.product_key,&#xd;&#xa;usr.ip&#xd;&#xa;from user_scan_record usr&#xd;&#xa;inner join product_base pb on usr.product_base_id &#x3d; pb.id  &#xd;&#xa;inner join di_time t on t.id &#x3d; date_format&#x28;convert_tz&#x28;usr.created_datetime,&#x27;&#x2b;00&#x3a;00&#x27;,&#x27;&#x2b;08&#x3a;00&#x27;&#x29;,&#x27;&#x25;Y&#x25;m&#x25;d&#x25;H&#x27;&#x29;&#xd;&#xa;left join lu_province_city lpc on&#xd;&#xa; &#x28;lpc.city &#x3d; usr.city or lpc.city &#x3d; concat&#x28;usr.city,&#x27;&#x5e02;&#x27;&#x29; or &#x28;length&#x28;usr.city&#x29; &#x3e;0 and lpc.city like concat&#x28;usr.city,&#x27;&#x25;&#x27;&#x29;&#x29; &#xd;&#xa;or &#x28;&#x28;lpc.province &#x3d; usr.province or usr.province &#x3d; concat&#x28;lpc.province, &#x27;&#x7701;&#x27;&#x29;&#x29; and length&#x28;ifnull&#x28;usr.city,&#x27;&#x27;&#x29;&#x29;&#x3d;0 and lpc.city &#x3d; &#x27;&#x672a;&#x77e5;&#x57ce;&#x5e02;&#x27;&#x29;&#xd;&#xa; &#x29;&#xd;&#xa;left join lu_user_agent lua on lua.user_agent &#x3d; ifnull&#x28;usr.user_agent,&#x27;&#x27;&#x29;&#xd;&#xa;where usr.id &#x3e; &#x3f; order by usr.id</sql>
     <limit>0</limit>
-    <lookup>get user max  draw price id</lookup>
+    <lookup>&#x83b7;&#x5f97;&#x6700;&#x5927;&#x626b;&#x63cf;id</lookup>
     <execute_each_row>N</execute_each_row>
     <variables_active>N</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>512</xloc>
-      <yloc>448</yloc>
+      <xloc>432</xloc>
+      <yloc>80</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x8fc7;&#x6ee4;&#x6389;&#x7a7a;&#x7684;&#x4ea7;&#x54c1;&#x6d41;</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+<send_true_to>Dummy &#x28;do nothing&#x29;</send_true_to>
+<send_false_to>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x7528;&#x6237;&#x4ea7;&#x54c1;&#x8868;</send_false_to>
+    <compare>
+<condition>
+ <negated>N</negated>
+ <leftvalue>product_key</leftvalue>
+ <function>IS NULL</function>
+ <rightvalue/>
+ </condition>
+    </compare>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>400</xloc>
+      <yloc>256</yloc>
       <draw>Y</draw>
       </GUI>
     </step>

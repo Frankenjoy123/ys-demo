@@ -205,6 +205,11 @@ public class MarketingDomain {
         return totalQuantity;
     }
 
+    public Long countMktDrawPrizesByMarketingId(String marketingId) {
+        Long totalPrizeQuantity = dataApiClient.get("marketing/drawPrize/totalcount/marketing/{id}", Long.class, marketingId);
+        return totalPrizeQuantity;
+    }
+
 
     public Long countDrawPrizeByDrawRuleId(String drawRuleId, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime) {
 
@@ -302,6 +307,14 @@ public class MarketingDomain {
         dataApiClient.patch("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
     }
 
+    public MktSellerObject getMktSellerByOpenid(String openid) {
+        return dataApiClient.get("marketing/seller/wechat/{openid}", MktSellerObject.class, openid);
+    }
+
+    public List<MarketingObject> getWechatMarketingByOpenid(String openid) {
+        return dataApiClient.get("marketing/seller/wechat/marketing/{openid}", new ParameterizedTypeReference<List<MarketingObject>>() {
+        }, openid);
+    }
 
     public Map<String, String> getAlipayBatchTansferParameters(List<MktDrawPrize> mktDrawPrizeList) {
 
