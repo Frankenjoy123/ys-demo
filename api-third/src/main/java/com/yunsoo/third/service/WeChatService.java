@@ -176,8 +176,10 @@ public class WeChatService {
         return token;
     }
 
-    public WeChatConfig getWechatConfig(String url, String nonceStr){
+    public WeChatConfig getWechatConfig(String appId, String url, String nonceStr){
         WeChatConfig config = new WeChatConfig();
+        if(!StringUtils.hasText(appId))
+            appId = this.appId;
         config.setAppId(appId);
         if(!StringUtils.hasText(nonceStr))
             config.setNoncestr(RandomUtils.generateString(30));

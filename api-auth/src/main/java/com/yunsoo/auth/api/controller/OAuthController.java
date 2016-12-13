@@ -101,10 +101,13 @@ public class OAuthController {
             if(account.getDetails()!=null) {
                 oAuthAccount.setSource(account.getDetails().get(SOURCE));
                 oAuthAccount.setSourceTypeCode(account.getDetails().get(SOURCE_TYPE));
+                oAuthAccount.setoAuthTypeCode(request.getOauthOpenType());
+                oAuthAccount.setoAuthOpenId(request.getOauthOpenid());
             }
             oAuthAccount.setDisabled(false);
             oAuthAccount.setoAuthTypeCode(request.getOauthOpenType());
-
+            oAuthAccount.setoAuthOpenId(request.getOauthOpenid());
+            /*
             if (request.getOauthOpenType().equals(WECHAT)) {
                 WeChatUser weChatUser = weChatService.getUserInfo(request.getOauthToken(), request.getOauthOpenid());
                 if (StringUtils.hasText(weChatUser.getErrorCode()))
@@ -115,7 +118,7 @@ public class OAuthController {
                 oAuthAccount.setName(weChatUser.getNickName());
                 oAuthAccount.setoAuthOpenId(weChatUser.getOpenId());
             }
-
+            */
             currentAccount = oAuthAccountService.save(oAuthAccount);
         }
         else
@@ -192,7 +195,8 @@ public class OAuthController {
         authAccount.setDetails(new HashMap<>());
         authAccount.getDetails().put(SOURCE_TYPE, account.getSourceTypeCode());
         authAccount.getDetails().put(SOURCE, account.getSource());
-
+        authAccount.getDetails().put("oauth_type", account.getoAuthTypeCode());
+        authAccount.getDetails().put("oauth_openId", account.getoAuthOpenId());
         return tokenAuthenticationService.generateAccessToken(authAccount);
     }
 

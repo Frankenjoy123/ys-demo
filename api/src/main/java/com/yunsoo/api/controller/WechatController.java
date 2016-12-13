@@ -1,12 +1,18 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.Constants;
+import com.yunsoo.api.auth.service.OAuthAccountService;
 import com.yunsoo.api.domain.WeChatAPIDomain;
+import com.yunsoo.api.dto.OAuthAccount;
 import com.yunsoo.api.dto.WeChatAccessToken;
+import com.yunsoo.api.util.AuthUtils;
+import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by yan on 10/19/2016.
@@ -16,10 +22,32 @@ import org.springframework.web.bind.annotation.RestController;
 public class WechatController {
 
     @Autowired
-    WeChatAPIDomain domain;
+    private WeChatAPIDomain domain;
+
+    @Autowired
+    private OAuthAccountService oAuthAccountService;
 
     @RequestMapping(value = "token", method = RequestMethod.GET)
     public WeChatAccessToken getWechatToken(){
         return domain.getUserAccessTokenByAppId(null);
+    }
+
+    @RequestMapping(value = "config", method = RequestMethod.GET)
+    public Map getWeChatConfig(@RequestParam("url")String url){
+        return domain.getConfig(null, url);
+    }
+
+    @RequestMapping(value = "pay/{marketing_id}", method = RequestMethod.POST)
+    public Map getWeChatPayConfig(@PathVariable(value = "marketing_id") String marketingId,
+                                  @RequestParam("nonce_str") String nonceString,
+                                  @RequestParam("timestamp") long timestamp){
+        Map detailsInfo = AuthUtils.getCurrentAccount().getDetails();
+        if(detailsInfo == null)
+            throw new NotFoundException("current account don't have oauth account");
+        OAuthAccount authAccount = oAuthAccountService.getOAuthAccountById(detailsInfo.get("oauth_openId") == null ? "" : detailsInfo.get("oauthAccountId").toString() );
+        if(authAccount == null)
+            throw new NotFoundException("current account don't have oauth account");
+
+        return domain.getPayConfig(null, authAccount.getoAuthOpenId(), marketingId, nonceString, timestamp);
     }
 }

@@ -13,9 +13,6 @@ public class OAuthAccountLoginRequest {
     @JsonProperty("oauth_open_type")
     private String oauthOpenType;
 
-    @JsonProperty("oauth_token")
-    private String oauthToken;
-
     @JsonProperty("login_token")
     private String loginToken;
 
@@ -43,11 +40,4 @@ public class OAuthAccountLoginRequest {
         this.loginToken = loginToken;
     }
 
-    public String getOauthToken() {
-        return oauthToken;
-    }
-
-    public void setOauthToken(String oauthToken) {
-        this.oauthToken = oauthToken;
-    }
 }

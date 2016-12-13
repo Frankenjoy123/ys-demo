@@ -1,10 +1,13 @@
 package com.yunsoo.third.dto.wechat;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Created by yan on 11/8/2016.
  */
 public class WeChatConfig {
 
+    @JsonProperty("app_id")
     public String appId;
 
     public Long timestamp;
