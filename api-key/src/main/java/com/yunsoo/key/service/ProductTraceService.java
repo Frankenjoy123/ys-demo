@@ -1,16 +1,17 @@
 package com.yunsoo.key.service;
 
 
-import com.yunsoo.key.dao.entity.ProductTraceEntity;
 import com.yunsoo.key.dto.ProductTrace;
 import org.joda.time.DateTime;
 
 import java.util.List;
 
 /**
- * Created by yan on 10/10/2016.
+ * Created by:   yan
+ * Created on:   10/10/2016
+ * Descriptions:
  */
-public interface ProductKeyTraceService {
+public interface ProductTraceService {
 
     List<ProductTrace> getByKey(String key);
 

@@ -53,6 +53,7 @@ public class DynamodbProductServiceImpl implements ProductService {
         product.setProductBaseId(productModel.getProductBaseId());
         product.setStatusCode(productModel.getProductStatusCode());
         product.setManufacturingDateTime(productModel.getManufacturingDateTime());
+        product.setSerialNo(productModel.getSerialNo());
         product.setDetails(productModel.getDetails());
 
         return product;

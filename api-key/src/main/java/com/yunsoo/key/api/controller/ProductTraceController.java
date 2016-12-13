@@ -2,36 +2,31 @@ package com.yunsoo.key.api.controller;
 
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.common.web.util.PageableUtils;
-import com.yunsoo.key.dao.entity.ProductTraceEntity;
-import com.yunsoo.key.dao.repository.ProductTraceRepository;
 import com.yunsoo.key.dto.Key;
 import com.yunsoo.key.dto.ProductTrace;
 import com.yunsoo.key.service.KeyService;
-import com.yunsoo.key.service.ProductKeyTraceService;
 import com.yunsoo.key.service.ProductPackageService;
+import com.yunsoo.key.service.ProductTraceService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
- * Created by yan on 10/11/2016.
+ * Created by:   yan
+ * Created on:   10/11/2016
+ * Descriptions:
  */
 @RestController
 @RequestMapping("producttrace")
 public class ProductTraceController {
 
     @Autowired
-    ProductKeyTraceService service;
+    ProductTraceService service;
 
     @Autowired
     ProductPackageService packageService;

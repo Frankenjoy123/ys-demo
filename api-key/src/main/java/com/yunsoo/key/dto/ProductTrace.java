@@ -10,7 +10,9 @@ import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 
 /**
- * Created by yan on 10/10/2016.
+ * Created by:   yan
+ * Created on:   10/10/2016
+ * Descriptions:
  */
 public class ProductTrace implements Comparable {
 
