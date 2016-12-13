@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>tr_s3_sync_package</name>
+    <name>&#x540c;&#x6b65;&#x5305;&#x88c5;</name>
     <description/>
     <extended_description/>
     <trans_version/>
@@ -130,8 +130,8 @@
   </connection>
   <order>
   <hop> <from>&#x83b7;&#x5f97;&#x5f53;&#x524d;&#x6ca1;&#x6709;&#x540c;&#x6b65;&#x8fc7;&#x7684;&#x6570;&#x636e;</from><to>&#x8bfb;&#x53d6;S3&#x6587;&#x4ef6;</to><enabled>Y</enabled> </hop>
-  <hop> <from>&#x8bfb;&#x53d6;S3&#x6587;&#x4ef6;</from><to>Filter rows</to><enabled>Y</enabled> </hop>
-  <hop> <from>Filter rows</from><to>&#x8bb0;&#x5f55;&#x5931;&#x8d25;&#x539f;&#x56e0;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x8bfb;&#x53d6;S3&#x6587;&#x4ef6;</from><to>&#x6ca1;&#x6709;&#x9519;&#x8bef;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x6ca1;&#x6709;&#x9519;&#x8bef;</from><to>&#x8bb0;&#x5f55;&#x5931;&#x8d25;&#x539f;&#x56e0;</to><enabled>Y</enabled> </hop>
   <hop> <from>&#x662f;&#x5426;&#x5b58;&#x5728;&#x5305;&#x88c5;&#x7801;</from><to>&#x662f;&#x5426;&#x9700;&#x8981;&#x66f4;&#x65b0;&#x5305;&#x88c5;&#x5173;&#x7cfb;</to><enabled>Y</enabled> </hop>
   <hop> <from>&#x662f;&#x5426;&#x9700;&#x8981;&#x66f4;&#x65b0;&#x5305;&#x88c5;&#x5173;&#x7cfb;</from><to>&#x66f4;&#x65b0;&#x6216;&#x8005;&#x63d2;&#x5165;&#x5305;&#x88c5;&#x4fe1;&#x606f;</to><enabled>Y</enabled> </hop>
   <hop> <from>&#x66f4;&#x65b0;&#x6216;&#x8005;&#x63d2;&#x5165;&#x5305;&#x88c5;&#x4fe1;&#x606f;</from><to>&#x5220;&#x9664;&#x5305;&#x88c5;&#x5173;&#x7cfb;</to><enabled>Y</enabled> </hop>
@@ -144,12 +144,12 @@
   <hop> <from>&#x53d6;&#x65f6;&#x95f4;&#x665a;&#x7684;&#x5305;&#x88c5;&#x5173;&#x7cfb;</from><to>&#x662f;&#x5426;&#x5b58;&#x5728;&#x5305;&#x88c5;&#x7801;</to><enabled>Y</enabled> </hop>
   <hop> <from>&#x622a;&#x53d6;&#x5305;&#x88c5;&#x7801;</from><to>&#x6570;&#x636e;&#x6e05;&#x6d17;</to><enabled>Y</enabled> </hop>
   <hop> <from>&#x6570;&#x636e;&#x6e05;&#x6d17;</from><to>&#x6309;&#x5305;&#x88c5;&#x7801;&#x548c;&#x65f6;&#x95f4;&#x5012;&#x5e8f;</to><enabled>Y</enabled> </hop>
-  <hop> <from>Filter rows</from><to>&#x66f4;&#x65b0;&#x72b6;&#x6001;&#xff1a;&#x5904;&#x7406;&#x4e2d;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x6ca1;&#x6709;&#x9519;&#x8bef;</from><to>&#x66f4;&#x65b0;&#x72b6;&#x6001;&#xff1a;&#x5904;&#x7406;&#x4e2d;</to><enabled>Y</enabled> </hop>
   <hop> <from>&#x66f4;&#x65b0;&#x72b6;&#x6001;&#xff1a;&#x5904;&#x7406;&#x4e2d;</from><to>&#x6309;line&#x5206;&#x9694;&#x8bb0;&#x5f55;</to><enabled>Y</enabled> </hop>
   <hop> <from>&#x66f4;&#x65b0;&#x6216;&#x8005;&#x63d2;&#x5165;&#x5305;&#x88c5;&#x4fe1;&#x606f;</from><to>&#x66f4;&#x65b0;&#x72b6;&#x6001;&#xff1a;&#x5904;&#x7406;&#x5b8c;&#x6210;</to><enabled>Y</enabled> </hop>
   </order>
   <step>
-    <name>Filter rows</name>
+    <name>&#x6ca1;&#x6709;&#x9519;&#x8bef;</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
@@ -204,8 +204,62 @@
     </arguments>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>928</xloc>
-      <yloc>192</yloc>
+      <xloc>976</xloc>
+      <yloc>208</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x53bb;&#x6389;&#x7a7a;&#x7684;&#x5305;&#x88c5;&#x5173;&#x7cfb;</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+<send_true_to/>
+<send_false_to>&#x622a;&#x53d6;&#x5305;&#x88c5;&#x7801;</send_false_to>
+    <compare>
+<condition>
+ <negated>N</negated>
+ <leftvalue>pack_line</leftvalue>
+ <function>&#x3d;</function>
+ <rightvalue/>
+ <value><name>constant</name><type>String</type><text>no content</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value> </condition>
+    </compare>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>544</xloc>
+      <yloc>416</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x53d6;&#x65f6;&#x95f4;&#x665a;&#x7684;&#x5305;&#x88c5;&#x5173;&#x7cfb;</name>
+    <type>Unique</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <count_rows>N</count_rows>
+      <count_field/>
+      <reject_duplicate_row>N</reject_duplicate_row>
+      <error_description/>
+    <fields>      <field>        <name>pack_key</name>
+        <case_insensitive>N</case_insensitive>
+        </field>      </fields>     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>656</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -253,7 +307,7 @@
       </field>    </fields>     <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>656</xloc>
-      <yloc>384</yloc>
+      <yloc>416</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -288,8 +342,88 @@
         <replace>N</replace>
       </field>    </fields>     <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>464</xloc>
-      <yloc>384</yloc>
+      <xloc>448</xloc>
+      <yloc>416</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x6309;&#x5305;&#x88c5;&#x7801;&#x548c;&#x65f6;&#x95f4;&#x5012;&#x5e8f;</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <directory>&#x25;&#x25;java.io.tmpdir&#x25;&#x25;</directory>
+      <prefix>out</prefix>
+      <sort_size>1000000</sort_size>
+      <free_memory/>
+      <compress>N</compress>
+      <compress_variable/>
+      <unique_rows>N</unique_rows>
+    <fields>
+      <field>
+        <name>pack_key</name>
+        <ascending>Y</ascending>
+        <case_sensitive>Y</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>pack_datetime</name>
+        <ascending>N</ascending>
+        <case_sensitive>N</case_sensitive>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>656</xloc>
+      <yloc>208</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x6570;&#x636e;&#x6e05;&#x6d17;</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <fields>      <field>        <name>file_id</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>org_id</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>pack_datetime</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>pack_key</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>prod_items</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>        <select_unspecified>N</select_unspecified>
+    </fields>     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>656</xloc>
+      <yloc>288</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -336,8 +470,8 @@
     </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>656</xloc>
-      <yloc>64</yloc>
+      <xloc>800</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -365,8 +499,8 @@
     </compare>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>784</xloc>
-      <yloc>64</yloc>
+      <xloc>928</xloc>
+      <yloc>112</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -417,8 +551,76 @@
     </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>928</xloc>
-      <yloc>64</yloc>
+      <xloc>1072</xloc>
+      <yloc>112</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x66f4;&#x65b0;&#x72b6;&#x6001;&#xff1a;&#x5904;&#x7406;&#x4e2d;</name>
+    <type>ExecSQL</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>dev di</connection>
+    <execute_each_row>Y</execute_each_row>
+    <single_statement>N</single_statement>
+    <replace_variables>N</replace_variables>
+    <quoteString>Y</quoteString>
+    <sql>update task_file_entry set imported_status &#x3d; 3, imported_datetime &#x3d; now&#x28;&#x29;, message &#x3d; &#x27;&#x27; where file_id &#x3d; &#x3f;</sql>
+    <set_params>N</set_params>
+    <insert_field/>
+    <update_field/>
+    <delete_field/>
+    <read_field/>
+    <arguments>
+       <argument><name>file_id</name></argument>
+    </arguments>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>448</xloc>
+      <yloc>336</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x66f4;&#x65b0;&#x72b6;&#x6001;&#xff1a;&#x5904;&#x7406;&#x5b8c;&#x6210;</name>
+    <type>ExecSQL</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>dev di</connection>
+    <execute_each_row>Y</execute_each_row>
+    <single_statement>N</single_statement>
+    <replace_variables>N</replace_variables>
+    <quoteString>Y</quoteString>
+    <sql>update task_file_entry set imported_status &#x3d; 1, imported_datetime &#x3d; now&#x28;&#x29;, message &#x3d; concat&#x28;ifnull&#x28;message,&#x27;&#x27;&#x29;,&#x27;&#x5c;r&#x5c;n&#x27;,&#x27;&#x5904;&#x7406;&#x6210;&#x529f;,&#x5305;&#x88c5;&#x7801;&#x4e3a;&#x3a;&#x27;,&#x3f;,&#x27;&#x4ea7;&#x54c1;&#x96c6;&#x5408;&#x3a;&#x27;,&#x3f;&#x29; where file_id &#x3d; &#x3f;</sql>
+    <set_params>N</set_params>
+    <insert_field/>
+    <update_field/>
+    <delete_field/>
+    <read_field/>
+    <arguments>
+       <argument><name>pack_key</name></argument>
+       <argument><name>prod_items</name></argument>
+       <argument><name>file_id</name></argument>
+    </arguments>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>1152</xloc>
+      <yloc>208</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -443,8 +645,8 @@
    <delimiter_is_regex>N</delimiter_is_regex>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>896</xloc>
-      <yloc>288</yloc>
+      <xloc>976</xloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -496,8 +698,8 @@
     </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>1024</xloc>
-      <yloc>288</yloc>
+      <xloc>1072</xloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -556,8 +758,8 @@
     </arguments>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>384</xloc>
-      <yloc>128</yloc>
+      <xloc>448</xloc>
+      <yloc>144</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -591,8 +793,8 @@
     </arguments>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>1152</xloc>
-      <yloc>288</yloc>
+      <xloc>1184</xloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -719,210 +921,8 @@ import com.yunsoo.common.support.YSFile;
 <parameter_description>The name of the output field.</parameter_description>
 </usage_parameter></usage_parameters>     <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>320</xloc>
+      <xloc>256</xloc>
       <yloc>240</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>&#x53bb;&#x6389;&#x7a7a;&#x7684;&#x5305;&#x88c5;&#x5173;&#x7cfb;</name>
-    <type>FilterRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-<send_true_to/>
-<send_false_to>&#x622a;&#x53d6;&#x5305;&#x88c5;&#x7801;</send_false_to>
-    <compare>
-<condition>
- <negated>N</negated>
- <leftvalue>pack_line</leftvalue>
- <function>&#x3d;</function>
- <rightvalue/>
- <value><name>constant</name><type>String</type><text>no content</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value> </condition>
-    </compare>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>560</xloc>
-      <yloc>384</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>&#x53d6;&#x65f6;&#x95f4;&#x665a;&#x7684;&#x5305;&#x88c5;&#x5173;&#x7cfb;</name>
-    <type>Unique</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-      <count_rows>N</count_rows>
-      <count_field/>
-      <reject_duplicate_row>N</reject_duplicate_row>
-      <error_description/>
-    <fields>      <field>        <name>pack_key</name>
-        <case_insensitive>N</case_insensitive>
-        </field>      </fields>     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>704</xloc>
-      <yloc>176</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>&#x6309;&#x5305;&#x88c5;&#x7801;&#x548c;&#x65f6;&#x95f4;&#x5012;&#x5e8f;</name>
-    <type>SortRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-      <directory>&#x25;&#x25;java.io.tmpdir&#x25;&#x25;</directory>
-      <prefix>out</prefix>
-      <sort_size>1000000</sort_size>
-      <free_memory/>
-      <compress>N</compress>
-      <compress_variable/>
-      <unique_rows>N</unique_rows>
-    <fields>
-      <field>
-        <name>pack_key</name>
-        <ascending>Y</ascending>
-        <case_sensitive>Y</case_sensitive>
-        <presorted>N</presorted>
-      </field>
-      <field>
-        <name>pack_datetime</name>
-        <ascending>N</ascending>
-        <case_sensitive>N</case_sensitive>
-        <presorted>N</presorted>
-      </field>
-    </fields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>752</xloc>
-      <yloc>288</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>&#x6570;&#x636e;&#x6e05;&#x6d17;</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <fields>      <field>        <name>file_id</name>
-        <rename/>
-        <length>-2</length>
-        <precision>-2</precision>
-      </field>      <field>        <name>org_id</name>
-        <rename/>
-        <length>-2</length>
-        <precision>-2</precision>
-      </field>      <field>        <name>pack_datetime</name>
-        <rename/>
-        <length>-2</length>
-        <precision>-2</precision>
-      </field>      <field>        <name>pack_key</name>
-        <rename/>
-        <length>-2</length>
-        <precision>-2</precision>
-      </field>      <field>        <name>prod_items</name>
-        <rename/>
-        <length>-2</length>
-        <precision>-2</precision>
-      </field>        <select_unspecified>N</select_unspecified>
-    </fields>     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>656</xloc>
-      <yloc>288</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>&#x66f4;&#x65b0;&#x72b6;&#x6001;&#xff1a;&#x5904;&#x7406;&#x4e2d;</name>
-    <type>ExecSQL</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>dev di</connection>
-    <execute_each_row>Y</execute_each_row>
-    <single_statement>N</single_statement>
-    <replace_variables>N</replace_variables>
-    <quoteString>Y</quoteString>
-    <sql>update task_file_entry set imported_status &#x3d; 3, imported_datetime &#x3d; now&#x28;&#x29;, message &#x3d; &#x27;&#x27; where file_id &#x3d; &#x3f;</sql>
-    <set_params>N</set_params>
-    <insert_field/>
-    <update_field/>
-    <delete_field/>
-    <read_field/>
-    <arguments>
-       <argument><name>file_id</name></argument>
-    </arguments>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>320</xloc>
-      <yloc>336</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>&#x66f4;&#x65b0;&#x72b6;&#x6001;&#xff1a;&#x5904;&#x7406;&#x5b8c;&#x6210;</name>
-    <type>ExecSQL</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>dev di</connection>
-    <execute_each_row>Y</execute_each_row>
-    <single_statement>N</single_statement>
-    <replace_variables>N</replace_variables>
-    <quoteString>Y</quoteString>
-    <sql>update task_file_entry set imported_status &#x3d; 1, imported_datetime &#x3d; now&#x28;&#x29;, message &#x3d; concat&#x28;ifnull&#x28;message,&#x27;&#x27;&#x29;,&#x27;&#x5c;r&#x5c;n&#x27;,&#x27;&#x5904;&#x7406;&#x6210;&#x529f;,&#x5305;&#x88c5;&#x7801;&#x4e3a;&#x3a;&#x27;,&#x3f;,&#x27;&#x4ea7;&#x54c1;&#x96c6;&#x5408;&#x3a;&#x27;,&#x3f;&#x29; where file_id &#x3d; &#x3f;</sql>
-    <set_params>N</set_params>
-    <insert_field/>
-    <update_field/>
-    <delete_field/>
-    <read_field/>
-    <arguments>
-       <argument><name>pack_key</name></argument>
-       <argument><name>prod_items</name></argument>
-       <argument><name>file_id</name></argument>
-    </arguments>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>1088</xloc>
-      <yloc>64</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -930,7 +930,7 @@ import com.yunsoo.common.support.YSFile;
   <step_error_handling>
       <error>
         <source_step>&#x662f;&#x5426;&#x5b58;&#x5728;&#x5305;&#x88c5;&#x7801;</source_step>
-        <target_step>&#x8bb0;&#x5f55;&#x5931;&#x8d25;&#x539f;&#x56e0;3</target_step>
+        <target_step/>
         <is_enabled>N</is_enabled>
         <nr_valuename/>
         <descriptions_valuename/>

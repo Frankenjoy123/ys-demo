@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>daily_run</name>
+    <name>&#x6309;&#x65e5;&#x6267;&#x884c;</name>
     <description/>
     <extended_description/>
     <trans_version/>
     <trans_type>Normal</trans_type>
+    <trans_status>0</trans_status>
     <directory>&#x2f;</directory>
     <parameters>
     </parameters>
@@ -170,15 +171,45 @@
     </attributes>
   </connection>
   <order>
-  <hop> <from>Table input</from><to>Insert &#x2f; Update</to><enabled>Y</enabled> </hop>
-  <hop> <from>get yesterday date</from><to>Select values</to><enabled>Y</enabled> </hop>
-  <hop> <from>Select values</from><to>Table input</to><enabled>Y</enabled> </hop>
-  <hop> <from>Table input 2</from><to>Insert &#x2f; Update 2</to><enabled>Y</enabled> </hop>
-  <hop> <from>get yesterday date 2</from><to>Table input 2</to><enabled>Y</enabled> </hop>
-  <hop> <from>get user phone</from><to>Insert &#x2f; update user phone</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x6293;&#x53d6;&#x65e5;&#x626b;&#x7801;&#x6570;&#x636e;</from><to>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x65e5;&#x626b;&#x7801;&#x6570;&#x636e;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x83b7;&#x5f97;&#x6628;&#x5929;&#x7684;&#x65f6;&#x95f4;</from><to>&#x91cd;&#x590d;&#x65f6;&#x95f4;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x91cd;&#x590d;&#x65f6;&#x95f4;</from><to>&#x6293;&#x53d6;&#x65e5;&#x626b;&#x7801;&#x6570;&#x636e;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x83b7;&#x5f97;&#x4e2d;&#x5956;&#x8bb0;&#x5f55;&#xff0c;&#x5305;&#x62ec;&#x4e8c;&#x6b21;&#x4e2d;&#x5956;</from><to>&#x6c47;&#x603b;&#x4e2d;&#x5956;&#x4fe1;&#x606f;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x83b7;&#x5f97;&#x6240;&#x6709;&#x624b;&#x673a;&#x4fe1;&#x606f;</from><to>&#x66f4;&#x65b0;&#x63d2;&#x5165;&#x6240;&#x6709;&#x624b;&#x673a;&#x4fe1;&#x606f;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x83b7;&#x5f97;&#x6628;&#x5929;&#x7684;&#x503c;</from><to>&#x91cd;&#x590d;&#x4e24;&#x4e2a;&#x503c;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x91cd;&#x590d;&#x4e24;&#x4e2a;&#x503c;</from><to>&#x83b7;&#x5f97;&#x4e2d;&#x5956;&#x8bb0;&#x5f55;&#xff0c;&#x5305;&#x62ec;&#x4e8c;&#x6b21;&#x4e2d;&#x5956;</to><enabled>Y</enabled> </hop>
+  <hop> <from>Dummy &#x28;do nothing&#x29;</from><to>&#x83b7;&#x5f97;&#x6628;&#x5929;&#x7684;&#x65f6;&#x95f4;</to><enabled>Y</enabled> </hop>
+  <hop> <from>Dummy &#x28;do nothing&#x29;</from><to>&#x83b7;&#x5f97;&#x6628;&#x5929;&#x7684;&#x503c;</to><enabled>Y</enabled> </hop>
+  <hop> <from>Dummy &#x28;do nothing&#x29;</from><to>&#x83b7;&#x5f97;&#x6240;&#x6709;&#x624b;&#x673a;&#x4fe1;&#x606f;</to><enabled>Y</enabled> </hop>
   </order>
   <step>
-    <name>Insert &#x2f; Update</name>
+    <name>&#x6293;&#x53d6;&#x65e5;&#x626b;&#x7801;&#x6570;&#x636e;</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>dev di</connection>
+    <sql>SELECT date&#x28;dt.date&#x29; as &#x27;date&#x27;,  ev.org_id, ev.product_base_id, pb.name as &#x27;product_name&#x27;, &#x27;&#x6240;&#x6709;&#x6279;&#x6b21;&#x27; as &#x27;key_batch_id&#x27;, count&#x28;1&#x29; as pv, count&#x28;distinct ev.user_id, ev.ys_id&#x29; as uv, count&#x28;up.product_key&#x29; as product_count from di_event ev&#xd;&#xa;inner join di_time dt on ev.time_id &#x3d; dt.id &#xd;&#xa;inner join product_base pb on pb.id &#x3d; ev.product_base_id&#xd;&#xa;left join di_user_product up on up.scan_record_id &#x3d; ev.event_id&#xd;&#xa;where  ev.name &#x3d; &#x27;scan&#x27; and date&#x28;dt.date&#x29; &#x3d; &#x3f;&#xd;&#xa;group by dt.y, dt.m, dt.d, ev.org_id, ev.product_base_id&#xd;&#xa;union all &#xd;&#xa;SELECT date&#x28;dt.date&#x29; as &#x27;date&#x27;,  ev.org_id, &#x27;All&#x27; as &#x27;product_base_id&#x27;,&#x27;&#x6240;&#x6709;&#x4ea7;&#x54c1;&#x27; as &#x27;product_name&#x27;, &#x27;&#x27; &#x27;&#x6240;&#x6709;&#x6279;&#x6b21;&#x27; as &#x27;key_batch_id&#x27;, count&#x28;1&#x29; as pv, count&#x28;distinct ev.user_id, ev.ys_id&#x29; as uv, count&#x28;up.product_key&#x29; as product_count from di_event ev&#xd;&#xa;inner join di_time dt on ev.time_id &#x3d; dt.id &#xd;&#xa;left join di_user_product up on up.scan_record_id &#x3d; ev.event_id&#xd;&#xa;where  ev.name &#x3d; &#x27;scan&#x27; and date&#x28;dt.date&#x29; &#x3d; &#x3f;&#xd;&#xa;group by dt.y, dt.m, dt.d, ev.org_id </sql>
+    <limit>0</limit>
+    <lookup>&#x91cd;&#x590d;&#x65f6;&#x95f4;</lookup>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>432</xloc>
+      <yloc>80</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x65e5;&#x626b;&#x7801;&#x6570;&#x636e;</name>
     <type>InsertUpdate</type>
     <description/>
     <distribute>Y</distribute>
@@ -255,87 +286,14 @@
     </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>528</xloc>
+      <xloc>576</xloc>
       <yloc>80</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Insert &#x2f; Update 2</name>
-    <type>InsertUpdate</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>dev di</connection>
-    <commit>100</commit>
-    <update_bypassed>N</update_bypassed>
-    <lookup>
-      <schema>di</schema>
-      <table>di_daily_draw_price</table>
-      <key>
-        <name>prize_date</name>
-        <field>draw_date</field>
-        <condition>&#x3d;</condition>
-        <name2/>
-      </key>
-      <key>
-        <name>draw_rule_id</name>
-        <field>draw_rule_id</field>
-        <condition>&#x3d;</condition>
-        <name2/>
-      </key>
-      <value>
-        <name>draw_date</name>
-        <rename>prize_date</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>marketing_id</name>
-        <rename>marketing_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>draw_rule_id</name>
-        <rename>draw_rule_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>draw_rule_name</name>
-        <rename>draw_rule_name</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>prize_type_code</name>
-        <rename>prize_type_code</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>count</name>
-        <rename>count</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>time_id</name>
-        <rename>time_id</rename>
-        <update>Y</update>
-      </value>
-    </lookup>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>448</xloc>
-      <yloc>208</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Insert &#x2f; update user phone</name>
+    <name>&#x66f4;&#x65b0;&#x63d2;&#x5165;&#x6240;&#x6709;&#x624b;&#x673a;&#x4fe1;&#x606f;</name>
     <type>InsertUpdate</type>
     <description/>
     <distribute>Y</distribute>
@@ -408,14 +366,219 @@
     </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>416</xloc>
+      <xloc>368</xloc>
       <yloc>304</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Select values</name>
+    <name>&#x6c47;&#x603b;&#x4e2d;&#x5956;&#x4fe1;&#x606f;</name>
+    <type>InsertUpdate</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>dev di</connection>
+    <commit>100</commit>
+    <update_bypassed>N</update_bypassed>
+    <lookup>
+      <schema>di</schema>
+      <table>di_daily_draw_price</table>
+      <key>
+        <name>prize_date</name>
+        <field>draw_date</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>draw_rule_id</name>
+        <field>draw_rule_id</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>draw_date</name>
+        <rename>prize_date</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>marketing_id</name>
+        <rename>marketing_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>draw_rule_id</name>
+        <rename>draw_rule_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>draw_rule_name</name>
+        <rename>draw_rule_name</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>prize_type_code</name>
+        <rename>prize_type_code</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>time_id</name>
+        <rename>time_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>count</name>
+        <rename>count</rename>
+        <update>Y</update>
+      </value>
+    </lookup>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>704</xloc>
+      <yloc>208</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x83b7;&#x5f97;&#x4e2d;&#x5956;&#x8bb0;&#x5f55;&#xff0c;&#x5305;&#x62ec;&#x4e8c;&#x6b21;&#x4e2d;&#x5956;</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>dev di</connection>
+    <sql>select prize_date, marketing_id,draw_rule_id,draw_rule_name,prize_type_code,time_id,count&#x28;1&#x29; as &#x27;count&#x27;&#xd;&#xa;from&#x28; select date&#x28;t.date&#x29; as prize_date, mdr.marketing_id,  mdrl.id as &#x27;draw_rule_id&#x27;, mdrl.comments as &#x27;draw_rule_name&#x27;,mdrl.prize_type_code,  t.id as &#x27;time_id&#x27; from mkt_draw_prize mdp inner join mkt_draw_record mdr&#xd;&#xa;on mdp.scan_record_id &#x3d; mdr.scan_record_id&#xd;&#xa;inner join mkt_draw_rule mdrl on mdrl.id &#x3d; mdp.draw_rule_id&#xd;&#xa;inner join di_time t on t.id &#x3d; date_format&#x28;date&#x28;convert_tz&#x28;mdp.created_datetime,&#x27;&#x2b;00&#x3a;00&#x27;,&#x27;&#x2b;08&#x3a;00&#x27;&#x29;&#x29;,&#x27;&#x25;Y&#x25;m&#x25;d&#x25;H&#x27;&#x29;&#xd;&#xa;where date&#x28;t.date&#x29; &#x3d; &#x3f;&#xd;&#xa;union all&#xd;&#xa;select date&#x28;t.date&#x29; as prize_date, mdr.marketing_id,  mdr.id as &#x27;draw_rule_id&#x27;, mdr.comments as &#x27;draw_rule_name&#x27;,mdr.prize_type_code,  t.id as &#x27;time_id&#x27; &#xd;&#xa;from user_event ue inner join mkt_draw_rule mdr on &#x60;value&#x60; &#x3d; mdr.id &#xd;&#xa;inner join di_time t on t.id &#x3d; date_format&#x28;date&#x28;convert_tz&#x28;ue.created_datetime,&#x27;&#x2b;00&#x3a;00&#x27;,&#x27;&#x2b;08&#x3a;00&#x27;&#x29;&#x29;,&#x27;&#x25;Y&#x25;m&#x25;d&#x25;H&#x27;&#x29;&#xd;&#xa;where date&#x28;t.date&#x29; &#x3d; &#x3f;&#x29; as total&#xd;&#xa;group by draw_rule_id&#x3b;</sql>
+    <limit>0</limit>
+    <lookup>&#x91cd;&#x590d;&#x4e24;&#x4e2a;&#x503c;</lookup>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>544</xloc>
+      <yloc>208</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x83b7;&#x5f97;&#x6240;&#x6709;&#x624b;&#x673a;&#x4fe1;&#x606f;</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>dev di</connection>
+    <sql>select &#xd;&#xa;ifnull&#x28;mdr.user_id,&#x27;&#x27;&#x29; as &#x27;user_id&#x27;, case when isnull&#x28;mdr.user_id&#x29; then mdr.ysid else &#x27;&#x27; end as &#x27;ys_id&#x27; , pb.org_id, mdp.mobile, mdp.draw_record_id, mdp.created_datetime&#xd;&#xa;from mkt_draw_prize mdp&#xd;&#xa;inner join mkt_draw_record mdr on mdp.scan_record_id &#x3d; mdr.scan_record_id&#xd;&#xa;inner join product_base pb on mdr.product_base_id &#x3d; pb.id&#xd;&#xa;where mdp.mobile is not null</sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>208</xloc>
+      <yloc>304</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x83b7;&#x5f97;&#x6628;&#x5929;&#x7684;&#x503c;</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>dev di</connection>
+    <sql>select date&#x28;DATE_SUB&#x28;convert_tz&#x28;now&#x28;&#x29;,&#x27;&#x2b;00&#x3a;00&#x27;,&#x27;&#x2b;08&#x3a;00&#x27;&#x29;, INTERVAL 1 day&#x29;&#x29; as &#x27;yesterday_date&#x27;&#x3b;</sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>208</xloc>
+      <yloc>176</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x83b7;&#x5f97;&#x6628;&#x5929;&#x7684;&#x65f6;&#x95f4;</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>dev di</connection>
+    <sql>select date&#x28;DATE_SUB&#x28;convert_tz&#x28;now&#x28;&#x29;,&#x27;&#x2b;00&#x3a;00&#x27;,&#x27;&#x2b;08&#x3a;00&#x27;&#x29;, INTERVAL 1 day&#x29;&#x29; as &#x27;yesterday_date&#x27;&#x3b;</sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>192</xloc>
+      <yloc>80</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x91cd;&#x590d;&#x4e24;&#x4e2a;&#x503c;</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <fields>      <field>        <name>yesterday_date</name>
+        <rename/>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>      <field>        <name>yesterday_date</name>
+        <rename>duplicated_date</rename>
+        <length>-2</length>
+        <precision>-2</precision>
+      </field>        <select_unspecified>N</select_unspecified>
+    </fields>     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>336</xloc>
+      <yloc>208</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x91cd;&#x590d;&#x65f6;&#x95f4;</name>
     <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
@@ -443,8 +606,8 @@
     </step>
 
   <step>
-    <name>Table input</name>
-    <type>TableInput</type>
+    <name>Dummy &#x28;do nothing&#x29;</name>
+    <type>Dummy</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -453,121 +616,10 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-    <connection>dev di</connection>
-    <sql>SELECT date&#x28;dt.date&#x29; as &#x27;date&#x27;,  ev.org_id, ev.product_base_id, pb.name as &#x27;product_name&#x27;, &#x27;&#x6240;&#x6709;&#x6279;&#x6b21;&#x27; as &#x27;key_batch_id&#x27;, count&#x28;1&#x29; as pv, count&#x28;distinct ev.user_id, ev.ys_id&#x29; as uv, count&#x28;up.product_key&#x29; as product_count from di_event ev&#xd;&#xa;inner join di_time dt on ev.time_id &#x3d; dt.id &#xd;&#xa;inner join product_base pb on pb.id &#x3d; ev.product_base_id&#xd;&#xa;left join di_user_product up on up.scan_record_id &#x3d; ev.event_id&#xd;&#xa;where  ev.name &#x3d; &#x27;scan&#x27; and date&#x28;dt.date&#x29; &#x3d; &#x3f;&#xd;&#xa;group by dt.y, dt.m, dt.d, ev.org_id, ev.product_base_id&#xd;&#xa;union all &#xd;&#xa;SELECT date&#x28;dt.date&#x29; as &#x27;date&#x27;,  ev.org_id, &#x27;All&#x27; as &#x27;product_base_id&#x27;,&#x27;&#x6240;&#x6709;&#x4ea7;&#x54c1;&#x27; as &#x27;product_name&#x27;, &#x27;&#x27; &#x27;&#x6240;&#x6709;&#x6279;&#x6b21;&#x27; as &#x27;key_batch_id&#x27;, count&#x28;1&#x29; as pv, count&#x28;distinct ev.user_id, ev.ys_id&#x29; as uv, count&#x28;up.product_key&#x29; as product_count from di_event ev&#xd;&#xa;inner join di_time dt on ev.time_id &#x3d; dt.id &#xd;&#xa;inner join product_base pb on pb.id &#x3d; ev.product_base_id&#xd;&#xa;left join di_user_product up on up.scan_record_id &#x3d; ev.event_id&#xd;&#xa;where  ev.name &#x3d; &#x27;scan&#x27; and date&#x28;dt.date&#x29; &#x3d; &#x3f;&#xd;&#xa;group by dt.y, dt.m, dt.d, ev.org_id </sql>
-    <limit>0</limit>
-    <lookup>Select values</lookup>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>432</xloc>
-      <yloc>80</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Table input 2</name>
-    <type>TableInput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>dev di</connection>
-    <sql>select date&#x28;t.date&#x29; as prize_date, mdr.marketing_id,  mdrl.id as &#x27;draw_rule_id&#x27;, mdrl.comments as &#x27;draw_rule_name&#x27;,mdrl.prize_type_code, count&#x28;1&#x29; as &#x27;count&#x27;, t.id as &#x27;time_id&#x27; from mkt_draw_prize mdp inner join mkt_draw_record mdr&#xd;&#xa;on mdp.scan_record_id &#x3d; mdr.scan_record_id&#xd;&#xa;inner join mkt_draw_rule mdrl on mdrl.id &#x3d; mdp.draw_rule_id&#xd;&#xa;inner join di_time t on t.id &#x3d; date_format&#x28;date&#x28;convert_tz&#x28;mdp.created_datetime,&#x27;&#x2b;00&#x3a;00&#x27;,&#x27;&#x2b;08&#x3a;00&#x27;&#x29;&#x29;,&#x27;&#x25;Y&#x25;m&#x25;d&#x25;H&#x27;&#x29;&#xd;&#xa;where date&#x28;t.date&#x29; &#x3d; &#x3f;&#xd;&#xa;group by prize_date, draw_rule_id</sql>
-    <limit>0</limit>
-    <lookup>get yesterday date 2</lookup>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>336</xloc>
-      <yloc>208</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>get user phone</name>
-    <type>TableInput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>dev di</connection>
-    <sql>select &#xd;&#xa;ifnull&#x28;mdr.user_id,&#x27;&#x27;&#x29; as &#x27;user_id&#x27;, case when isnull&#x28;mdr.user_id&#x29; then mdr.ysid else &#x27;&#x27; end as &#x27;ys_id&#x27; , pb.org_id, mdp.mobile, mdp.draw_record_id, mdp.created_datetime&#xd;&#xa;from mkt_draw_prize mdp&#xd;&#xa;inner join mkt_draw_record mdr on mdp.scan_record_id &#x3d; mdr.scan_record_id&#xd;&#xa;inner join product_base pb on mdr.product_base_id &#x3d; pb.id&#xd;&#xa;where mdp.mobile is not null</sql>
-    <limit>0</limit>
-    <lookup/>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>208</xloc>
-      <yloc>304</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>get yesterday date</name>
-    <type>TableInput</type>
-    <description/>
-    <distribute>N</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>dev di</connection>
-    <sql>select date&#x28;DATE_SUB&#x28;convert_tz&#x28;now&#x28;&#x29;,&#x27;&#x2b;00&#x3a;00&#x27;,&#x27;&#x2b;08&#x3a;00&#x27;&#x29;, INTERVAL 1 day&#x29;&#x29; as &#x27;yesterday_date&#x27;&#x3b;</sql>
-    <limit>0</limit>
-    <lookup/>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>192</xloc>
-      <yloc>80</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>get yesterday date 2</name>
-    <type>TableInput</type>
-    <description/>
-    <distribute>N</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <connection>dev di</connection>
-    <sql>select date&#x28;DATE_SUB&#x28;convert_tz&#x28;now&#x28;&#x29;,&#x27;&#x2b;00&#x3a;00&#x27;,&#x27;&#x2b;08&#x3a;00&#x27;&#x29;, INTERVAL 1 day&#x29;&#x29; as &#x27;yesterday_date&#x27;&#x3b;</sql>
-    <limit>0</limit>
-    <lookup/>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>192</xloc>
-      <yloc>208</yloc>
+      <xloc>80</xloc>
+      <yloc>144</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
