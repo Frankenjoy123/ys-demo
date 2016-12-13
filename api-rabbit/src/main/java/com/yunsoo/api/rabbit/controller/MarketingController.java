@@ -115,15 +115,6 @@ public class MarketingController {
         return new Marketing(mktObject);
     }
 
-    //get marketing plan for micro shop by openid
-    @RequestMapping(value = "marketing/seller/draw04/{openid}", method = RequestMethod.GET)
-    public List<Marketing> getMarketingByOpenid(@PathVariable(value = "openid") String openid) {
-        if (!StringUtils.hasText(openid)) {
-            throw new BadRequestException("seller openid should not be empty.");
-        }
-        return marketingDomain.getWechatMarketingByOpenid(openid).stream().map(Marketing::new).collect(Collectors.toList());
-    }
-
     @RequestMapping(value = "marketing/draw04/{id}", method = RequestMethod.PUT)
     public void updateWechatMarketing(@PathVariable(value = "id") String marketingId) {
         if (marketingId == null) {
