@@ -19,5 +19,5 @@ public interface OAuthAccountRepository extends CrudRepository<OAuthAccountEntit
 
     int countBySourceInAndSourceTypeCodeAndDisabled(List<String> source, String sourceTypeCode, Boolean disabled);
 
-    List<OAuthAccountEntity> findByOAuthTypeCodeAndOAuthOpenIdAndDisabled(String type, String id, Boolean disabled);
+    List<OAuthAccountEntity> findByOAuthTypeCodeAndOAuthOpenIdAndSourceAndSourceTypeCodeAndDisabled(String type, String id,String sourceId, String sourceType, Boolean disabled);
 }
