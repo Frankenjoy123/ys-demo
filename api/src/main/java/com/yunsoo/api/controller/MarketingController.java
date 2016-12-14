@@ -2,6 +2,7 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.auth.dto.Organization;
 import com.yunsoo.api.auth.service.AuthOrganizationService;
+import com.yunsoo.api.auth.service.OAuthAccountService;
 import com.yunsoo.api.di.service.MarketingService;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
@@ -61,6 +62,9 @@ public class MarketingController {
 
     @Autowired
     private AuthOrganizationService authOrganizationService;
+
+    @Autowired
+    private OAuthAccountService oAuthAccountService;
 
     @Autowired
     private UserDomain userDomain;
@@ -402,13 +406,20 @@ public class MarketingController {
 
     //create marketing plan for micro shop sending wechat red packets
     @RequestMapping(value = "marketing/draw04", method = RequestMethod.POST)
-    public Marketing createWechatMarketing(@RequestParam(value = "openid") String openid,
-                                           @RequestBody Marketing marketing) {
+    public Marketing createWechatMarketing(@RequestBody Marketing marketing) {
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
-        if (!StringUtils.hasText(openid)) {
+        Map detailsInfo = AuthUtils.getCurrentAccount().getDetails();
+        if (detailsInfo == null)
+            throw new NotFoundException("current account don't have oauth account");
+
+        OAuthAccount authAccount = oAuthAccountService.getOAuthAccountById(detailsInfo.get("oauth_openId") == null ? "" : detailsInfo.get("oauthAccountId").toString());
+        if (authAccount == null)
+            throw new NotFoundException("current account don't have oauth account");
+
+        if (!StringUtils.hasText(authAccount.getoAuthOpenId())) {
             throw new BadRequestException("seller openid should not be empty.");
         }
-        MktSellerObject mktSellerObject = marketingDomain.getMktSellerByOpenid(openid);
+        MktSellerObject mktSellerObject = marketingDomain.getMktSellerByOpenid(authAccount.getoAuthOpenId());
         if (mktSellerObject == null) {
             throw new BadRequestException("seller openid invalid.");
         }
@@ -433,6 +444,8 @@ public class MarketingController {
         if (mktDrawRuleList == null || mktDrawRuleList.size() == 0) {
             throw new BadRequestException("marketing draw rule list can not be null");
         }
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
+
         List<MktDrawRuleObject> mktDrawRuleObjectList = new ArrayList<>();
         for (MktDrawRule mktDrawRule : mktDrawRuleList) {
             String marketingId = mktDrawRule.getMarketingId();
@@ -443,6 +456,7 @@ public class MarketingController {
             MktDrawRuleObject mktDrawRuleObject = mktDrawRule.toMktDrawRuleObject();
             mktDrawRuleObject.setTotalQuantity(marketingObject.getQuantity());
             mktDrawRuleObject.setAvailableQuantity(marketingObject.getQuantity());
+            mktDrawRuleObject.setCreatedAccountId(currentAccountId);
             mktDrawRuleObject.setCreatedDateTime(DateTime.now());
             mktDrawRuleObjectList.add(mktDrawRuleObject);
         }
@@ -451,14 +465,15 @@ public class MarketingController {
         return new MktDrawRule(newMktDrawRuleObject);
     }
 
-    //get marketing plan for micro shop by openid
-    @RequestMapping(value = "seller/draw04/{openid}", method = RequestMethod.GET)
-    public List<WeChatMarketing> getMarketingByOpenid(@PathVariable(value = "openid") String openid) {
-        if (!StringUtils.hasText(openid)) {
-            throw new BadRequestException("seller openid should not be empty.");
+    //get marketing plan for micro shop by seller
+    @RequestMapping(value = "seller/draw04", method = RequestMethod.GET)
+    public List<WeChatMarketing> getSellerMarketing() {
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
+        if (!StringUtils.hasText(currentAccountId)) {
+            throw new BadRequestException("seller account id should not be empty.");
         }
         List<WeChatMarketing> weChatMarketingList = new ArrayList<>();
-        List<MarketingObject> marketingObjectList = marketingDomain.getWechatMarketingByOpenid(openid);
+        List<MarketingObject> marketingObjectList = marketingDomain.getWechatMarketingByAccountId(currentAccountId);
 
         marketingObjectList.forEach(object -> {
             WeChatMarketing weChatMarketing = new WeChatMarketing(object);

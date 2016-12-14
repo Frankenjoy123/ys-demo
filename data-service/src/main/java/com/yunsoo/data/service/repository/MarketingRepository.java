@@ -22,6 +22,8 @@ public interface MarketingRepository extends CrudRepository<MarketingEntity, Str
 
     List<MarketingEntity> findByOrgIdAndTypeCodeOrderByCreatedDateTimeDesc(String orgId, String typeCode);
 
+    List<MarketingEntity> findByCreatedAccountIdAndTypeCodeOrderByCreatedDateTimeDesc(String createdAccountId, String typeCode);
+
     Long countByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodes);
 
     @Query("select m.id from MarketingEntity m where orgId = ?1")

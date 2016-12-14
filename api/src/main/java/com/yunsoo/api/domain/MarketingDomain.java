@@ -311,9 +311,9 @@ public class MarketingDomain {
         return dataApiClient.get("marketing/seller/wechat/{openid}", MktSellerObject.class, openid);
     }
 
-    public List<MarketingObject> getWechatMarketingByOpenid(String openid) {
-        return dataApiClient.get("marketing/seller/wechat/marketing/{openid}", new ParameterizedTypeReference<List<MarketingObject>>() {
-        }, openid);
+    public List<MarketingObject> getWechatMarketingByAccountId(String accountId) {
+        return dataApiClient.get("marketing/seller/wechat/marketing/{id}", new ParameterizedTypeReference<List<MarketingObject>>() {
+        }, accountId);
     }
 
     public Map<String, String> getAlipayBatchTansferParameters(List<MktDrawPrize> mktDrawPrizeList) {
