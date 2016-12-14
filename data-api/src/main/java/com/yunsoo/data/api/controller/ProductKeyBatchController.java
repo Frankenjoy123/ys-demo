@@ -3,7 +3,6 @@ package com.yunsoo.data.api.controller;
 import com.amazonaws.services.s3.model.S3Object;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
-import com.yunsoo.common.data.object.ProductKeysObject;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.api.util.ResponseEntityUtils;
@@ -11,7 +10,6 @@ import com.yunsoo.data.service.entity.ProductKeyBatchEntity;
 import com.yunsoo.data.service.repository.ProductKeyBatchRepository;
 import com.yunsoo.data.service.service.ProductKeyBatchService;
 import com.yunsoo.data.service.service.contract.ProductKeyBatch;
-import com.yunsoo.data.service.service.contract.ProductKeys;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
@@ -61,15 +59,6 @@ public class ProductKeyBatchController {
             throw new NotFoundException("productKeyBatch not found by [id: " + id + "]");
         }
         return toProductKeyBatchObject(entity);
-    }
-
-    @RequestMapping(value = "{id}/keys", method = RequestMethod.GET)
-    public ProductKeysObject getProductKeys(@PathVariable(value = "id") String id) {
-        ProductKeys productKeys = productKeyBatchService.getProductKeysByBatchId(id);
-        if (productKeys == null) {
-            throw new NotFoundException("productKeys not found by [id: " + id + "]");
-        }
-        return toProductKeysObject(productKeys);
     }
 
     @RequestMapping(value = "{id}/details", method = RequestMethod.GET)
@@ -292,16 +281,4 @@ public class ProductKeyBatchController {
         return batch;
     }
 
-    private ProductKeysObject toProductKeysObject(ProductKeys productKeys) {
-        if (productKeys == null) {
-            return null;
-        }
-        ProductKeysObject object = new ProductKeysObject();
-        object.setBatchId(productKeys.getBatchId());
-        object.setQuantity(productKeys.getQuantity());
-        object.setCreatedDateTime(productKeys.getCreatedDateTime());
-        object.setProductKeyTypeCodes(productKeys.getProductKeyTypeCodes());
-        object.setProductKeys(productKeys.getProductKeys());
-        return object;
-    }
 }

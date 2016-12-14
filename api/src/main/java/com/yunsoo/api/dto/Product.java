@@ -3,7 +3,6 @@ package com.yunsoo.api.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.yunsoo.common.data.object.ProductObject;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import com.yunsoo.common.web.security.util.OrgIdDetectable;
@@ -133,20 +132,4 @@ public class Product implements OrgIdDetectable {
         this.details = details;
     }
 
-    public Product() {
-    }
-
-    public Product(ProductObject productObject) {
-        if (productObject != null) {
-            this.setProductKey(productObject.getProductKey());
-            this.setProductKeyTypeCode(productObject.getProductKeyTypeCode());
-            this.setProductKeyBatchId(productObject.getProductKeyBatchId());
-            this.setProductKeySet(productObject.getProductKeySet());
-            this.setCreatedDateTime(productObject.getCreatedDateTime());
-            this.setProductBaseId(productObject.getProductBaseId());
-            this.setProductStatusCode(productObject.getProductStatusCode());
-            this.setManufacturingDateTime(productObject.getManufacturingDateTime());
-            this.setDetails(productObject.getDetails());
-        }
-    }
 }

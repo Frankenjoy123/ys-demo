@@ -167,15 +167,10 @@ public class MarketingController {
     }
 
     //get wechat marketing plan by openid, provide API-rabbit
-    @RequestMapping(value = "/seller/wechat/marketing/{openid}", method = RequestMethod.GET)
-    public List<MarketingObject> getWechatMarketingByOpenid(@PathVariable String openid) {
+    @RequestMapping(value = "/seller/wechat/marketing/{id}", method = RequestMethod.GET)
+    public List<MarketingObject> getWechatMarketingByOpenid(@PathVariable String id) {
 
-        MktSellerEntity entity = mktSellerRepository.findOne(openid);
-        if (entity == null) {
-            throw new NotFoundException("marketing wechat seller not found by [openid: " + openid + ']');
-        }
-        String orgId = entity.getOrgId();
-        List<MarketingEntity> entities = marketingRepository.findByOrgIdAndTypeCodeOrderByCreatedDateTimeDesc(orgId, LookupCodes.MktType.DRAW04);
+        List<MarketingEntity> entities = marketingRepository.findByCreatedAccountIdAndTypeCodeOrderByCreatedDateTimeDesc(id, LookupCodes.MktType.DRAW04);
         return entities.stream().map(this::toMarketingObject).collect(Collectors.toList());
     }
 
