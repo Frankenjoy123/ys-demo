@@ -112,6 +112,7 @@ public class OAuthController {
         OAuthAccountLoginResponse response = new OAuthAccountLoginResponse();
         response.setAccessToken(tokenAuthenticationService.generateAccessToken(account));
         response.setToken(currentAccount.getToken());
+
         response.setOauthAccountId(currentAccount.getId());
 
         return response;
@@ -119,12 +120,14 @@ public class OAuthController {
 
     @RequestMapping(value = "/loginToken", method = RequestMethod.GET)
     public Token getLoginToken(@RequestParam(value = "source_type_code", required = false) String sourceTypeCode,
-                               @RequestParam(value = "source", required = false) String source) {
+                               @RequestParam(value = "source", required = false) String source,
+                               @RequestParam(value = "account_id", required = false) String accountId) {
         if (sourceTypeCode == null)
             sourceTypeCode = "agency";
 
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
-        String accountId = currentAccountId;
+        if(!StringUtils.hasText(accountId))
+            accountId = currentAccountId;
 
         if (sourceTypeCode.equals("agency")) {
             List<Account> agencyAccountList = accountService.getByTypeCode(Constants.AccountType.AGENCY, AuthUtils.fixOrgId(null));
@@ -183,8 +186,6 @@ public class OAuthController {
         authAccount.setDetails(new HashMap<>());
         authAccount.getDetails().put(SOURCE_TYPE, account.getSourceTypeCode());
         authAccount.getDetails().put(SOURCE, account.getSource());
-        authAccount.getDetails().put("oauth_type", account.getoAuthTypeCode());
-        authAccount.getDetails().put("oauth_openId", account.getoAuthOpenId());
         return tokenAuthenticationService.generateAccessToken(authAccount);
     }
 

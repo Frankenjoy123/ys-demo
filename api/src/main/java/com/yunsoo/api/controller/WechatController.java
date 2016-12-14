@@ -41,10 +41,8 @@ public class WechatController {
     public Map getWeChatPayConfig(@PathVariable(value = "marketing_id") String marketingId,
                                   @RequestParam("nonce_str") String nonceString,
                                   @RequestParam("timestamp") long timestamp){
-        Map detailsInfo = AuthUtils.getCurrentAccount().getDetails();
-        if(detailsInfo == null)
-            throw new NotFoundException("current account don't have oauth account");
-        OAuthAccount authAccount = oAuthAccountService.getOAuthAccountById(detailsInfo.get("oauth_openId") == null ? "" : detailsInfo.get("oauthAccountId").toString() );
+        String accountId = AuthUtils.fixAccountId(null);
+        OAuthAccount authAccount = oAuthAccountService.getOAuthAccountByAccountId(accountId);
         if(authAccount == null)
             throw new NotFoundException("current account don't have oauth account");
 

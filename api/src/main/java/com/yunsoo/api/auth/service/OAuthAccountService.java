@@ -30,4 +30,16 @@ public class OAuthAccountService {
             return null;
         }
     }
+
+    public OAuthAccount getOAuthAccountByAccountId(String accountId){
+        if (StringUtils.isEmpty(accountId)) {
+            return null;
+        }
+        try {
+            return authApiClient.get("oauth/account/account/{id}", OAuthAccount.class, accountId);
+        } catch (NotFoundException ex) {
+            log.warn("oauth account not found by id: " + accountId);
+            return null;
+        }
+    }
 }

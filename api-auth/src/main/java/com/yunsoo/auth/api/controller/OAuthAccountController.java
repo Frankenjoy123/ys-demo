@@ -44,6 +44,11 @@ public class OAuthAccountController {
         return oAuthAccountService.getById(id);
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "account/{id}")
+    public OAuthAccount getByAccountId(@PathVariable("id") String id){
+        return oAuthAccountService.getByAccountId(id);
+    }
+
 
 
 }

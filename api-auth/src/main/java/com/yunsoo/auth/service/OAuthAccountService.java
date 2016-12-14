@@ -38,6 +38,11 @@ public class OAuthAccountService {
         return new OAuthAccount(entity);
     }
 
+    public OAuthAccount getByAccountId(String id){
+        OAuthAccountEntity entity = repository.getByAccountIdAndDisabled(id, false);
+        return new OAuthAccount(entity);
+    }
+
     public OAuthAccount save(OAuthAccount account){
         OAuthAccountEntity entity = new OAuthAccountEntity(account);
         repository.save(entity);
