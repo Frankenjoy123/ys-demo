@@ -5,11 +5,12 @@ import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.ProductKeyBatch;
 import com.yunsoo.api.dto.ProductKeyCredit;
 import com.yunsoo.api.file.service.FileService;
+import com.yunsoo.api.key.dto.Keys;
+import com.yunsoo.api.key.service.KeyBatchService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.message.ProductKeyBatchCreateMessage;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
-import com.yunsoo.common.data.object.ProductKeysObject;
 import com.yunsoo.common.support.YSFile;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
@@ -56,6 +57,9 @@ public class ProductKeyDomain {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private KeyBatchService keyBatchService;
 
     @Autowired
     private ProductKeyOrderDomain productKeyOrderDomain;
@@ -208,14 +212,14 @@ public class ProductKeyDomain {
 
 
     public byte[] getProductKeysByBatchId(String id) {
-        ProductKeysObject productKeys = dataApiClient.get("productkeybatch/{batchId}/keys", ProductKeysObject.class, id);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Keys productKeys = keyBatchService.getKeysByKeyBatchId(id);
         if (productKeys == null) {
             return null;
         }
         try {
-            List<String> productKeyTypeCodes = productKeys.getProductKeyTypeCodes();
-            for (List<String> ks : productKeys.getProductKeys()) {
+            List<String> productKeyTypeCodes = productKeys.getKeyTypeCodes();
+            for (List<String> ks : productKeys.getKeys()) {
                 for (int j = 0; j < ks.size(); j++) {
                     if (LookupCodes.ProductKeyType.EXTERNAL.equals(productKeyTypeCodes.get(j))) {
                         ks.set(j, productKeyBaseUrl + "external/" + ks.get(j));

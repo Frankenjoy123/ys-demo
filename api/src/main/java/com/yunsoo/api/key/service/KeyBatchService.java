@@ -2,7 +2,9 @@ package com.yunsoo.api.key.service;
 
 import com.yunsoo.api.client.KeyApiClient;
 import com.yunsoo.api.key.dto.KeyBatch;
+import com.yunsoo.api.key.dto.Keys;
 import com.yunsoo.common.web.client.Page;
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -54,6 +56,18 @@ public class KeyBatchService {
                 .filter(id -> id != null && id.length() > 0)
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+    public Keys getKeysByKeyBatchId(String keyBatchId) {
+        if (StringUtils.isEmpty(keyBatchId)) {
+            return null;
+        }
+        try {
+            return keyApiClient.get("keyBatch/{id}/keys", Keys.class, keyBatchId);
+        } catch (NotFoundException e) {
+            log.warn("keys not found by keyBatchId: " + keyBatchId);
+            return null;
+        }
     }
 
 }
