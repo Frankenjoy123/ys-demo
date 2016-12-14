@@ -2,6 +2,7 @@ package com.yunsoo.api.key.service;
 
 import com.yunsoo.api.client.KeyApiClient;
 import com.yunsoo.api.key.dto.KeyBatch;
+import com.yunsoo.api.key.dto.KeyBatchCreationRequest;
 import com.yunsoo.api.key.dto.Keys;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -68,6 +69,19 @@ public class KeyBatchService {
             log.warn("keys not found by keyBatchId: " + keyBatchId);
             return null;
         }
+    }
+
+    public KeyBatch create(KeyBatchCreationRequest request) {
+        return keyApiClient.post("keyBatch", request, KeyBatch.class);
+    }
+
+    /**
+     * update batchNo, productBaseId, statusCode
+     *
+     * @param keyBatch
+     */
+    public void patchUpdateKeyBatch(KeyBatch keyBatch) {
+        keyApiClient.patch("keyBatch/{id}", keyBatch, keyBatch.getId());
     }
 
 }

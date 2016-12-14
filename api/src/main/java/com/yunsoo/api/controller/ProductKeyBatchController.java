@@ -1,9 +1,13 @@
 package com.yunsoo.api.controller;
 
 import com.yunsoo.api.aspect.OperationLog;
-import com.yunsoo.api.domain.*;
+import com.yunsoo.api.domain.MarketingDomain;
+import com.yunsoo.api.domain.OrganizationConfigDomain;
+import com.yunsoo.api.domain.ProductBaseDomain;
+import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.file.service.FileService;
+import com.yunsoo.api.key.dto.KeyBatchCreationRequest;
 import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
@@ -202,16 +206,17 @@ public class ProductKeyBatchController {
             throw new BadRequestException("product_key_type_codes invalid");
         }
 
-        ProductKeyBatchObject batchObj = new ProductKeyBatchObject();
-        batchObj.setBatchNo(request.getBatchNo());
-        batchObj.setQuantity(quantity);
-        batchObj.setProductBaseId(productBaseId);
-        batchObj.setProductKeyTypeCodes(productKeyTypeCodes);
-        batchObj.setOrgId(orgId);
-        batchObj.setCreatedAppId(appId);
-        batchObj.setCreatedDeviceId(deviceId);
-        log.info(String.format("ProductKeyBatch creating started [quantity: %s]", batchObj.getQuantity()));
-        ProductKeyBatch newBatch = productKeyDomain.createProductKeyBatch(batchObj);
+        KeyBatchCreationRequest creationRequest = new KeyBatchCreationRequest();
+        creationRequest.setBatchNo(request.getBatchNo());
+        creationRequest.setQuantity(quantity);
+        creationRequest.setProductBaseId(productBaseId);
+        creationRequest.setKeyTypeCodes(productKeyTypeCodes);
+        creationRequest.setOrgId(orgId);
+        creationRequest.setCreatedAppId(appId);
+        creationRequest.setCreatedDeviceId(deviceId);
+
+        log.info(String.format("ProductKeyBatch creating started [quantity: %s]", creationRequest.getQuantity()));
+        ProductKeyBatch newBatch = productKeyDomain.createProductKeyBatch(creationRequest);
         log.info(String.format("ProductKeyBatch created [id: %s, quantity: %s]", newBatch.getId(), newBatch.getQuantity()));
 
         return newBatch;
@@ -296,14 +301,14 @@ public class ProductKeyBatchController {
     }
 
     @RequestMapping(value = "/marketing/{id}", method = RequestMethod.GET)
-    public List<ProductKeyBatchInfo> getKeybatchInfoByMarketingId(@PathVariable(value = "id") String marketingId) {
+    public List<ProductKeyBatchInfo> getKeyBatchInfoByMarketingId(@PathVariable(value = "id") String marketingId) {
 
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
         List<ProductKeyBatchInfo> productKeyBatchInfoList = new ArrayList<>();
 
-        List<ProductKeyBatch> productKeyBatches = productKeyDomain.getProductKeybatchByMarketingId(marketingId).stream().map(ProductKeyBatch::new).collect(Collectors.toList());
+        List<ProductKeyBatch> productKeyBatches = productKeyDomain.getProductKeyBatchByMarketingId(marketingId).stream().map(ProductKeyBatch::new).collect(Collectors.toList());
         if ((productKeyBatches != null) && (productKeyBatches.size() > 0)) {
             for (ProductKeyBatch productKeyBatch : productKeyBatches) {
                 ProductKeyBatchInfo object = new ProductKeyBatchInfo();
