@@ -12,14 +12,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.NONE)
 public class WeChatOrderResult extends WeChatXmlBaseType {
 
-    @XmlElement(name = "app_id")
+    @XmlElement(name = "appid")
     private String appId;
 
     @XmlElement(name = "mch_id")
     private String mchId;
-
-    @XmlElement(name = "device_info")
-    private String deviceInfo;
 
     @XmlElement(name = "nonce_str")
     private String nonceStr;
@@ -32,9 +29,6 @@ public class WeChatOrderResult extends WeChatXmlBaseType {
 
     @XmlElement(name = "prepay_id")
     private String prepayId;
-
-    @XmlElement(name = "code_url")
-    private String codeUrl;
 
     public String getAppId() {
         return appId;
@@ -50,14 +44,6 @@ public class WeChatOrderResult extends WeChatXmlBaseType {
 
     public void setMchId(String mchId) {
         this.mchId = mchId;
-    }
-
-    public String getDeviceInfo() {
-        return deviceInfo;
-    }
-
-    public void setDeviceInfo(String deviceInfo) {
-        this.deviceInfo = deviceInfo;
     }
 
     public String getNonceStr() {
@@ -92,11 +78,4 @@ public class WeChatOrderResult extends WeChatXmlBaseType {
         this.prepayId = prepayId;
     }
 
-    public String getCodeUrl() {
-        return codeUrl;
-    }
-
-    public void setCodeUrl(String codeUrl) {
-        this.codeUrl = codeUrl;
-    }
 }

@@ -66,7 +66,8 @@ public class WeChatController {
     public Map<String, Object> getWeChatPayConfig(@RequestParam("pre_pay_id") String id,
                                                   @RequestParam("nonce_str") String nonceString,
                                                   @RequestParam("timestamp") long timestamp) throws UnsupportedEncodingException {
-        return weChatService.getWeChatPayConfig(id, timestamp, nonceString).getValues();
+        Map<String, Object> values = weChatService.getWeChatPayConfig(id, timestamp, nonceString).getValues();
+        return values;
     }
 
     @RequestMapping(value = "unified", method = RequestMethod.POST)

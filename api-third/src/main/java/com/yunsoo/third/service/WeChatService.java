@@ -222,7 +222,7 @@ public class WeChatService {
             data.addSign(privateKey);
             String result = weChatMchClient.postForObject(url, data.toXml(), String.class);
             result = new String(result.getBytes("ISO-8859-1"), "UTF-8");
-            WeChatOrderResult orderResult = XmlUtils.convertXmlToObject(result, WeChatOrderResult.class);
+            WeChatOrderResult orderResult = XmlUtils.convertXmlToObject(result, WeChatXmlBaseType.class, WeChatOrderResult.class);
             if("SUCCESS".equals(orderResult.getReturnCode()) &&  "SUCCESS".equals(orderResult.getResultCode()))
                 return orderResult;
             else{

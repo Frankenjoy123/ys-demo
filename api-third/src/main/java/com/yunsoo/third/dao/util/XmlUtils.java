@@ -11,9 +11,10 @@ import java.io.StringReader;
  */
 public class XmlUtils {
 
-    public static <T> T convertXmlToObject(String xml, Class<T> classType) throws JAXBException {
+    public static <T> T convertXmlToObject(String xml, Class... classType) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(classType);
         Unmarshaller unMarshaller = context.createUnmarshaller();
-        return (T)unMarshaller.unmarshal( new StreamSource( new StringReader(xml) ) );
+        T resultObj = (T)unMarshaller.unmarshal(new StreamSource(new StringReader(xml)));
+        return resultObj;
     }
 }

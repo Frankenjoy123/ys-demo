@@ -53,6 +53,7 @@ public class WechatController {
         if(authAccount == null)
             throw new NotFoundException("current account don't have oauth account");
 
-        return domain.getPayConfig(null, authAccount.getoAuthOpenId(), marketingId, nonceString, timestamp);
+        Map payConfig = domain.getPayConfig(null, authAccount.getoAuthOpenId(), marketingId, nonceString, timestamp);
+        return payConfig;
     }
 }

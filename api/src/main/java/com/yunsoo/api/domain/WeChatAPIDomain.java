@@ -85,7 +85,7 @@ public class WeChatAPIDomain {
                 .append("nonce_str", nonceString)
                 .append("timestamp", timestamp)
                 .build();
-        return thirdApiClient.get("jssdk/pay_config" + query, Map.class);
+        return thirdApiClient.get("wechat/jssdk/pay_config" + query, Map.class);
     }
 
 
