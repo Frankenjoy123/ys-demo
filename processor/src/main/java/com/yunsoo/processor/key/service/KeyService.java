@@ -19,13 +19,14 @@ public class KeyService {
     @Autowired
     private KeyApiClient keyApiClient;
 
-    public void batchSaveKeys(KeyBatch keyBatch, List<List<String>> keys, String productStatusCode) {
+    public void batchSaveKeys(KeyBatch keyBatch, String productStatusCode, String serialNoPattern, List<List<String>> keys) {
         BatchSaveKeyRequest request = new BatchSaveKeyRequest();
         request.setKeyBatchId(keyBatch.getId());
         request.setKeyTypeCodes(keyBatch.getKeyTypeCodes());
         request.setProductBaseId(keyBatch.getProductBaseId());
         request.setCreatedDateTime(keyBatch.getCreatedDateTime());
         request.setProductStatusCode(productStatusCode);
+        request.setSerialNoPattern(serialNoPattern);
         request.setKeys(keys);
 
         keyApiClient.post("key/batchSave", request, null);

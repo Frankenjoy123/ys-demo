@@ -23,6 +23,9 @@ public class BatchSaveKeyRequest implements Serializable {
     @JsonProperty("key_type_codes")
     private List<String> keyTypeCodes;
 
+    @JsonProperty("serial_no_pattern")
+    private String serialNoPattern;
+
     @JsonProperty("keys")
     private List<List<String>> keys;
 
@@ -56,6 +59,14 @@ public class BatchSaveKeyRequest implements Serializable {
 
     public void setKeyTypeCodes(List<String> keyTypeCodes) {
         this.keyTypeCodes = keyTypeCodes;
+    }
+
+    public String getSerialNoPattern() {
+        return serialNoPattern;
+    }
+
+    public void setSerialNoPattern(String serialNoPattern) {
+        this.serialNoPattern = serialNoPattern;
     }
 
     public List<List<String>> getKeys() {

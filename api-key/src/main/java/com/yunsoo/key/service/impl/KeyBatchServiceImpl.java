@@ -91,18 +91,19 @@ public class KeyBatchServiceImpl implements KeyBatchService {
             return null;
         }
 
-        List<List<String>> keyList = getKeysFromFile(batchEntity.getOrgId(), batchId);
-
-        if (keyList == null) {
-            return null;
-        }
         KeyBatch keyBatch = toKeyBatch(batchEntity);
         Keys keys = new Keys();
         keys.setKeyBatchId(batchEntity.getId());
         keys.setQuantity(batchEntity.getQuantity());
         keys.setCreatedDateTime(batchEntity.getCreatedDateTime());
         keys.setKeyTypeCodes(keyBatch.getKeyTypeCodes());
-        keys.setKeys(keyList);
+
+        fillKeysFromFile(keys);
+
+        if (keys.getKeys() == null) {
+            return null;
+        }
+
         return keys;
     }
 
@@ -168,14 +169,14 @@ public class KeyBatchServiceImpl implements KeyBatchService {
 
         //generate keys
         List<List<String>> keyList = hasExternalKeys
-                ? generateProductKeys(quantity, keyTypeCodes, partitionId, externalKeys)
-                : generateProductKeys(quantity, keyTypeCodes);
+                ? generateKeys(quantity, keyTypeCodes, partitionId, externalKeys)
+                : generateKeys(quantity, keyTypeCodes);
 
         //save batch
         KeyBatchEntity entity = keyBatchRepository.save(toKeyBatchEntity(batch));
 
         //save keys to file
-        saveKeysToFile(entity.getOrgId(), entity.getId(), entity.getQuantity(), entity.getKeyTypeCodes(), keyList);
+        saveKeysToFile(entity.getOrgId(), entity.getId(), entity.getQuantity(), entity.getKeyTypeCodes(), request.getSerialNoPattern(), keyList);
 
         //put to queue
         processorService.putKeyBatchCreateMessageToQueue(entity.getId());
@@ -231,7 +232,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
 
     //region private methods
 
-    private List<List<String>> generateProductKeys(int quantity, List<String> keyTypeCodes) {
+    private List<List<String>> generateKeys(int quantity, List<String> keyTypeCodes) {
         List<List<String>> keyList = new ArrayList<>(quantity);
         for (int i = 0, len = keyTypeCodes.size(); i < quantity; i++) {
             List<String> tempKeys = new ArrayList<>(len);
@@ -244,8 +245,8 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         return keyList;
     }
 
-    private List<List<String>> generateProductKeys(int quantity, List<String> keyTypeCodes,
-                                                   String partitionId, List<String> externalKeys) {
+    private List<List<String>> generateKeys(int quantity, List<String> keyTypeCodes,
+                                            String partitionId, List<String> externalKeys) {
         int externalIndex = -1;
         for (int i = 0; i < keyTypeCodes.size(); i++) {
             if (Constants.KeyType.EXTERNAL.equals(keyTypeCodes.get(i))) {
@@ -269,12 +270,15 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         return keyList;
     }
 
-    private void saveKeysToFile(String orgId, String batchId, int quantity, String keyTypeCodes, List<List<String>> keyList) {
+    private void saveKeysToFile(String orgId, String batchId, int quantity, String keyTypeCodes, String serialNoPattern, List<List<String>> keyList) {
         YSFile ysFile = new YSFile(YSFile.EXT_PKS);
         ysFile.putHeader("org_id", orgId);
-        ysFile.putHeader("product_key_batch_id", batchId);
+        ysFile.putHeader("key_batch_id", batchId);
         ysFile.putHeader("quantity", Integer.toString(quantity));
-        ysFile.putHeader("product_key_type_codes", keyTypeCodes);
+        ysFile.putHeader("key_type_codes", keyTypeCodes);
+        if (!StringUtils.isEmpty(serialNoPattern)) {
+            ysFile.putHeader("serial_no_pattern", serialNoPattern);
+        }
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < quantity; i++) {
@@ -293,35 +297,37 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         fileService.putFile(path, new ResourceInputStream(inputStream, data.length, "application/vnd+ys.pks"));
     }
 
-    private List<List<String>> getKeysFromFile(String orgId, String batchId) {
+    private void fillKeysFromFile(final Keys keys) {
+        String orgId = keys.getOrgId();
+        String batchId = keys.getKeyBatchId();
         String path = formatKeyBatchKeysFilePath(orgId, batchId);
         ResourceInputStream resourceInputStream = fileService.getFile(path);
         if (resourceInputStream == null) {
-            return null;
+            return;
         }
         YSFile ysFile;
         try {
             byte[] buffer = IOUtils.toByteArray(resourceInputStream);
             ysFile = YSFile.read(buffer);
         } catch (Exception e) {
-            log.error(String.format("getKeysFromFile exception: [path: %s]", path), e);
-            return null;
+            log.error(String.format("fillKeysFromFile exception: [path: %s]", path), e);
+            return;
         }
         byte[] content = ysFile.getContent();
-        List<List<String>> result = new ArrayList<>();
+        List<List<String>> keyList = new ArrayList<>();
         String contentStr = new String(content, StandardCharsets.UTF_8);
         String[] lines = contentStr.split("\r\n");
         for (String line : lines) {
             if (line.length() > 0) {
-                result.add(Arrays.asList(StringUtils.commaDelimitedListToStringArray(line)));
+                keyList.add(Arrays.asList(StringUtils.commaDelimitedListToStringArray(line)));
             }
         }
         String quantity = ysFile.getHeader("quantity");
-        if (quantity != null && Integer.parseInt(quantity) == result.size()) {
-            return result;
+        if (quantity != null && Integer.parseInt(quantity) == keyList.size()) {
+            keys.setSerialNoPattern(ysFile.getHeader("serial_no_pattern"));
+            keys.setKeys(keyList);
         } else {
-            log.error(String.format("getKeysFromFile result size not equal to quantity: [path: %s]", path));
-            return null;
+            log.error(String.format("fillKeysFromFile keyList size not equal to quantity: [path: %s]", path));
         }
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class KeyBatchCreationRequest implements Serializable {
     @JsonProperty("batch_no")
     private String batchNo;
 
+    @NotNull(message = "quantity must not be null")
     @Range(min = 1, max = 1000000, message = "quantity must in range of 1 to 1000000")
     @JsonProperty("quantity")
     private Integer quantity;
@@ -37,6 +39,9 @@ public class KeyBatchCreationRequest implements Serializable {
     @NotEmpty(message = "org_id must not be null or empty")
     @JsonProperty("org_id")
     private String orgId;
+
+    @JsonProperty("serial_no_pattern")
+    private String serialNoPattern;
 
     @JsonProperty("created_app_id")
     private String createdAppId;
@@ -105,6 +110,14 @@ public class KeyBatchCreationRequest implements Serializable {
 
     public void setOrgId(String orgId) {
         this.orgId = orgId;
+    }
+
+    public String getSerialNoPattern() {
+        return serialNoPattern;
+    }
+
+    public void setSerialNoPattern(String serialNoPattern) {
+        this.serialNoPattern = serialNoPattern;
     }
 
     public String getCreatedAppId() {

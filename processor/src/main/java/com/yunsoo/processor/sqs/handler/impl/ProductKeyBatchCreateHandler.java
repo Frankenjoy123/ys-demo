@@ -1,9 +1,11 @@
 package com.yunsoo.processor.sqs.handler.impl;
 
 import com.yunsoo.common.data.LookupCodes;
+import com.yunsoo.common.util.SerialNoGenerator;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.processor.domain.LogDomain;
 import com.yunsoo.processor.key.dto.KeyBatch;
+import com.yunsoo.processor.key.dto.Keys;
 import com.yunsoo.processor.key.service.KeyBatchService;
 import com.yunsoo.processor.key.service.KeyService;
 import com.yunsoo.processor.sqs.MessageSender;
@@ -61,14 +63,18 @@ public class ProductKeyBatchCreateHandler implements MessageHandler<KeyBatchCrea
         String productStatusCode = !StringUtils.isEmpty(message.getProductStatusCode()) ? message.getProductStatusCode()
                 : !StringUtils.isEmpty(keyBatch.getProductStatusCode()) ? keyBatch.getProductStatusCode()
                 : LookupCodes.ProductStatus.ACTIVATED;
-        List<List<String>> keys = keyBatchService.getKeysByBatchId(keyBatchId);
-        if (keys == null) {
+        Keys keys = keyBatchService.getKeysByBatchId(keyBatchId);
+        if (keys == null || keys.getKeys() == null) {
             log.error("keys not found by keyBatchId: " + keyBatchId);
             throw new RuntimeException("keys not found");
         }
 
-        int quantity = keys.size();
+        List<List<String>> keyList = keys.getKeys();
+        int quantity = keyList.size();
         int continueOffset = message.getContinueOffset() != null ? message.getContinueOffset() : 0;
+        SerialNoGenerator serialNoGenerator = !StringUtils.isEmpty(keys.getSerialNoPattern())
+                ? new SerialNoGenerator(keys.getSerialNoPattern())
+                : null;
 
         log.info("started processing keyBatch " + StringFormatter.formatMap("message", message, "remainQuantity", quantity - continueOffset));
         DateTime startDateTime = DateTime.now();
@@ -77,10 +83,11 @@ public class ProductKeyBatchCreateHandler implements MessageHandler<KeyBatchCrea
 
         for (int i = continueOffset; i < quantity; i += BATCH_LIMIT) {
             int toIndex = quantity < i + BATCH_LIMIT ? quantity : i + BATCH_LIMIT;
-            List<List<String>> subList = keys.subList(i, toIndex);
+            String serialNoPattern = serialNoGenerator != null ? serialNoGenerator.getSubSerialNoPattern(i, toIndex - i) : null;
+            List<List<String>> subList = keyList.subList(i, toIndex);
 
             batchStartDateTime = DateTime.now();
-            keyService.batchSaveKeys(keyBatch, subList, productStatusCode);
+            keyService.batchSaveKeys(keyBatch, productStatusCode, serialNoPattern, subList);
             DateTime batchEndDateTime = DateTime.now();
 
             log.info("batch saved keys " + StringFormatter.formatMap(
