@@ -1,9 +1,7 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.client.ThirdApiClient;
-import com.yunsoo.api.dto.WeChatAccessToken;
-import com.yunsoo.api.dto.WeChatOpenIdList;
-import com.yunsoo.api.dto.WeChatOrderRequest;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.common.data.object.MarketingObject;
 import com.yunsoo.common.data.object.MktDrawPrizeObject;
 import com.yunsoo.common.web.util.QueryStringBuilder;
@@ -35,6 +33,27 @@ public class WeChatAPIDomain {
 
         return  thirdApiClient.get("wechat/token" + query, WeChatAccessToken.class);
     }
+
+    public WeChatUser getWebUser(String code, Boolean detailsFlag){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("code", code)
+                .build();
+        WeChatWebAccessToken weChatAccessToken = thirdApiClient.get("wechat/web_token" + query, WeChatWebAccessToken.class);
+        if(detailsFlag) {
+            query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                    .append("access_token", weChatAccessToken.getAccessToken())
+                    .append("openid", weChatAccessToken.getOpenId())
+                    .build();
+
+            return thirdApiClient.get("wechat/user" + query, WeChatUser.class);
+        }
+        else {
+            WeChatUser user = new WeChatUser();
+            user.setOpenId(weChatAccessToken.getOpenId());
+            return user;
+        }
+    }
+
 
     public WeChatOpenIdList getOpenIds(String appId, String secret){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
