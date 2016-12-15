@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -249,9 +250,12 @@ public class MarketingDomain {
         });
     }
 
-    public void updateWechatMarketing(String marketingId) {
+    public void updateWechatMarketing(String marketingId, String orderId) {
         MarketingObject marketingObject = getMarketingById(marketingId);
         marketingObject.setStatusCode(LookupCodes.MktStatus.PAID);
+        if (StringUtils.hasText(orderId)) {
+            marketingObject.setComments(orderId);
+        }
         dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
     }
 

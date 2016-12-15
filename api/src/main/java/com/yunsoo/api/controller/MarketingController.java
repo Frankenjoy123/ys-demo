@@ -490,11 +490,12 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "update/draw04/{id}", method = RequestMethod.PUT)
-    public void updateWechatMarketing(@PathVariable(value = "id") String marketingId) {
+    public void updateWechatMarketing(@PathVariable(value = "id") String marketingId,
+                                      @RequestParam(value = "order_id", required = false) String orderId) {
         if (marketingId == null) {
             throw new BadRequestException("wechat marketing id can not be null");
         }
-        marketingDomain.updateWechatMarketing(marketingId);
+        marketingDomain.updateWechatMarketing(marketingId, orderId);
     }
 
 
