@@ -3,6 +3,7 @@ package com.yunsoo.api.domain;
 import com.yunsoo.api.dto.MktDrawPrize;
 import com.yunsoo.api.payment.AlipayParameters;
 import com.yunsoo.api.payment.ParameterNames;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
@@ -246,6 +247,12 @@ public class MarketingDomain {
                 .build();
         return dataApiClient.get("analysis/market_win_user_location" + query, new ParameterizedTypeReference<List<MarketWinUserLocationAnalysisObject>>() {
         });
+    }
+
+    public void updateWechatMarketing(String marketingId) {
+        MarketingObject marketingObject = getMarketingById(marketingId);
+        marketingObject.setStatusCode(LookupCodes.MktStatus.PAID);
+        dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
     }
 
 

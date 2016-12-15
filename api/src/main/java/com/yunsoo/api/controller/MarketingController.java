@@ -407,30 +407,23 @@ public class MarketingController {
     //create marketing plan for micro shop sending wechat red packets
     @RequestMapping(value = "marketing/draw04", method = RequestMethod.POST)
     public Marketing createWechatMarketing(@RequestBody Marketing marketing) {
-        String currentAccountId = AuthUtils.getCurrentAccount().getId();
-        Map detailsInfo = AuthUtils.getCurrentAccount().getDetails();
-        if (detailsInfo == null)
-            throw new NotFoundException("current account don't have oauth account");
-
-        OAuthAccount authAccount = oAuthAccountService.getOAuthAccountById(detailsInfo.get("oauth_openId") == null ? "" : detailsInfo.get("oauthAccountId").toString());
+        String accountId = AuthUtils.fixAccountId(null);
+        OAuthAccount authAccount = oAuthAccountService.getOAuthAccountByAccountId(accountId);
         if (authAccount == null)
             throw new NotFoundException("current account don't have oauth account");
 
         if (!StringUtils.hasText(authAccount.getoAuthOpenId())) {
             throw new BadRequestException("seller openid should not be empty.");
         }
-        MktSellerObject mktSellerObject = marketingDomain.getMktSellerByOpenid(authAccount.getoAuthOpenId());
-        if (mktSellerObject == null) {
-            throw new BadRequestException("seller openid invalid.");
-        }
+        String orgId = AuthUtils.fixOrgId(null);
         MarketingObject marketingObject = marketing.toMarketingObject();
-        marketingObject.setCreatedAccountId(currentAccountId);
+        marketingObject.setCreatedAccountId(accountId);
         marketingObject.setCreatedDateTime(DateTime.now());
         marketingObject.setTypeCode(LookupCodes.MktType.DRAW04);
         if (marketing.getBudget() != null) {
             marketingObject.setBalance(marketing.getBudget());
         }
-        marketingObject.setOrgId(mktSellerObject.getOrgId());
+        marketingObject.setOrgId(orgId);
         marketingObject.setQuantity((marketing.getBudget().intValue()));
         MarketingObject mktObject = marketingDomain.createMarketing(marketingObject);
 
@@ -494,6 +487,14 @@ public class MarketingController {
         });
 
         return weChatMarketingList;
+    }
+
+    @RequestMapping(value = "update/draw04/{id}", method = RequestMethod.PUT)
+    public void updateWechatMarketing(@PathVariable(value = "id") String marketingId) {
+        if (marketingId == null) {
+            throw new BadRequestException("wechat marketing id can not be null");
+        }
+        marketingDomain.updateWechatMarketing(marketingId);
     }
 
 
