@@ -61,6 +61,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/payment/brand/alipay/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/marketing/alipay/notify").permitAll()
                 .antMatchers(HttpMethod.POST, "/analysis/track/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/wechat/web_user").permitAll()
                 .anyRequest().authenticated().and()
 
                 // custom Token based authentication based on the header previously given to the client

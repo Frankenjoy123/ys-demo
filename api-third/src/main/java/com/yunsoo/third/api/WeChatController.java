@@ -26,7 +26,7 @@ public class WeChatController {
     private WeChatService weChatService;
 
     @RequestMapping(value = "user", method = RequestMethod.GET)
-    public WeChatUser getWeChatUser(@RequestParam("access_token") String accessToken, @RequestParam("openid") String openId) {
+    public WeChatUser getWeChatWebUser(@RequestParam("access_token") String accessToken, @RequestParam("openid") String openId) {
         return weChatService.getUserInfo(accessToken, openId);
     }
 
