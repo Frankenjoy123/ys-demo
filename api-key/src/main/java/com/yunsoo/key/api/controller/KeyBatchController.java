@@ -1,10 +1,12 @@
 package com.yunsoo.key.api.controller;
 
 import com.yunsoo.common.support.YSFile;
+import com.yunsoo.common.util.SerialNoGenerator;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
+import com.yunsoo.key.Constants;
 import com.yunsoo.key.api.util.PageUtils;
 import com.yunsoo.key.api.util.ResponseEntityUtils;
 import com.yunsoo.key.dto.KeyBatch;
@@ -67,8 +69,9 @@ public class KeyBatchController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public KeyBatch create(@RequestBody @Valid KeyBatchCreationRequest request) {
-        return keyBatchService.create(request);
+    public KeyBatch create(@RequestBody @Valid KeyBatchCreationRequest creationRequest) {
+        validateSerialNoPattern(creationRequest.getSerialNoPattern(), creationRequest.getQuantity());
+        return keyBatchService.create(creationRequest);
     }
 
     @RequestMapping(value = "file", method = RequestMethod.POST)
@@ -84,6 +87,7 @@ public class KeyBatchController {
             throw new BadRequestException("file EXT invalid");
         }
         KeyBatchCreationRequest creationRequest = toKeyBatchCreationRequest(ysFile);
+        validateSerialNoPattern(creationRequest.getSerialNoPattern(), creationRequest.getQuantity());
         return keyBatchService.create(creationRequest);
     }
 
@@ -119,6 +123,19 @@ public class KeyBatchController {
         keyBatchService.saveKeyBatchDetails(id, new ResourceInputStream(inputStream, contentLength, contentType));
     }
 
+    private void validateSerialNoPattern(String serialNoPattern, int quantity) {
+        if (StringUtils.isEmpty(serialNoPattern)) {
+            return;
+        }
+        try {
+            SerialNoGenerator serialNoGenerator = new SerialNoGenerator(serialNoPattern);
+            if (serialNoGenerator.getTotalCount() != quantity) {
+                throw new BadRequestException("serial_no_pattern invalid");
+            }
+        } catch (IllegalArgumentException ex) {
+            throw new BadRequestException("serial_no_pattern invalid");
+        }
+    }
 
     private KeyBatchCreationRequest toKeyBatchCreationRequest(YSFile ysFile) {
         String partitionId = ysFile.getHeader("partition_id");
@@ -128,11 +145,14 @@ public class KeyBatchController {
         String productBaseId = ysFile.getHeader("product_base_id");
         String productStatusCode = ysFile.getHeader("product_status_code");
         String orgId = ysFile.getHeader("org_id");
+        String serialNoPattern = ysFile.getHeader("serial_no_pattern");
         String createdAppId = ysFile.getHeader("created_app_id");
         String createdDeviceId = ysFile.getHeader("created_device_id");
         String createdAccountId = ysFile.getHeader("created_account_id");
+
         int quantityInt;
         List<String> keyTypeCodeList;
+        List<String> externalKeys = null;
 
         if (StringUtils.isEmpty(quantity)
                 || StringUtils.isEmpty(keyTypeCodes)
@@ -144,17 +164,19 @@ public class KeyBatchController {
         } catch (NumberFormatException e) {
             throw new BadRequestException("quantity invalid");
         }
-        String contentStr = new String(ysFile.getContent(), StandardCharsets.UTF_8);
-        List<String> externalKeys = Arrays.asList(contentStr.split("\r\n"))
-                .stream()
-                .filter(k -> k != null)
-                .map(String::trim)
-                .filter(k -> k.length() > 0)
-                .collect(Collectors.toList());
-        if (quantityInt <= 0 || quantityInt != externalKeys.size()) {
-            throw new BadRequestException("quantity invalid");
-        }
         keyTypeCodeList = Arrays.asList(StringUtils.commaDelimitedListToStringArray(keyTypeCodes));
+        if (keyTypeCodeList.contains(Constants.KeyType.EXTERNAL)) {
+            String contentStr = new String(ysFile.getContent(), StandardCharsets.UTF_8);
+            externalKeys = Arrays.asList(contentStr.split("\r\n"))
+                    .stream()
+                    .filter(k -> k != null)
+                    .map(String::trim)
+                    .filter(k -> k.length() > 0)
+                    .collect(Collectors.toList());
+            if (quantityInt <= 0 || quantityInt != externalKeys.size()) {
+                throw new BadRequestException("quantity invalid");
+            }
+        }
 
         KeyBatchCreationRequest creationRequest = new KeyBatchCreationRequest();
         creationRequest.setPartitionId(partitionId);
@@ -164,10 +186,12 @@ public class KeyBatchController {
         creationRequest.setProductBaseId(productBaseId);
         creationRequest.setProductStatusCode(productStatusCode);
         creationRequest.setOrgId(orgId);
+        creationRequest.setSerialNoPattern(serialNoPattern);
         creationRequest.setCreatedAppId(createdAppId);
         creationRequest.setCreatedDeviceId(createdDeviceId);
         creationRequest.setCreatedAccountId(createdAccountId);
         creationRequest.setExternalKeys(externalKeys);
         return creationRequest;
     }
+
 }

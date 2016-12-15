@@ -58,7 +58,7 @@ public class KeyController {
         productTemplate.setCreatedDateTime(request.getCreatedDateTime());
         productTemplate.setManufacturingDateTime(request.getManufacturingDateTime());
 
-        keyService.batchSave(request.getKeyBatchId(), request.getKeyTypeCodes(), request.getKeys(), productTemplate);
+        keyService.batchSave(request.getKeyBatchId(), request.getKeyTypeCodes(), request.getSerialNoPattern(), request.getKeys(), productTemplate);
     }
 
 }
