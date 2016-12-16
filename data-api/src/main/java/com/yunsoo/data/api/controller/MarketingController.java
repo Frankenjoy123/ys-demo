@@ -145,8 +145,9 @@ public class MarketingController {
     // query marketing draw record by product key and ysid
     @RequestMapping(value = "/draw/{key}/user/{id}", method = RequestMethod.GET)
     public MktDrawRecordObject getMktDrawRecordByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "id") String id,
-                                                                   @RequestParam(value = "oauth_openid") String oauthOpenId) {
-        List<MktDrawRecordEntity> entities = mktDrawRecordRepository.findByProductKeyAndOauthOpenid(key, oauthOpenId);
+                                                                   @RequestParam(value = "oauth_openid") String oauthOpenId,
+                                                                   @RequestParam(value = "marketing_id") String marketingId) {
+        List<MktDrawRecordEntity> entities = mktDrawRecordRepository.findByProductKeyAndOauthOpenidAndMarketingId(key, oauthOpenId, marketingId);
         if (entities.size() > 0) {
             MktDrawRecordEntity entity = entities.get(0);
             return toMktDrawRecordObject(entity);

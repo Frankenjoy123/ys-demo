@@ -81,8 +81,13 @@ public class MarketingDomain {
     }
 
     // query marketing draw prize by product key and ysid and oauthOpenId
-    public MktDrawRecordObject getMktDrawRecordByProductKeyAndUserAndOauthOpenId(String key, String ysId, String oauthOpenId) {
-        return dataApiClient.get("marketing/draw/{key}/user/{id}" + "?oauth_openid=" + oauthOpenId, MktDrawRecordObject.class, key, ysId);
+    public MktDrawRecordObject getMktDrawRecordByProductKeyAndUserAndOauthOpenId(String key, String ysId, String oauthOpenId, String marketingId) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("oauth_openid", oauthOpenId)
+                .append("marketing_id", marketingId)
+                .build();
+
+        return dataApiClient.get("marketing/draw/{key}/user/{id}" + query, MktDrawRecordObject.class, key, ysId);
     }
 
 

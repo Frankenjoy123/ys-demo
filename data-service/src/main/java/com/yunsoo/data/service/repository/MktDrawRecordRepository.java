@@ -19,7 +19,7 @@ public interface MktDrawRecordRepository extends FindOneAndSaveRepository<MktDra
 
     List<MktDrawRecordEntity> findByProductKeyAndYsid(String productKey, String ysid);
 
-    List<MktDrawRecordEntity> findByProductKeyAndOauthOpenid(String productKey, String oauthOpenid);
+    List<MktDrawRecordEntity> findByProductKeyAndOauthOpenidAndMarketingId(String productKey, String oauthOpenid, String marketingId);
 
     List<MktDrawRecordEntity> findByYsidAndMarketingId(String ysId, String marketingId);
 
