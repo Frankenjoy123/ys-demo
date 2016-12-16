@@ -4,6 +4,7 @@ import com.yunsoo.common.util.HashUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -23,6 +24,10 @@ public class WeChatData {
         paramsMap.put(key, value);
     }
 
+    public void setValues(Map data){
+        paramsMap.putAll(data);
+    }
+
     /**
      * 根据字段名获取某个字段的值
      * @param key 字段名
@@ -31,6 +36,14 @@ public class WeChatData {
     public Object getValue(String key)
     {
         return paramsMap.get(key);
+    }
+
+    /**
+     * @获取Map
+     */
+    public TreeMap<String, Object> getValues()
+    {
+        return paramsMap;
     }
 
     /**
@@ -83,18 +96,18 @@ public class WeChatData {
     }
 
     public void addSign(String privateKey) throws UnsupportedEncodingException {
+        paramsMap.put("sign", getSign(privateKey));
+    }
+
+    public String getSign(String privateKey) throws UnsupportedEncodingException {
         String str = toUrl();
         //在string后加入API KEY
         str += "&key=" + privateKey;
-        paramsMap.put("sign", HashUtils.md5HexString(str, "UTF-8").toUpperCase());
-    }
-
-    /**
-     * @获取Map
-     */
-    public TreeMap<String, Object> getValues()
-    {
-        return paramsMap;
+        String signType = paramsMap.get("sign_type") == null ? "MD5" :  paramsMap.get("sign_type").toString() ;
+        if(signType.equals("MD5"))
+            return HashUtils.md5HexString(str, "UTF-8").toUpperCase();
+        else
+            return "";
     }
 
 }

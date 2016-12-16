@@ -76,7 +76,7 @@ public class WeChatController {
 
         String ip = IpUtils.getIpFromRequest(request);
         WeChatOrderResult result = weChatService.saveWeChatUnifiedOrder(orderRequest.getOpenId(), ip, orderRequest.getNonceString(),
-                orderRequest.getProdName(), orderRequest.getId(), orderRequest.getPrice());
+                orderRequest.getProdName(), orderRequest.getId(), orderRequest.getPrice(), orderRequest.getNotifyUrl(), orderRequest.getOrderType() );
         if (result != null)
             return result.getPrepayId();
         else
@@ -89,6 +89,19 @@ public class WeChatController {
         String ip = IpUtils.getIpFromRequest(request);
         return  weChatService.sendRedPack(redPackRequest.getOpenId(), redPackRequest.getMchName(), redPackRequest.getId(),
                 redPackRequest.getPrice(), ip, redPackRequest.getRemark(), redPackRequest.getWishing(), redPackRequest.getActionName());
+    }
+
+    @RequestMapping(value = "notify", method = RequestMethod.GET)
+    public WeChatNotifyResult handleWeChatNotifyResult(@RequestParam("notify_info") String notifyInfo){
+        if(!StringUtils.hasText(notifyInfo))
+            throw new BadRequestException("notify info is empty");
+        return weChatService.handleNotifyResult(notifyInfo);
+    }
+
+    @RequestMapping(value = "pay/{order_id}", method = RequestMethod.GET)
+    public WeChatPayResult getPayResult(@PathVariable("order_id") String orderId,
+                                        @RequestParam(value = "nonce_str", required = false) String nonceString){
+        return weChatService.queryPayResult(orderId, nonceString);
     }
 
 }

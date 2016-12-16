@@ -33,6 +33,14 @@ public class WeChatOrderRequest {
     @NotEmpty
     private String nonceString;
 
+    @JsonProperty("notify_url")
+    @NotEmpty
+    private String notifyUrl;
+
+    @JsonProperty("order_type")
+    @NotEmpty
+    private String orderType;
+
     public String getId() {
         return id;
     }
@@ -71,5 +79,21 @@ public class WeChatOrderRequest {
 
     public void setNonceString(String nonceString) {
         this.nonceString = nonceString;
+    }
+
+    public String getNotifyUrl() {
+        return notifyUrl;
+    }
+
+    public void setNotifyUrl(String notifyUrl) {
+        this.notifyUrl = notifyUrl;
+    }
+
+    public String getOrderType() {
+        return orderType;
+    }
+
+    public void setOrderType(String orderType) {
+        this.orderType = orderType;
     }
 }

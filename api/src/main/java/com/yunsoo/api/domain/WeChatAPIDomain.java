@@ -69,15 +69,18 @@ public class WeChatAPIDomain {
         return  thirdApiClient.get("wechat/jssdk/config" + query, Map.class);
     }
 
-    public Map<String, Object> getPayConfig(String appId, String openId, String marketingId, String nonceString, long timestamp){
+    public Map<String, Object> getPayConfig(String appId, String openId, String marketingId,
+                                            String nonceString, long timestamp, String notifyUrl){
 
         MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
         WeChatOrderRequest request = new WeChatOrderRequest();
         request.setId(marketingId);
         request.setNonceString(nonceString);
         request.setOpenId(openId);
-        request.setPrice(new BigDecimal(marketingObject.getBudget()));
+        request.setPrice(new BigDecimal(marketingObject.getBudget() * 100));
         request.setProdName(marketingObject.getName());
+        request.setNotifyUrl(notifyUrl);
+        request.setOrderType("marketing");
         String preOrderId = thirdApiClient.post("wechat/unified", request, String.class);
 
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
