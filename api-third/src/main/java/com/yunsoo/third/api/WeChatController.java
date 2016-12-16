@@ -80,7 +80,7 @@ public class WeChatController {
         if (result != null)
             return result.getPrepayId();
         else
-            throw new BadRequestException("get wecha unified order error");
+            throw new BadRequestException("get wechat unified order error");
 
     }
 
@@ -99,9 +99,13 @@ public class WeChatController {
     }
 
     @RequestMapping(value = "pay/{order_id}", method = RequestMethod.GET)
-    public WeChatPayResult getPayResult(@PathVariable("order_id") String orderId,
+    public String getPayResult(@PathVariable("order_id") String orderId,
                                         @RequestParam(value = "nonce_str", required = false) String nonceString){
-        return weChatService.queryPayResult(orderId, nonceString);
+        WeChatPayResult payResult = weChatService.queryPayResult(orderId, nonceString);
+        if (payResult != null)
+            return payResult.getWeChatOrderId();
+        else
+            throw new BadRequestException("get wechat pay info error");
     }
 
 }
