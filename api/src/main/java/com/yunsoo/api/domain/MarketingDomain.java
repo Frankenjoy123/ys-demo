@@ -1,5 +1,6 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.client.ThirdApiClient;
 import com.yunsoo.api.dto.MktDrawPrize;
 import com.yunsoo.api.payment.AlipayParameters;
 import com.yunsoo.api.payment.ParameterNames;
@@ -48,6 +49,8 @@ public class MarketingDomain {
     @Value("${yunsoo.alipay.notify_url}")
     private String alipayNotifyUrl;
 
+    @Autowired
+    private ThirdApiClient thirdApiClient;
 
     public MktDrawRuleObject createMktDrawRule(MktDrawRuleObject mktDrawRuleObject) {
         mktDrawRuleObject.setId(null);
@@ -251,12 +254,13 @@ public class MarketingDomain {
     }
 
     public void updateSuccessWechatMarketing(String marketingId, String orderId) {
+        orderId = thirdApiClient.get("wechat/pay/{id}", String.class, marketingId);
         MarketingObject marketingObject = getMarketingById(marketingId);
         marketingObject.setStatusCode(LookupCodes.MktStatus.PAID);
         if (StringUtils.hasText(orderId)) {
             marketingObject.setComments(orderId);
+            dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
         }
-        dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
     }
 
     public void updateFailedWechatMarketing(String marketingId) {

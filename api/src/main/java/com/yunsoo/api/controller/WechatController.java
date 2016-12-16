@@ -5,6 +5,7 @@ import com.yunsoo.api.auth.service.OAuthAccountService;
 import com.yunsoo.api.domain.WeChatAPIDomain;
 import com.yunsoo.api.dto.OAuthAccount;
 import com.yunsoo.api.dto.WeChatAccessToken;
+import com.yunsoo.api.dto.WeChatPayRequest;
 import com.yunsoo.api.dto.WeChatUser;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -46,14 +47,15 @@ public class WechatController {
 
     @RequestMapping(value = "pay/{marketing_id}", method = RequestMethod.POST)
     public Map getWeChatPayConfig(@PathVariable(value = "marketing_id") String marketingId,
-                                  @RequestParam("nonce_str") String nonceString,
-                                  @RequestParam("timestamp") long timestamp){
+                                  @RequestBody WeChatPayRequest payRequest){
         String accountId = AuthUtils.fixAccountId(null);
         OAuthAccount authAccount = oAuthAccountService.getOAuthAccountByAccountId(accountId);
         if(authAccount == null)
             throw new NotFoundException("current account don't have oauth account");
 
-        Map payConfig = domain.getPayConfig(null, authAccount.getoAuthOpenId(), marketingId, nonceString, timestamp);
+        Map payConfig = domain.getPayConfig(null, authAccount.getoAuthOpenId(), marketingId, payRequest.getNonceString(),
+                payRequest.getTimestamp(), payRequest.getNotifyUrl());
         return payConfig;
     }
+
 }

@@ -4,6 +4,7 @@ import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.util.ObjectUtils;
 import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.RestClient;
+import com.yunsoo.common.web.exception.ForbiddenException;
 import com.yunsoo.third.dao.entity.ThirdWeChatAccessTokenEntity;
 import com.yunsoo.third.dao.repository.WeChatAccessTokenRepository;
 import com.yunsoo.third.dao.util.XmlUtils;
@@ -36,7 +37,9 @@ import java.nio.charset.Charset;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Admin on 6/29/2016.
@@ -204,7 +207,7 @@ public class WeChatService {
         return data;
     }
 
-    public WeChatOrderResult saveWeChatUnifiedOrder(String openId, String ip, String nonceString, String productName, String orderId, BigDecimal price) {
+    public WeChatOrderResult saveWeChatUnifiedOrder(String openId, String ip, String nonceString, String productName, String orderId, BigDecimal price, String notifyUrl, String orderType) {
         String url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
         WeChatData data = new WeChatData();
         data.setValue("appid", appId);
@@ -215,9 +218,10 @@ public class WeChatService {
         data.setValue("total_fee", price.intValue());
         data.setValue("spbill_create_ip", ip);
         data.setValue("trade_type", "JSAPI");
-        data.setValue("notify_url", baseUrl + "notify");
+        data.setValue("notify_url", notifyUrl);
+        data.setValue("attach", orderType);
         data.setValue("openid", openId);
-
+        data.setValue("sign_type", "MD5");
         try {
             data.addSign(privateKey);
             String result = weChatMchClient.postForObject(url, data.toXml(), String.class);
@@ -239,6 +243,67 @@ public class WeChatService {
 
         return null;
     }
+
+    public WeChatPayResult queryPayResult(String orderId, String nonceString){
+        String url = "https://api.mch.weixin.qq.com/pay/orderquery";
+        WeChatData data = new WeChatData();
+        data.setValue("appid", appId);
+        data.setValue("mch_id", mchId);
+        data.setValue("nonce_str", StringUtils.hasText(nonceString)? nonceString : RandomUtils.generateString(30));
+        data.setValue("out_trade_no", orderId);
+        data.setValue("sign_type", "MD5");
+        try {
+            data.addSign(privateKey);
+            String result = weChatMchClient.postForObject(url, data.toXml(), String.class);
+            result = new String(result.getBytes("ISO-8859-1"), "UTF-8");
+            WeChatPayResult payResult = XmlUtils.convertXmlToObject(result, WeChatXmlBaseType.class, WeChatPayResult.class);
+            if("SUCCESS".equals(payResult.getReturnCode()) &&  "SUCCESS".equals(payResult.getResultCode()))
+                return payResult;
+            else{
+                if(!"SUCCESS".equals(payResult.getReturnCode()))
+                    logger.error("get wechat pay result error: " + payResult.getReturnMsg());
+                else
+                    logger.error("get wechat pay result error: code: " + payResult.getErrCode() + ", message: " + payResult.getErrCodeDes());
+            }
+        } catch (JAXBException e) {
+            logger.error(e);
+        } catch (UnsupportedEncodingException e) {
+            logger.error(e);
+        }
+
+        return null;
+    }
+
+    public WeChatNotifyResult handleNotifyResult(String notifyInfo){
+        WeChatData data = new WeChatData();
+        try {
+            Map notifyResultMap = XmlUtils.convertXmlToObject(notifyInfo, HashMap.class);
+            data.setValues(notifyResultMap);
+            String existingSign = convertToStr(notifyResultMap.get("sign") == null);
+            String sign = data.getSign(privateKey);
+            if(existingSign.equals(sign)){
+                WeChatNotifyResult result = new WeChatNotifyResult();
+                result.setOrderType(convertToStr(data.getValue("attach")));
+                result.setOrderId(convertToStr(data.getValue("out_trade_no")));
+                result.setWeChatOrderId(convertToStr(data.getValue("transaction_id")));
+                return  result;
+            }
+            else{
+                throw new ForbiddenException("sign error");
+            }
+
+
+        } catch (JAXBException e) {
+            logger.error(e);
+        } catch (UnsupportedEncodingException ex) {
+            logger.error(ex);
+        }
+
+
+        return null;
+    }
+
+
 
     public boolean sendRedPack(String openId, String mchName, String orderId,
                             BigDecimal price, String ip, String remark, String wishing, String actionName) {
@@ -325,5 +390,9 @@ public class WeChatService {
         }
 
         return null;
+    }
+
+    private String convertToStr(Object target){
+        return  target == null ? "" : target.toString();
     }
 }
