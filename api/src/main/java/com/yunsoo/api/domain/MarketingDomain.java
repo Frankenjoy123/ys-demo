@@ -250,7 +250,7 @@ public class MarketingDomain {
         });
     }
 
-    public void updateWechatMarketing(String marketingId, String orderId) {
+    public void updateSuccessWechatMarketing(String marketingId, String orderId) {
         MarketingObject marketingObject = getMarketingById(marketingId);
         marketingObject.setStatusCode(LookupCodes.MktStatus.PAID);
         if (StringUtils.hasText(orderId)) {
@@ -258,6 +258,13 @@ public class MarketingDomain {
         }
         dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
     }
+
+    public void updateFailedWechatMarketing(String marketingId) {
+        MarketingObject marketingObject = getMarketingById(marketingId);
+        marketingObject.setStatusCode(LookupCodes.MktStatus.FAILED);
+        dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
+    }
+
 
 
     public void updateMarketing(MarketingObject marketingObject){

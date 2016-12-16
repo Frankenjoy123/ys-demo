@@ -489,14 +489,23 @@ public class MarketingController {
         return weChatMarketingList;
     }
 
-    @RequestMapping(value = "update/draw04/{id}", method = RequestMethod.PUT)
-    public void updateWechatMarketing(@PathVariable(value = "id") String marketingId,
+    @RequestMapping(value = "update/draw04/success/{id}", method = RequestMethod.PUT)
+    public void updateSuccessWechatMarketing(@PathVariable(value = "id") String marketingId,
                                       @RequestParam(value = "order_id", required = false) String orderId) {
         if (marketingId == null) {
             throw new BadRequestException("wechat marketing id can not be null");
         }
-        marketingDomain.updateWechatMarketing(marketingId, orderId);
+        marketingDomain.updateSuccessWechatMarketing(marketingId, orderId);
     }
+
+    @RequestMapping(value = "update/draw04/failed/{id}", method = RequestMethod.PUT)
+    public void updateFailedWechatMarketing(@PathVariable(value = "id") String marketingId) {
+        if (marketingId == null) {
+            throw new BadRequestException("wechat marketing id can not be null");
+        }
+        marketingDomain.updateFailedWechatMarketing(marketingId);
+    }
+
 
 
     @RequestMapping(value = "update/{id}", method = RequestMethod.PUT)

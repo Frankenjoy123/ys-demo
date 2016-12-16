@@ -233,6 +233,7 @@ public class LookupCodes {
         public static final String DISABLED = "disabled";
         public static final String REJECTED = "rejected";
         public static final String DELETED = "deleted";
+        public static final String FAILED = "failed";
         public static final String AVALAIBLESTATUS = "availablestatus";
         public static final List<String> AVALAIBLE_STATUS = Arrays.asList("created", "available", "disabled", "paid");
         public static final List<String> ANALYZE_STATUS = Arrays.asList("available", "disabled", "paid");
