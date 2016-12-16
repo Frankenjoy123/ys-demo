@@ -52,7 +52,6 @@ public class MarketingDomain {
     @Autowired
     private ThirdApiClient thirdApiClient;
 
-
     public MktDrawRuleObject createMktDrawRule(MktDrawRuleObject mktDrawRuleObject) {
         mktDrawRuleObject.setId(null);
         mktDrawRuleObject.setCreatedDateTime(DateTime.now());
@@ -254,7 +253,7 @@ public class MarketingDomain {
         });
     }
 
-    public void updateWechatMarketing(String marketingId, String orderId) {
+    public void updateSuccessWechatMarketing(String marketingId, String orderId) {
         orderId = thirdApiClient.get("wechat/pay/{id}", String.class, marketingId);
         MarketingObject marketingObject = getMarketingById(marketingId);
         marketingObject.setStatusCode(LookupCodes.MktStatus.PAID);
@@ -263,6 +262,13 @@ public class MarketingDomain {
             dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
         }
     }
+
+    public void updateFailedWechatMarketing(String marketingId) {
+        MarketingObject marketingObject = getMarketingById(marketingId);
+        marketingObject.setStatusCode(LookupCodes.MktStatus.FAILED);
+        dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
+    }
+
 
 
     public void updateMarketing(MarketingObject marketingObject){

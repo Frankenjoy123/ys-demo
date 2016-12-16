@@ -93,6 +93,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
 
         KeyBatch keyBatch = toKeyBatch(batchEntity);
         Keys keys = new Keys();
+        keys.setOrgId(keyBatch.getOrgId());
         keys.setKeyBatchId(batchEntity.getId());
         keys.setQuantity(batchEntity.getQuantity());
         keys.setCreatedDateTime(batchEntity.getCreatedDateTime());
