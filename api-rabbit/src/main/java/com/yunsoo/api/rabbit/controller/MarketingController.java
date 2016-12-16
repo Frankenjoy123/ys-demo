@@ -80,7 +80,7 @@ public class MarketingController {
             throw new BadRequestException("oauth openid can not be null");
         }
         MktDrawInfo mktDrawInfo = new MktDrawInfo();
-        MktDrawRecordObject mktDrawRecordObject = marketingDomain.getMktDrawRecordByProductKeyAndUserAndOauthOpenId(key, ysId, oauthOpenId);
+        MktDrawRecordObject mktDrawRecordObject = marketingDomain.getMktDrawRecordByProductKeyAndUserAndOauthOpenId(key, ysId, oauthOpenId, marketingId);
         if (mktDrawRecordObject != null) {
             mktDrawInfo.setMktDrawRecord(new MktDrawRecord(mktDrawRecordObject));
             MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKeyAndUserAndOauthOpenId(key, ysId, oauthOpenId);
