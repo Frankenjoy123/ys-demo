@@ -6,6 +6,8 @@ import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 /**
  * Created by yan on 12/7/2016.
  */
@@ -21,6 +23,13 @@ public class WeChatService {
                 .build();
 
         return  thirdApiClient.get("wechat/token" + query, WeChatAccessToken.class);
+    }
+
+    public Map<String, Object> getConfig(String appId, String url){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("app_id", appId).append("url", url)
+                .build();
+        return  thirdApiClient.get("wechat/jssdk/config" + query, Map.class);
     }
 
 

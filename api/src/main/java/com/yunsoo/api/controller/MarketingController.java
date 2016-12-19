@@ -489,13 +489,14 @@ public class MarketingController {
         return weChatMarketingList;
     }
 
+
     @RequestMapping(value = "update/draw04/success/{id}", method = RequestMethod.PUT)
     public void updateSuccessWechatMarketing(@PathVariable(value = "id") String marketingId,
                                       @RequestParam(value = "order_id", required = false) String orderId) {
         if (marketingId == null) {
             throw new BadRequestException("wechat marketing id can not be null");
         }
-        marketingDomain.updateSuccessWechatMarketing(marketingId, orderId);
+        marketingDomain.updateSuccessWechatMarketing(marketingId);
     }
 
     @RequestMapping(value = "update/draw04/failed/{id}", method = RequestMethod.PUT)

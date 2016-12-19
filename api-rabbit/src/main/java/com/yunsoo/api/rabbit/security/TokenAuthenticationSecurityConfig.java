@@ -69,7 +69,7 @@ public class TokenAuthenticationSecurityConfig extends WebSecurityConfigurerAdap
                 .antMatchers("/swagger-resources").permitAll()
                 .antMatchers("/swagger-ui.html").permitAll()
                 .antMatchers("/webjars/**").permitAll()
-
+                .antMatchers("/wechat/**").permitAll()
                 .anyRequest().authenticated().and()
 
                 .addFilterBefore(new TokenAuthenticationFilter(tokenAuthenticationService), UsernamePasswordAuthenticationFilter.class);

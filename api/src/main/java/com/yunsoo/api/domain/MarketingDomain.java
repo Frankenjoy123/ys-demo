@@ -253,8 +253,8 @@ public class MarketingDomain {
         });
     }
 
-    public void updateSuccessWechatMarketing(String marketingId, String orderId) {
-        orderId = thirdApiClient.get("wechat/pay/{id}", String.class, marketingId);
+    public void updateSuccessWechatMarketing(String marketingId) {
+        String orderId = thirdApiClient.get("wechat/pay/{id}", String.class, marketingId);
         MarketingObject marketingObject = getMarketingById(marketingId);
         marketingObject.setStatusCode(LookupCodes.MktStatus.PAID);
         if (StringUtils.hasText(orderId)) {
@@ -268,8 +268,6 @@ public class MarketingDomain {
         marketingObject.setStatusCode(LookupCodes.MktStatus.FAILED);
         dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
     }
-
-
 
     public void updateMarketing(MarketingObject marketingObject){
         dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
