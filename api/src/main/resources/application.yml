@@ -58,7 +58,7 @@ yunsoo:
   environment: local
   client:
     auth_api:
-      base_url: http://localhost:6180/
+      base_url: http://dev.yunsu.co/api/auth/
     data_api:
       base_url: http://dev-api.yunsu.co:3080/
     processor:
@@ -70,7 +70,7 @@ yunsoo:
     di_api:
       base_url: http://dev-api.yunsu.co:4380/
     third_api:
-      base_url: http://localhost:4480/
+      base_url: http://dev-api.yunsu.co:4480/
   cache:
     type: local
   alipay:

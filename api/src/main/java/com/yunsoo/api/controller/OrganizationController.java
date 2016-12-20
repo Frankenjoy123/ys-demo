@@ -69,7 +69,7 @@ public class OrganizationController {
 
         if (imageDataBytes != null && imageDataBytes.length > 0) {
             orgId = AuthUtils.fixOrgId(orgId);
-            imageService.saveImage(imageDataBytes, MediaType.IMAGE_PNG_VALUE, String.format("organization/%s/logo/$s", orgId, imageName));
+            imageService.saveImage(imageDataBytes, MediaType.IMAGE_PNG_VALUE, String.format("organization/%s/logo/%s", orgId, imageName));
         }
     }
 
