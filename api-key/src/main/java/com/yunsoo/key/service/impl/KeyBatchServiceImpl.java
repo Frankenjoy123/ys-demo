@@ -18,6 +18,7 @@ import com.yunsoo.key.dto.Keys;
 import com.yunsoo.key.file.service.FileService;
 import com.yunsoo.key.processor.service.ProcessorService;
 import com.yunsoo.key.service.KeyBatchService;
+import com.yunsoo.key.service.KeySerialNoService;
 import com.yunsoo.key.service.KeyService;
 import com.yunsoo.key.service.util.BatchNoGenerator;
 import org.apache.commons.logging.Log;
@@ -49,6 +50,9 @@ public class KeyBatchServiceImpl implements KeyBatchService {
 
     @Autowired
     private KeyBatchRepository keyBatchRepository;
+
+    @Autowired
+    private KeySerialNoService keySerialNoService;
 
     @Autowired
     private FileService fileService;
@@ -118,6 +122,8 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         List<String> keyTypeCodes = request.getKeyTypeCodes();
         List<String> externalKeys = request.getExternalKeys();
         String productStatusCode = request.getProductStatusCode();
+        String serialNoPattern = request.getSerialNoPattern();
+
         if (keyTypeCodes == null || keyTypeCodes.size() == 0) {
             throw new BadRequestException("key_type_codes must not be null or empty");
         }
@@ -151,6 +157,10 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         } else if (!Constants.ProductStatus.ALL.contains(productStatusCode)) {
             throw new BadRequestException("product_status_code invalid");
         }
+        if (StringUtils.isEmpty(serialNoPattern)) {
+            //get serialNoPattern
+            serialNoPattern = keySerialNoService.getKeySerialNoPattern(request.getOrgId(), quantity);
+        }
         //endregion
 
         //init batch
@@ -177,7 +187,7 @@ public class KeyBatchServiceImpl implements KeyBatchService {
         KeyBatchEntity entity = keyBatchRepository.save(toKeyBatchEntity(batch));
 
         //save keys to file
-        saveKeysToFile(entity.getOrgId(), entity.getId(), entity.getQuantity(), entity.getKeyTypeCodes(), request.getSerialNoPattern(), keyList);
+        saveKeysToFile(entity.getOrgId(), entity.getId(), entity.getQuantity(), entity.getKeyTypeCodes(), serialNoPattern, keyList);
 
         //put to queue
         processorService.putKeyBatchCreateMessageToQueue(entity.getId());
