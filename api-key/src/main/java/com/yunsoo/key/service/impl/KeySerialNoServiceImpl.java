@@ -104,7 +104,7 @@ public class KeySerialNoServiceImpl implements KeySerialNoService {
             int serialLength = entity.getSerialLength();
             int end = offset + count - 1;
             if (end > Math.pow(10, serialLength) - 1) {
-                serialLength++;
+                serialLength = extendSerialLength(serialLength, end);
                 entity.setSerialLength(serialLength);
             }
             SerialNoGenerator serialNoGenerator = new SerialNoGenerator(
@@ -118,6 +118,13 @@ public class KeySerialNoServiceImpl implements KeySerialNoService {
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+
+    private int extendSerialLength(int serialLength, int end) {
+        while (end > Math.pow(10, serialLength) - 1) {
+            serialLength++;
+        }
+        return serialLength;
     }
 
     private KeySerialNoEntity findByOrgId(String orgId) {
