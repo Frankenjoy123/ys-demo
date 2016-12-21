@@ -10,9 +10,14 @@ import org.joda.time.DateTime;
 import java.io.Serializable;
 
 /**
- * Created by Admin on 7/20/2016.
+ * Created by:   Admin
+ * Created on:   7/20/2016
+ * Descriptions:
  */
 public class WebTemplateObject implements Serializable {
+
+    @JsonProperty("id")
+    private String id;
 
     @JsonProperty("name")
     private String name;
@@ -20,11 +25,11 @@ public class WebTemplateObject implements Serializable {
     @JsonProperty("version")
     private String version;
 
-    @JsonProperty("description")
-    private String description;
-
     @JsonProperty("type_code")
     private String typeCode;
+
+    @JsonProperty("description")
+    private String description;
 
     @JsonProperty("restriction")
     private String restriction;
@@ -33,6 +38,15 @@ public class WebTemplateObject implements Serializable {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -50,20 +64,20 @@ public class WebTemplateObject implements Serializable {
         this.version = version;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getTypeCode() {
         return typeCode;
     }
 
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getRestriction() {
