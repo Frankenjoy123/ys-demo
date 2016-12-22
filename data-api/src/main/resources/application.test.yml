@@ -27,10 +27,7 @@ logging:
 yunsoo:
   debug: false
   environment: test
-  aws:
-    region: cn-north-1
-    s3:
-      bucket_name: test-yunsoo
+
 jdbc:
   master:
     driver_class_name: com.mysql.jdbc.Driver

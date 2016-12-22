@@ -1,11 +1,11 @@
 package com.yunsoo.data.service.repository.impl;
 
-import com.amazonaws.util.StringUtils;
 import com.yunsoo.data.service.entity.EMREventEntity;
 import com.yunsoo.data.service.entity.MarketUserLocationAnalysisEntity;
 import com.yunsoo.data.service.entity.ScanRecordLocationAnalysisEntity;
 import com.yunsoo.data.service.repository.CustomEMREventRepository;
 import org.joda.time.DateTime;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -106,11 +106,11 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("eventName", eventName);
         parameters.put("orgId", orgId);
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+        if (!StringUtils.isEmpty(productBaseId)) {
             sql = sql + " and ev.product_base_id = :productBaseId";
             parameters.put("productBaseId", productBaseId);
         }
-        if (!StringUtils.isNullOrEmpty(province)) {
+        if (!StringUtils.isEmpty(province)) {
             sql = sql + " and ev.province like :province";
             parameters.put("province", "%" + province + "%");
         }
@@ -167,7 +167,7 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("orgId", orgId);
         parameters.put("eventName", "scan");
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+        if (!StringUtils.isEmpty(productBaseId)) {
             sql = sql + " and ev.product_base_id = :productBaseId";
             parameters.put("productBaseId", productBaseId);
         }
@@ -249,11 +249,11 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("eventName", action);
         parameters.put("orgId", orgId);
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+        if (!StringUtils.isEmpty(productBaseId)) {
             sql = sql + " and ev.product_base_id = :productBaseId";
             parameters.put("productBaseId", productBaseId);
         }
-        if (!StringUtils.isNullOrEmpty(province)) {
+        if (!StringUtils.isEmpty(province)) {
             sql = sql + " and ev.province like :province";
             parameters.put("province", "%" + province + "%");
         }
@@ -303,11 +303,11 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("eventName", action);
         parameters.put("orgId", orgId);
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+        if (!StringUtils.isEmpty(productBaseId)) {
             sql = sql + " and ev.product_base_id = :productBaseId";
             parameters.put("productBaseId", productBaseId);
         }
-        if (!StringUtils.isNullOrEmpty(province)) {
+        if (!StringUtils.isEmpty(province)) {
             sql = sql + " and ev.province like :province";
             parameters.put("province", "%" + province + "%");
         }
@@ -363,11 +363,11 @@ public class EMREventRepositoryImpl implements CustomEMREventRepository {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("eventName", action);
         parameters.put("orgId", orgId);
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+        if (!StringUtils.isEmpty(productBaseId)) {
             sql = sql + " and ev.product_base_id = :productBaseId";
             parameters.put("productBaseId", productBaseId);
         }
-        if (!StringUtils.isNullOrEmpty(province)) {
+        if (!StringUtils.isEmpty(province)) {
             sql = sql + " and ev.province like :province";
             parameters.put("province", "%" + province + "%");
         }

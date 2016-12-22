@@ -1,12 +1,12 @@
 package com.yunsoo.data.service.repository.impl;
 
-import com.amazonaws.util.StringUtils;
 import com.yunsoo.data.service.entity.MktDrawPrizeReportEntity;
 import com.yunsoo.data.service.repository.MktDrawPrizeReportRepository;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -41,17 +41,17 @@ public class MktDrawPrizeReportRepositoryImpl implements MktDrawPrizeReportRepos
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("marketingId", marketingId);
 
-        if (!StringUtils.isNullOrEmpty(accountType)) {
+        if (!StringUtils.isEmpty(accountType)) {
             sql = sql + " and prize.account_type = :accountType";
             parameters.put("accountType", accountType);
         }
 
-        if (!StringUtils.isNullOrEmpty(prizeTypeCode)) {
+        if (!StringUtils.isEmpty(prizeTypeCode)) {
             sql = sql + " and prize.prize_type_code = :prizeTypeCode";
             parameters.put("prizeTypeCode", prizeTypeCode);
         }
 
-        if (!StringUtils.isNullOrEmpty(statusCode)) {
+        if (!StringUtils.isEmpty(statusCode)) {
             sql = sql + " and prize.status_code = :statusCode";
             parameters.put("statusCode", statusCode);
         }

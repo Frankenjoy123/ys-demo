@@ -1,7 +1,6 @@
 package com.yunsoo.data.service.repository.impl;
 
 
-import com.amazonaws.util.StringUtils;
 import com.yunsoo.data.service.entity.EMRUserEntity;
 import com.yunsoo.data.service.entity.EMRUserProductEventStatistics;
 import com.yunsoo.data.service.entity.UserProfileLocationCountEntity;
@@ -10,6 +9,7 @@ import com.yunsoo.data.service.repository.CustomEMRUserRepository;
 import org.hibernate.annotations.common.util.StringHelper;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -35,11 +35,11 @@ public class EMRUserRepositoryImpl implements CustomEMRUserRepository {
 
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("orgId", orgId);
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+        if (!StringUtils.isEmpty(productBaseId)) {
             sql = sql + " and ev.product_base_id = :productBaseId";
             parameters.put("productBaseId", productBaseId);
         }
-        if (!StringUtils.isNullOrEmpty(province)) {
+        if (!StringUtils.isEmpty(province)) {
             sql = sql + " and ev.province like :province";
             parameters.put("province", "%" + province + "%");
         }
@@ -77,11 +77,11 @@ public class EMRUserRepositoryImpl implements CustomEMRUserRepository {
 
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("orgId", orgId);
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+        if (!StringUtils.isEmpty(productBaseId)) {
             sql = sql + " and ev.product_base_id = :productBaseId";
             parameters.put("productBaseId", productBaseId);
         }
-        if (!StringUtils.isNullOrEmpty(province)) {
+        if (!StringUtils.isEmpty(province)) {
             sql = sql + " and ev.province like :province";
             parameters.put("province", "%" + province + "%");
         }
