@@ -3,15 +3,19 @@ package com.yunsoo.api.rabbit.domain;
 import com.yunsoo.api.rabbit.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.rabbit.file.service.FileService;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
+import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 
 /**
  * Created by:   Lijian
@@ -58,6 +62,11 @@ public class ProductDomain {
 
     public Long getCommentsScore(String productBaseId) {
         return dataApiClient.get("productcomments/avgscore/{id}", Long.class, productBaseId);
+    }
+
+    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTKEYSCENARIO.toString(), #ScenarioId)")
+    public String saveKeyToRadis(Number ScenarioId, String key){
+        return key;
     }
 
 

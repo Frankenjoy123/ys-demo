@@ -34,6 +34,14 @@ public class WeChatAPIDomain {
         return thirdApiClient.get("wechat/token" + query, WeChatAccessToken.class);
     }
 
+    public WeChatWebAccessToken getWebToken(String code){
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("code", code)
+                .build();
+        WeChatWebAccessToken weChatAccessToken = thirdApiClient.get("wechat/web_token" + query, WeChatWebAccessToken.class);
+        return weChatAccessToken;
+    }
+
     public WeChatUser getWebUser(String code, Boolean detailsFlag) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("code", code)

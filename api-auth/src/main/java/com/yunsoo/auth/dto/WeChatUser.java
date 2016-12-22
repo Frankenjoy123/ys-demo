@@ -39,29 +39,6 @@ public class WeChatUser {
     @JsonProperty("unionid")
     private String unionId;
 
-    @JsonProperty("errcode")
-    private String errorCode;
-
-    @JsonProperty("errmsg")
-    private String errorMsg;
-
-    public String getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(String errorCode) {
-        this.errorCode = errorCode;
-    }
-
-    public String getErrorMsg() {
-        return errorMsg;
-    }
-
-    public void setErrorMsg(String errorMsg) {
-        this.errorMsg = errorMsg;
-    }
-
-
     public String getOpenId() {
         return openId;
     }

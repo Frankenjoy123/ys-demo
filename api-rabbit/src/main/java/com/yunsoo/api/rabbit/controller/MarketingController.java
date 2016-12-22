@@ -2,8 +2,11 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.MarketingDomain;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
+import com.yunsoo.api.rabbit.domain.UserDomain;
+import com.yunsoo.api.rabbit.domain.UserScanDomain;
 import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.key.dto.Product;
+import com.yunsoo.api.rabbit.key.service.KeyService;
 import com.yunsoo.api.rabbit.key.service.ProductService;
 import com.yunsoo.api.rabbit.third.dto.WeChatRedPackRequest;
 import com.yunsoo.api.rabbit.third.service.JuheService;
@@ -50,6 +53,14 @@ public class MarketingController {
 
     @Autowired
     private WeChatService weChatService;
+
+    @Autowired
+    private UserScanDomain userScanDomain;
+
+    @Autowired
+    private UserDomain userDomain;
+
+
 
 
     //获取Key所对应的抽奖记录
@@ -678,6 +689,26 @@ public class MarketingController {
         weChatPrize.setWechatPrize(mktDrawPrizeList);
 
         return weChatPrize;
+    }
+
+    @RequestMapping(value = "redpack/{scenario_id}", method = RequestMethod.POST)
+    public boolean sendWeChatRedPack(@PathVariable("scenario_id") Number scenarioId, @RequestParam("openid")String openId){
+        String key = productDomain.saveKeyToRadis(scenarioId, "");
+        if(StringUtils.hasText(key)){
+            Product product = productService.getProductByKey(key);
+            ProductKeyBatchObject keyBatchObject = productDomain.getProductKeyBatch(product.getKeyBatchId());
+            UserScanRecordObject recordObject = userScanDomain.getLatestScanRecordByProductKey(key);
+
+            MktDraw draw = new MktDraw();
+            draw.setMarketingId(keyBatchObject.getMarketingId());
+            draw.setOauthOpenId(openId);
+            draw.setProductBaseId(product.getProductBaseId());
+            draw.setProductKey(key);
+            draw.setScanRecordId(recordObject.getId());
+
+        }
+
+        return false;
     }
 
 

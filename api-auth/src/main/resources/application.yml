@@ -45,6 +45,9 @@ yunsoo:
     default_expire_time: 600 #seconds
     redis:
       host: dev-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn
+  client:
+    third_api:
+      base_url: http://dev-api.yunsu.co:4480/
 ---
 spring:
   profiles: local

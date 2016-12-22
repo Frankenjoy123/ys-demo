@@ -7,6 +7,7 @@ import com.yunsoo.auth.dto.*;
 import com.yunsoo.auth.service.AccountService;
 import com.yunsoo.auth.service.LoginService;
 import com.yunsoo.auth.service.OAuthAccountService;
+import com.yunsoo.auth.service.WeChatService;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
@@ -50,6 +51,9 @@ public class OAuthController {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private WeChatService weChatService;
+
     @RequestMapping(value = "/bind", method = RequestMethod.POST)
     public OAuthAccountLoginResponse bind(@RequestBody OAuthAccountLoginRequest request) {
         if (request.getOauthOpenType() == null)
@@ -86,9 +90,14 @@ public class OAuthController {
             }
             oAuthAccount.setDisabled(false);
             oAuthAccount.setoAuthTypeCode(request.getOauthOpenType());
-            oAuthAccount.setoAuthOpenId(request.getOauthOpenid());
-            oAuthAccount.setName(request.getOauthName());
-            oAuthAccount.setGravatarUrl(request.getOauthGravatarUrl());
+
+            if (request.getOauthOpenType().equals(WECHAT)) {
+                WeChatUser weChatUser = weChatService.getUserInfo(request.getOauthToken(), request.getOauthOpenid());
+
+                oAuthAccount.setGravatarUrl(weChatUser.getImageUrl());
+                oAuthAccount.setName(weChatUser.getNickName());
+                oAuthAccount.setoAuthOpenId(weChatUser.getOpenId());
+            }
 
             currentAccount = oAuthAccountService.save(oAuthAccount);
         } else
