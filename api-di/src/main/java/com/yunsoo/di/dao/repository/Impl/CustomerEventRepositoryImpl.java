@@ -8,7 +8,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,47 +23,24 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
     @PersistenceContext(unitName = "di")
     private EntityManager entityManager;
 
-    private static final String WEXIN="wexin";
-
     @Override
-    public int[] scanCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd , String scanSource) {
-        return scanQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, scanSource);
+    public int[] scanCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd , Boolean wxUser) {
+        return scanQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, wxUser);
     }
 
     @Override
-    public int[] wxCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return scanQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, WEXIN);
+    public int[] drawCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd ,Boolean wxUser) {
+        return  drawQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, wxUser , 2);
     }
 
     @Override
-    public int[] drawCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd ,String scanSource) {
-        return  drawQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, scanSource , 2);
+    public int[] winCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd,Boolean wxUser) {
+        return drawQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, wxUser , 3);
     }
 
     @Override
-    public int[] winCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd,String scanSource) {
-        return drawQuery( orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, scanSource , 3);
-    }
-
-    @Override
-    public int[] rewardCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, String scanSource) {
-        return prizedQuery(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, scanSource);
-    }
-
-
-    @Override
-    public int[] shareCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return new int[0];
-    }
-
-    @Override
-    public int[] storeUrlCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return new int[0];
-    }
-
-    @Override
-    public int[] commentCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return new int[0];
+    public int[] rewardCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Boolean wxUser) {
+        return prizedQuery(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, wxUser);
     }
 
     @Override
@@ -85,7 +61,51 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
 
     @Override
     public List<String[]> commentDailyCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return queryDailyEventCount("comment", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+        String sql = "select DATE_FORMAT(c.created_datetime,'%Y-%m-%d') as comment_date,count(1), count(distinct u.id)  " +
+                "from di.product_comments c " +
+                "inner join di.di_event ev on c.scan_record_id=ev.event_id " +
+                "LEFT JOIN di.lu_province_city pc ON ev.location_id=pc.id " +
+                "inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) " +
+                "where ev.org_id = :orgId ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isEmpty(province)) {
+            sql = sql + " and pc.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and pc.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and c.created_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and c.created_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+        sql = sql + " group by comment_date;";
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        List<Object[]> data = query.getResultList();
+        List<String[]> list = new ArrayList<>();
+        for (Object[] item : data) {
+            String[] temp = new String[3];
+            temp[0] = (String) item[0];
+            temp[1] = (String) item[1].toString();
+            temp[2] = (String) item[2].toString();
+            list.add(temp);
+        }
+        return list;
     }
 
     @Override
@@ -93,7 +113,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         int[] scanCount = queryScanCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
         int[] shareCount = queryEventCount("share", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
         int[] storeUrlCount = queryEventCount("store_url", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
-        int[] commentCount = queryEventCount("comment", orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+        int[] commentCount = queryCommentCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
         List<int[]> list = new ArrayList<>();
         list.add(scanCount);
         list.add(shareCount);
@@ -119,10 +139,55 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
 
     @Override
     public List<String[]> commentLocationCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
-        return  queryEventLocationCount("comment",orgId,productBaseId,province,city,createdDateTimeStart,createdDateTimeEnd);
+        String sql = "select case when pc.province is null or pc.province ='' then '未公开省份'  else  pc.province END as provinceA, case when pc.city is null or pc.city = '' then '未公开城市' else pc.city END as cityA, count(1), count(distinct u.id) " +
+                "from di.product_comments c INNER join di.di_event ev on c.scan_record_id=ev.event_id "+
+                "LEFT JOIN di.lu_province_city pc ON ev.location_id=pc.id "+
+                "inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) "+
+                "where ev.org_id = :orgId ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isEmpty(province)) {
+            sql = sql + " and pc.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and pc.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and c.created_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and c.created_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+
+        sql = sql + " group by pc.id";
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        List<Object[]> data = query.getResultList();
+        List<String[]> list = new ArrayList<>();
+        for (Object[] item : data) {
+            String[] temp = new String[4];
+            temp[0] = (String) item[0];
+            temp[1] = (String) item[1];
+            temp[2] = String.valueOf(item[2]) ;
+            temp[3] = String.valueOf(item[3]) ;
+            list.add(temp);
+        }
+        return list;
     }
 
-    private int[] scanQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, String scanSource) {
+    private int[] scanQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Boolean wxUser) {
         String sql = "select count(1), count(distinct u.id) from di.di_event ev inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.name= :eventName " +
                 " and ev.org_id =:orgId ";
 
@@ -150,7 +215,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
             parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
         }
 
-        if (!StringUtils.isEmpty(scanSource)&& scanSource.equals(WEXIN)){
+        if (wxUser!=null && wxUser){
             sql = sql + " and u.wx_openid is not null";
         }
 
@@ -160,12 +225,12 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         }
         Object[] data = (Object[]) query.getSingleResult();
         int[] array = new int[2];
-        array[0] = ((BigInteger) data[0]).intValue();
-        array[1] = ((BigInteger) data[1]).intValue();
+        array[0] = ((Number) data[0]).intValue();
+        array[1] = ((Number) data[1]).intValue();
         return array;
     }
 
-    private int[] drawQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, String scanSource ,  int level) {
+    private int[] drawQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Boolean wxUser ,  int level) {
         String sql = "select count(1), count(distinct u.id) from di.mkt_draw_record dr left join di.di_event ev on dr.scan_record_id=ev.event_id  " +
                 "inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.org_id =:orgId  ";
 
@@ -192,7 +257,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
             parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
         }
 
-        if (!StringUtils.isEmpty(scanSource)&& scanSource.equals(WEXIN)){
+        if (wxUser!=null && wxUser){
             sql = sql + " and u.wx_openid is not null";
         }
 
@@ -209,12 +274,12 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         }
         Object[] data = (Object[]) query.getSingleResult();
         int[] array = new int[2];
-        array[0] = ((BigInteger) data[0]).intValue();
-        array[1] = ((BigInteger) data[1]).intValue();
+        array[0] = ((Number) data[0]).intValue();
+        array[1] = ((Number) data[1]).intValue();
         return array;
     }
 
-    private int[] prizedQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, String scanSource) {
+    private int[] prizedQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Boolean wxUser) {
         String sql = "select count(1), count(distinct u.id) from di.mkt_draw_record dr left join di.di_event ev on dr.scan_record_id=ev.event_id INNER JOIN di.mkt_draw_prize dp ON dr.id=dp.draw_record_id " +
                 "inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.org_id =:orgId  and dr.isPrized = 1 and dp.status_code in ('submit','paid') ";
 
@@ -241,7 +306,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
             parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
         }
 
-        if (!StringUtils.isEmpty(scanSource)&& scanSource.equals(WEXIN)){
+        if (wxUser!=null && wxUser){
             sql = sql + " and u.wx_openid is not null";
         }
 
@@ -251,8 +316,8 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         }
         Object[] data = (Object[]) query.getSingleResult();
         int[] array = new int[2];
-        array[0] = ((BigInteger) data[0]).intValue();
-        array[1] = ((BigInteger) data[1]).intValue();
+        array[0] = ((Number) data[0]).intValue();
+        array[1] = ((Number) data[1]).intValue();
         return array;
     }
 
@@ -387,8 +452,8 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         }
         Object[] data = (Object[]) query.getSingleResult();
         int[] array = new int[2];
-        array[0] = ((BigInteger) data[0]).intValue();
-        array[1] = ((BigInteger) data[1]).intValue();
+        array[0] = ((Number) data[0]).intValue();
+        array[1] = ((Number) data[1]).intValue();
         return array;
     }
 
@@ -430,16 +495,58 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         }
         Object[] data = (Object[]) query.getSingleResult();
         int[] array = new int[2];
-        array[0] = ((BigInteger) data[0]).intValue();
-        array[1] = ((BigInteger) data[1]).intValue();
+        array[0] = ((Number) data[0]).intValue();
+        array[1] = ((Number) data[1]).intValue();
+        return array;
+    }
+
+    private int[] queryCommentCount( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
+
+        String sql = "select count(1), count(distinct u.id) " +
+                "from di.product_comments c left join di.di_event ev on c.scan_record_id=ev.event_id "+
+                "LEFT JOIN di.lu_province_city pc ON ev.location_id=pc.id "+
+                "inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) "+
+                "where ev.org_id = :orgId ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isEmpty(province)) {
+            sql = sql + " and pc.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and pc.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and c.created_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and c.created_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        Object[] data = (Object[]) query.getSingleResult();
+        int[] array = new int[2];
+        array[0] = ((Number) data[0]).intValue();
+        array[1] = ((Number) data[1]).intValue();
         return array;
     }
 
 
     private List<String[]> queryScanLocationCount( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
         String sql = "select case when pc.province is null or pc.province ='' then '未公开省份'  else  pc.province END as provinceA, case when pc.city is null or pc.city = '' then '未公开城市' else pc.city END as cityA, count(1), count(distinct u.id) " +
-                "from di.di_event ev LEFT JOIN di.lu_province_city pc ON ev.location_id=pc.id "+
+                "from di.di_event ev "+
                 "inner join di.di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) "+
+                "LEFT JOIN di.lu_province_city pc ON ev.location_id=pc.id "+
                 "where ev.org_id = :orgId ";
 
         HashMap<String, Object> parameters = new HashMap<>();
@@ -475,11 +582,11 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         List<Object[]> data = query.getResultList();
         List<String[]> list = new ArrayList<>();
         for (Object[] item : data) {
-            String[] temp = new String[5];
+            String[] temp = new String[4];
             temp[0] = (String) item[0];
             temp[1] = (String) item[1];
             temp[2] = String.valueOf(item[2]) ;
-            temp[3] = String.valueOf(item[2]) ;
+            temp[3] = String.valueOf(item[3]) ;
             list.add(temp);
         }
         return list;
@@ -527,11 +634,11 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
         List<Object[]> data = query.getResultList();
         List<String[]> list = new ArrayList<>();
         for (Object[] item : data) {
-            String[] temp = new String[5];
+            String[] temp = new String[4];
             temp[0] = (String) item[0];
             temp[1] = (String) item[1];
             temp[2] = String.valueOf(item[2]) ;
-            temp[3] = String.valueOf(item[2]) ;
+            temp[3] = String.valueOf(item[3]) ;
             list.add(temp);
         }
         return list;

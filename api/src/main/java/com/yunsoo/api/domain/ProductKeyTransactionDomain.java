@@ -1,8 +1,8 @@
 package com.yunsoo.api.domain;
 
 import com.yunsoo.api.dto.ProductKeyOrder;
+import com.yunsoo.api.key.dto.KeyBatch;
 import com.yunsoo.common.data.LookupCodes;
-import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.data.object.ProductKeyTransactionObject;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.UnprocessableEntityException;
@@ -62,7 +62,7 @@ public class ProductKeyTransactionDomain {
         return quantity;
     }
 
-    public String purchase(final ProductKeyBatchObject batch) {
+    public String purchase(final KeyBatch batch) {
         int quantity = batch.getQuantity();
         String productBaseId = batch.getProductBaseId();
         String orgId = batch.getOrgId();

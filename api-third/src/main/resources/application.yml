@@ -1,0 +1,76 @@
+server:
+  port: 4480
+management:
+  port: 4481
+  add-application-context-header: false
+
+spring:
+  profiles.active: local
+  application.name: 'api-third'
+  mvc.throw-exception-if-no-handler-found: true
+  jpa:
+    show_sql: false
+    database: MYSQL
+    generate_ddl: false
+
+jdbc:
+  third:
+    driver_class_name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://dev-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/yunsoo2015DB?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    username: root
+    password: admin201512
+    initial_size: 1
+    min_idle: 1
+    max_idle: 5
+    test_on_borrow: true
+    validation_query: select 1
+
+logging:
+  file: /var/log/yunsoo/api-third.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'INFO'
+
+yunsoo:
+  debug: true
+  environment: dev
+  wechat:
+    app_id: wxe3804cb3dff62fe3
+    app_secret: 7d553f1bbfbe9f86f973bce5d0ee7852
+    private_key: H97q3vDa6z2rsRppSyQW60aeaewED23d
+    mch_id: 1405965002
+    key_file: d:/wx_cert/apiclient_cert.p12
+  juhe:
+    openId: JH813dabacf966aa41e752c88a141c8731
+    keys:
+      sms: f4647f3c1d0ffb85ad72182d2f6b7048
+      mobile_order: 6ec4712d7cf812e150b357f8379f861b
+      mobile_data: 999124199517378d6b551e465aa06847
+      mobile_location: c6627d598e4331ed70f2a868ec4b0ee7
+      ip: 277a63a6111d82dbe2857278ec6a83b2
+---
+spring:
+  profiles: local
+  jpa.show_sql: true
+
+logging:
+  file: c:/logs/yunsoo/api-third.log
+  level:
+    org.springframework: 'INFO'
+    org.hibernate: 'ERROR'
+
+yunsoo:
+  environment: local
+  wechat:
+    refresh_token: false
+
+---
+spring:
+  profiles: dev
+
+yunsoo:
+  environment: dev
+  wechat:
+    refresh_token: true
+    key_file: /opt/bin/wechat_keys/apiclient_cert.p12
+

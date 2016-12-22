@@ -1,4 +1,4 @@
-package com.yunsoo.di.dao.repository.impl;
+package com.yunsoo.di.dao.repository.Impl;
 
 import com.yunsoo.di.dao.entity.ScanRecordLocationAnalysisEntity;
 import com.yunsoo.di.dao.repository.ScanRecordRepository;
@@ -9,7 +9,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,9 +56,9 @@ public class ScanRecordRepositoryImpl implements ScanRecordRepository {
             ScanRecordLocationAnalysisEntity entity = new ScanRecordLocationAnalysisEntity();
             entity.setProvince((String) d[0]);
             entity.setCity((String) d[1]);
-            entity.setProductBaseId((String) d[2]);
-            entity.setPv(((BigInteger) d[3]).intValue());
-            entity.setUv(((BigInteger) d[4]).intValue());
+            entity.setProductBaseId(productBaseId);
+            entity.setPv(((Number) d[3]).intValue());
+            entity.setUv(((Number) d[4]).intValue());
             list.add(entity);
         }
         return list;

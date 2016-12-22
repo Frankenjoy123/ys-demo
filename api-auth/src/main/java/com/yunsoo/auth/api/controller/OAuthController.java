@@ -7,7 +7,6 @@ import com.yunsoo.auth.dto.*;
 import com.yunsoo.auth.service.AccountService;
 import com.yunsoo.auth.service.LoginService;
 import com.yunsoo.auth.service.OAuthAccountService;
-import com.yunsoo.auth.service.WeChatService;
 import com.yunsoo.common.util.HashUtils;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.UnauthorizedException;
@@ -35,7 +34,7 @@ public class OAuthController {
     private static int LOGIN_TOKEN_EXPIRES_SECONDS = 1440;
     private static String SOURCE = "source";
     private static String SOURCE_TYPE = "source_type_code";
-    private static String WECHAT="wechat";
+    private static String WECHAT = "wechat";
 
     private Log log = LogFactory.getLog(this.getClass());
 
@@ -51,34 +50,13 @@ public class OAuthController {
     @Autowired
     private AccountService accountService;
 
-    @Autowired
-    private WeChatService weChatService;
-
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public OAuthAccountLoginResponse login(@RequestBody OAuthAccountLoginRequest request) {
-        if(request.getOauthOpenType() == null)
-            request.setOauthOpenType(WECHAT);
-        List<OAuthAccount> accountList = oAuthAccountService.getByOAuthOpenIdAndOAuthTypeCode(request.getOauthOpenid(), request.getOauthOpenType());
-        if(accountList.size() ==0)
-            throw new UnauthorizedException("wechat user not bind");
-
-        OAuthAccount account = accountList.get(0);
-        Token accessToken = getAccessToken(account.getId(), account.getToken());
-
-        OAuthAccountLoginResponse response = new OAuthAccountLoginResponse();
-        response.setToken(account.getToken());
-        response.setAccessToken(accessToken);
-        response.setOauthAccountId(account.getId());
-        return response;
-    }
-
     @RequestMapping(value = "/bind", method = RequestMethod.POST)
     public OAuthAccountLoginResponse bind(@RequestBody OAuthAccountLoginRequest request) {
-        if(request.getOauthOpenType() == null)
+        if (request.getOauthOpenType() == null)
             request.setOauthOpenType(WECHAT);
 
         AuthAccount account = tokenAuthenticationService.parseLoginToken(request.getLoginToken());
-        if (account == null || StringUtils.isEmpty(account.getId())) {
+        if (account == null || StringUtils.isEmpty(account.getId()) || account.getDetails() == null) {
             log.warn(String.format("login token is not valid [token: %s]", request.getLoginToken()));
             throw new UnauthorizedException("login token is not valid");
         }
@@ -89,41 +67,37 @@ public class OAuthController {
             throw new UnauthorizedException("account is not valid");
         }
 
-        List<OAuthAccount> accountList = oAuthAccountService.getByOAuthOpenIdAndOAuthTypeCode(request.getOauthOpenid(), request.getOauthOpenType());
+        List<OAuthAccount> accountList = oAuthAccountService.getByOAuthOpenIdAndOAuthTypeCode(request.getOauthOpenid(), request.getOauthOpenType(),
+                account.getDetails().get(SOURCE_TYPE), account.getDetails().get(SOURCE));
+
         OAuthAccount currentAccount;
-        if(accountList.size() ==0) {
+        if (accountList.size() == 0) {
 
             OAuthAccount oAuthAccount = new OAuthAccount();
             oAuthAccount.setCreatedDateTime(DateTime.now());
             oAuthAccount.setAccountId(account.getId());
             oAuthAccount.setToken(HashUtils.sha1HexString(UUID.randomUUID().toString()));  //random sha1
 
-            if(account.getDetails()!=null) {
+            if (account.getDetails() != null) {
                 oAuthAccount.setSource(account.getDetails().get(SOURCE));
                 oAuthAccount.setSourceTypeCode(account.getDetails().get(SOURCE_TYPE));
+                oAuthAccount.setoAuthTypeCode(request.getOauthOpenType());
+                oAuthAccount.setoAuthOpenId(request.getOauthOpenid());
             }
             oAuthAccount.setDisabled(false);
             oAuthAccount.setoAuthTypeCode(request.getOauthOpenType());
-
-            if (request.getOauthOpenType().equals(WECHAT)) {
-                WeChatUser weChatUser = weChatService.getUserInfo(request.getOauthToken(), request.getOauthOpenid());
-                if (StringUtils.hasText(weChatUser.getErrorCode()))
-                    throw new BadRequestException("could not get wechat user, error message: " + weChatUser.getErrorMsg() + ", error code: " + weChatUser.getErrorCode());
-
-
-                oAuthAccount.setGravatarUrl(weChatUser.getImageUrl());
-                oAuthAccount.setName(weChatUser.getNickName());
-                oAuthAccount.setoAuthOpenId(weChatUser.getOpenId());
-            }
+            oAuthAccount.setoAuthOpenId(request.getOauthOpenid());
+            oAuthAccount.setName(request.getOauthName());
+            oAuthAccount.setGravatarUrl(request.getOauthGravatarUrl());
 
             currentAccount = oAuthAccountService.save(oAuthAccount);
-        }
-        else
+        } else
             currentAccount = accountList.get(0);
 
         OAuthAccountLoginResponse response = new OAuthAccountLoginResponse();
         response.setAccessToken(tokenAuthenticationService.generateAccessToken(account));
         response.setToken(currentAccount.getToken());
+
         response.setOauthAccountId(currentAccount.getId());
 
         return response;
@@ -131,16 +105,21 @@ public class OAuthController {
 
     @RequestMapping(value = "/loginToken", method = RequestMethod.GET)
     public Token getLoginToken(@RequestParam(value = "source_type_code", required = false) String sourceTypeCode,
-                               @RequestParam(value = "source", required = false) String source) {
-        if(sourceTypeCode == null)
+                               @RequestParam(value = "source", required = false) String source,
+                               @RequestParam(value = "account_id", required = false) String accountId) {
+        if (sourceTypeCode == null)
             sourceTypeCode = "agency";
 
         String currentAccountId = AuthUtils.getCurrentAccount().getId();
+        if(!StringUtils.hasText(accountId))
+            accountId = currentAccountId;
 
-        List<Account> agencyAccountList = accountService.getByTypeCode(Constants.AccountType.AGENCY, AuthUtils.fixOrgId(null));
-        if(agencyAccountList.size()==0)
-            throw new BadRequestException("no agency account exists");
-        String accountId = agencyAccountList.get(0).getId();
+        if (sourceTypeCode.equals("agency")) {
+            List<Account> agencyAccountList = accountService.getByTypeCode(Constants.AccountType.AGENCY, AuthUtils.fixOrgId(null));
+            if (agencyAccountList.size() == 0)
+                throw new BadRequestException("no agency account exists");
+            accountId = agencyAccountList.get(0).getId();
+        }
 
         log.info(String.format("login token creation request from account [id: %s] for account [id: %s]", currentAccountId, accountId));
 
@@ -155,11 +134,11 @@ public class OAuthController {
         AuthAccount authAccount = new AuthAccount();
         authAccount.setId(accountId);
         authAccount.setOrgId(account.getOrgId());
-        if (sourceTypeCode == null || (sourceTypeCode != null && sourceTypeCode.equals("agency"))) {
-            authAccount.setDetails(new HashMap<>());
-            authAccount.getDetails().put(SOURCE_TYPE, sourceTypeCode);
-            authAccount.getDetails().put(SOURCE, source);
-        }
+
+        authAccount.setDetails(new HashMap<>());
+        authAccount.getDetails().put(SOURCE_TYPE, sourceTypeCode);
+        authAccount.getDetails().put(SOURCE, source);
+
         return tokenAuthenticationService.generateLoginToken(authAccount, LOGIN_TOKEN_EXPIRES_SECONDS);
     }
 
@@ -192,7 +171,6 @@ public class OAuthController {
         authAccount.setDetails(new HashMap<>());
         authAccount.getDetails().put(SOURCE_TYPE, account.getSourceTypeCode());
         authAccount.getDetails().put(SOURCE, account.getSource());
-
         return tokenAuthenticationService.generateAccessToken(authAccount);
     }
 

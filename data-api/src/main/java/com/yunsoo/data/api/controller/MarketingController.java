@@ -8,8 +8,6 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.util.PageableUtils;
 import com.yunsoo.data.service.entity.*;
 import com.yunsoo.data.service.repository.*;
-import com.yunsoo.data.service.service.ProductService;
-import com.yunsoo.data.service.service.contract.Product;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,9 +62,12 @@ public class MarketingController {
     @Autowired
     private MktDrawPrizeReportRepository mktDrawPrizeReportRepository;
 
+    @Autowired
+    private MktSellerRepository mktSellerRepository;
+
 
     @Autowired
-    private ProductService productService;
+    private MktPrizeCostRepository costRepository;
 
     //get marketing plan by id, provide API
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
@@ -96,6 +97,33 @@ public class MarketingController {
         }
     }
 
+    //get mktDrawPrize by product key and ysid, provide API-Rabbit
+    @RequestMapping(value = "/drawprize/{key}/user/{id}", method = RequestMethod.GET)
+    public MktDrawPrizeObject getMktDrawPrizeByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "id") String id,
+                                                                 @RequestParam(value = "oauth_openid", required = false) String oauthOpenid) {
+
+        List<MktDrawRecordEntity> mktDrawRecordEntities = new ArrayList<>();
+        if (!StringUtils.isEmpty(oauthOpenid)) {
+            mktDrawRecordEntities = mktDrawRecordRepository.findByProductKeyAndOauthOpenidAndIsPrized(key, oauthOpenid, true);
+        } else {
+            mktDrawRecordEntities = mktDrawRecordRepository.findByProductKeyAndYsidAndIsPrized(key, id, true);
+        }
+        if (mktDrawRecordEntities.size() > 0) {
+            MktDrawRecordEntity mktDrawRecordEntity = mktDrawRecordEntities.get(0);
+            String scanRecordId = mktDrawRecordEntity.getScanRecordId();
+            List<MktDrawPrizeEntity> mktDrawPrizeEntityList = mktDrawPrizeRepository.findByScanRecordId(scanRecordId);
+            if (mktDrawPrizeEntityList.size() > 0) {
+                MktDrawPrizeEntity entity = mktDrawPrizeEntityList.get(0);
+                return toMktDrawPrizeObject(entity);
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+
     //get mktDrawRecord by product key, provide API-Rabbit
     @RequestMapping(value = "/draw", method = RequestMethod.GET)
     public List<MktDrawRecordObject> queryRecord(@RequestParam("ys_id") String ysId, @RequestParam("marketing_id") String marketingId) {
@@ -113,6 +141,42 @@ public class MarketingController {
             return null;
         }
     }
+
+    // query marketing draw record by product key and ysid
+    @RequestMapping(value = "/draw/{key}/user/{id}", method = RequestMethod.GET)
+    public MktDrawRecordObject getMktDrawRecordByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "id") String id,
+                                                                   @RequestParam(value = "oauth_openid") String oauthOpenId,
+                                                                   @RequestParam(value = "marketing_id") String marketingId) {
+        List<MktDrawRecordEntity> entities = mktDrawRecordRepository.findByProductKeyAndOauthOpenidAndMarketingId(key, oauthOpenId, marketingId);
+        if (entities.size() > 0) {
+            MktDrawRecordEntity entity = entities.get(0);
+            return toMktDrawRecordObject(entity);
+        } else {
+            return null;
+        }
+    }
+
+    //get marketing plan by id, provide API
+    @RequestMapping(value = "/seller/wechat/{openid}", method = RequestMethod.GET)
+    public MktSellerObject getMktSellerByOpenid(@PathVariable String openid) {
+
+        MktSellerEntity entity = mktSellerRepository.findOne(openid);
+        if (entity == null) {
+            throw new NotFoundException("marketing wechat seller not found by [openid: " + openid + ']');
+        }
+        return toMktSellerObject(entity);
+    }
+
+    //get wechat marketing plan by openid, provide API-rabbit
+    @RequestMapping(value = "/seller/wechat/marketing/{id}", method = RequestMethod.GET)
+    public List<MarketingObject> getWechatMarketingByOpenid(@PathVariable String id) {
+
+        List<MarketingEntity> entities = marketingRepository.findByCreatedAccountIdAndTypeCodeOrderByCreatedDateTimeDesc(id, LookupCodes.MktType.DRAW04);
+        return entities.stream().map(this::toMarketingObject).collect(Collectors.toList());
+    }
+
+
+
 
     //query marketing plan, provide API
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -262,6 +326,43 @@ public class MarketingController {
         }
     }
 
+    //get marketing consumer right by key and ysid
+    @RequestMapping(value = "consumer/key/{key}/user/{id}", method = RequestMethod.GET)
+    public MktConsumerRightObject getMktConsumerRightByProductKeyAndUser(@PathVariable(value = "key") String key, @PathVariable(value = "id") String id) {
+
+        List<MktDrawRecordEntity> mktDrawRecordEntityList = mktDrawRecordRepository.findByProductKeyAndYsidAndIsPrized(key, id, true);
+        if (mktDrawRecordEntityList.size() > 0) {
+            MktDrawRecordEntity mktDrawRecordEntity = mktDrawRecordEntityList.get(0);
+            String scanRecordId = mktDrawRecordEntity.getScanRecordId();
+            List<MktDrawPrizeEntity> mktDrawPrizeEntityList = mktDrawPrizeRepository.findByScanRecordId(scanRecordId);
+            if (mktDrawPrizeEntityList.size() > 0) {
+                MktDrawPrizeEntity mktDrawPrizeEntity = mktDrawPrizeEntityList.get(0);
+                String drawRuleId = mktDrawPrizeEntity.getDrawRuleId();
+                MktDrawRuleEntity mktDrawRuleEntity = mktDrawRuleRepository.findOne(drawRuleId);
+                if (mktDrawRuleEntity != null) {
+                    String consumerRightId = mktDrawRuleEntity.getConsumerRightId();
+                    if (consumerRightId != null) {
+                        MktConsumerRightEntity mktConsumerRightEntity = mktConsumerRightRepository.findOne(consumerRightId);
+                        if (mktConsumerRightEntity != null) {
+                            return toMktConsumerRightObject(mktConsumerRightEntity);
+                        } else {
+                            return null;
+                        }
+
+                    } else {
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
 
     //get marketing consumer right redeem code by product key
     @RequestMapping(value = "consumer/redeemcode/{key}", method = RequestMethod.GET)
@@ -396,6 +497,12 @@ public class MarketingController {
         } else {
             return null;
         }
+    }
+
+    @RequestMapping(value = "/drawPrize/totalcount/marketing/{id}", method = RequestMethod.GET)
+    public Long countMktDrawPrizesByMarketingId(@PathVariable(value = "id") String marketingId) {
+        return mktDrawPrizeRepository.countByMarketingId(marketingId);
+
     }
 
 
@@ -537,15 +644,15 @@ public class MarketingController {
     @RequestMapping(value = "/draw", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public MktDrawRecordObject createDrawRecord(@RequestBody MktDrawRecordObject mktDrawRecordObject) {
-        String productKey = mktDrawRecordObject.getProductKey();
-        Product product = productService.getByKey(productKey);
-        if (product == null) {
-            throw new NotFoundException("Product");
-        }
-        List<MktDrawRecordEntity> mktDrawRecordEntityList = mktDrawRecordRepository.findByProductKey(productKey);
-        if (mktDrawRecordEntityList.size() > 0) {
-            throw new ConflictException("This product has been already drawed.");
-        }
+//        String productKey = mktDrawRecordObject.getProductKey();
+//        Product product = productService.getByKey(productKey);
+//        if (product == null) {
+//            throw new NotFoundException("Product");
+//        }
+//        List<MktDrawRecordEntity> mktDrawRecordEntityList = mktDrawRecordRepository.findByProductKey(productKey);
+//        if (mktDrawRecordEntityList.size() > 0) {
+//            throw new ConflictException("This product has been already drawed.");
+//        }
 
         MktDrawRecordEntity entity = toMktDrawRecordEntity(mktDrawRecordObject);
         entity.setId(null);
@@ -742,6 +849,33 @@ public class MarketingController {
             entity.setPaidDateTime(mktDrawPrizeObject.getPaidDateTime());
         if(mktDrawPrizeObject.getPrizeContactId() != null)
             entity.setPrizeContactId(mktDrawPrizeObject.getPrizeContactId());
+        if (LookupCodes.MktDrawPrizeStatus.PAID.equals(mktDrawPrizeObject.getStatusCode())) {
+            entity.setPaidDateTime(DateTime.now());
+        }
+        MktDrawPrizeEntity newEntity = mktDrawPrizeRepository.save(entity);
+
+        return toMktDrawPrizeObject(newEntity);
+    }
+
+    //update marketing draw prize when sending wechat red packets, provide: API-Rabbit
+    @RequestMapping(value = "/drawPrize/wechat", method = RequestMethod.PATCH)
+    public MktDrawPrizeObject updateWechatPrize(@RequestBody MktDrawPrizeObject mktDrawPrizeObject) {
+        if (mktDrawPrizeObject == null)
+            throw new BadRequestException("marketing prize object is null");
+
+        MktDrawPrizeObject temp = findMktDrawPrizeById(mktDrawPrizeObject.getDrawRecordId());
+        MktDrawPrizeEntity entity = toMktDrawPrizeEntity(temp);
+
+        if (mktDrawPrizeObject.getPrizeAccount() != null)
+            entity.setPrizeAccount(mktDrawPrizeObject.getPrizeAccount());
+        if (mktDrawPrizeObject.getPrizeAccountName() != null)
+            entity.setPrizeAccountName(mktDrawPrizeObject.getPrizeAccountName());
+        if (mktDrawPrizeObject.getMobile() != null)
+            entity.setMobile(mktDrawPrizeObject.getMobile());
+        if (mktDrawPrizeObject.getStatusCode() != null)
+            entity.setStatusCode(mktDrawPrizeObject.getStatusCode());
+        if (mktDrawPrizeObject.getPaidDateTime() != null)
+            entity.setPaidDateTime(mktDrawPrizeObject.getPaidDateTime());
         if (LookupCodes.MktDrawPrizeStatus.PAID.equals(mktDrawPrizeObject.getStatusCode())) {
             entity.setPaidDateTime(DateTime.now());
         }
@@ -970,6 +1104,23 @@ public class MarketingController {
             marketingObjectList.add(object);
         }
         return marketingObjectList;
+    }
+
+    @RequestMapping(value = "/cost", method = RequestMethod.POST)
+    public MktPrizeCostObject savePrizeCost(@RequestBody MktPrizeCostObject costObject){
+        if(costObject != null) {
+            MktPrizeCostEntity entity = new MktPrizeCostEntity();
+            entity.setType(costObject.getType());
+            entity.setName(costObject.getName());
+            entity.setOrderId(costObject.getOrderId());
+            entity.setMobile(costObject.getMobile());
+            entity.setDrawRecordId(costObject.getDrawRecordId());
+            entity.setCost(costObject.getCost());
+            costRepository.save(entity);
+            return  costObject;
+        }
+
+        return null;
     }
 
 
@@ -1323,6 +1474,23 @@ public class MarketingController {
         object.setRuleName(entity.getRuleName());
         object.setGravatarUrl(entity.getGravatarUrl());
         object.setOauthOpenid(entity.getOauthOpenid());
+        return object;
+    }
+
+    private MktSellerObject toMktSellerObject(MktSellerEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        MktSellerObject object = new MktSellerObject();
+        object.setOpenid(entity.getOpenid());
+        object.setOrgId(entity.getOrgId());
+        object.setName(entity.getName());
+        object.setSex(entity.getSex());
+        object.setCity(entity.getCity());
+        object.setProvince(entity.getProvince());
+        object.setCountry(entity.getCountry());
+        object.setGravatarUrl(entity.getGravatarUrl());
+        object.setShopUrl(entity.getShopUrl());
         return object;
     }
 

@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
-
 /**
  * Created by:   Lijian
  * Created on:   2016-08-28
@@ -39,12 +37,12 @@ public class KeyBatchService {
         }
     }
 
-    public List<List<String>> getKeysByBatchId(String batchId) {
+    public Keys getKeysByBatchId(String batchId) {
         if (StringUtils.isEmpty(batchId)) {
             return null;
         }
         try {
-            return keyApiClient.get("keyBatch/{id}/keys", Keys.class, batchId).getKeys();
+            return keyApiClient.get("keyBatch/{id}/keys", Keys.class, batchId);
         } catch (NotFoundException e) {
             log.error(e.getMessage());
             return null;

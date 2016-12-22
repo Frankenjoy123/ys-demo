@@ -2,6 +2,8 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.auth.dto.Organization;
 import com.yunsoo.api.auth.service.AuthOrganizationService;
+import com.yunsoo.api.auth.service.OAuthAccountService;
+import com.yunsoo.api.di.service.MarketingService;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.payment.ParameterNames;
@@ -44,6 +46,9 @@ public class MarketingController {
     private MarketingDomain marketingDomain;
 
     @Autowired
+    private MarketingService marketingService;
+
+    @Autowired
     private ProductBaseDomain productBaseDomain;
 
     @Autowired
@@ -57,6 +62,9 @@ public class MarketingController {
 
     @Autowired
     private AuthOrganizationService authOrganizationService;
+
+    @Autowired
+    private OAuthAccountService oAuthAccountService;
 
     @Autowired
     private UserDomain userDomain;
@@ -395,6 +403,111 @@ public class MarketingController {
         }
         return new Marketing(mktObject);
     }
+
+    //create marketing plan for micro shop sending wechat red packets
+    @RequestMapping(value = "marketing/draw04", method = RequestMethod.POST)
+    public Marketing createWechatMarketing(@RequestBody Marketing marketing) {
+        String accountId = AuthUtils.fixAccountId(null);
+        OAuthAccount authAccount = oAuthAccountService.getOAuthAccountByAccountId(accountId);
+        if (authAccount == null)
+            throw new NotFoundException("current account don't have oauth account");
+
+        if (!StringUtils.hasText(authAccount.getoAuthOpenId())) {
+            throw new BadRequestException("seller openid should not be empty.");
+        }
+        String orgId = AuthUtils.fixOrgId(null);
+        MarketingObject marketingObject = marketing.toMarketingObject();
+        marketingObject.setCreatedAccountId(accountId);
+        marketingObject.setCreatedDateTime(DateTime.now());
+        marketingObject.setTypeCode(LookupCodes.MktType.DRAW04);
+        if (marketing.getBudget() != null) {
+            marketingObject.setBalance(marketing.getBudget());
+        }
+        marketingObject.setOrgId(orgId);
+        marketingObject.setQuantity((marketing.getBudget().intValue()));
+        MarketingObject mktObject = marketingDomain.createMarketing(marketingObject);
+
+        return new Marketing(mktObject);
+    }
+
+    //create marketing draw rules for micro shop sending wechat red packets
+    @RequestMapping(value = "drawRule/draw04/list", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public MktDrawRule createWechatMktDrawRuleList(@RequestBody List<MktDrawRule> mktDrawRuleList) {
+        if (mktDrawRuleList == null || mktDrawRuleList.size() == 0) {
+            throw new BadRequestException("marketing draw rule list can not be null");
+        }
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
+
+        List<MktDrawRuleObject> mktDrawRuleObjectList = new ArrayList<>();
+        for (MktDrawRule mktDrawRule : mktDrawRuleList) {
+            String marketingId = mktDrawRule.getMarketingId();
+            MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+            if (marketingObject == null) {
+                throw new NotFoundException("marketing can not be found by the id");
+            }
+            MktDrawRuleObject mktDrawRuleObject = mktDrawRule.toMktDrawRuleObject();
+            mktDrawRuleObject.setTotalQuantity(marketingObject.getQuantity());
+            mktDrawRuleObject.setAvailableQuantity(marketingObject.getQuantity());
+            mktDrawRuleObject.setCreatedAccountId(currentAccountId);
+            mktDrawRuleObject.setCreatedDateTime(DateTime.now());
+            mktDrawRuleObjectList.add(mktDrawRuleObject);
+        }
+
+        MktDrawRuleObject newMktDrawRuleObject = marketingDomain.createMktDrawRuleList(mktDrawRuleObjectList);
+        return new MktDrawRule(newMktDrawRuleObject);
+    }
+
+    //get marketing plan for micro shop by seller
+    @RequestMapping(value = "seller/draw04", method = RequestMethod.GET)
+    public List<WeChatMarketing> getSellerMarketing() {
+        String currentAccountId = AuthUtils.getCurrentAccount().getId();
+        if (!StringUtils.hasText(currentAccountId)) {
+            throw new BadRequestException("seller account id should not be empty.");
+        }
+        List<WeChatMarketing> weChatMarketingList = new ArrayList<>();
+        List<MarketingObject> marketingObjectList = marketingDomain.getWechatMarketingByAccountId(currentAccountId);
+
+        marketingObjectList.forEach(object -> {
+            WeChatMarketing weChatMarketing = new WeChatMarketing(object);
+            List<MktDrawRuleObject> mktDrawRuleObjectList = marketingDomain.getRuleList(object.getId());
+            Double amountMin = mktDrawRuleObjectList.get(0).getAmount();
+            Double amountMax = mktDrawRuleObjectList.get(1).getAmount();
+            if (amountMin > amountMax) {
+                Double temp = amountMin;
+                amountMin = amountMax;
+                amountMax = temp;
+            }
+            weChatMarketing.setAmountMin(amountMin);
+            weChatMarketing.setAmountMax(amountMax);
+            weChatMarketing.setProbability(mktDrawRuleObjectList.get(0).getProbability());
+            Long prizeQuantity = marketingDomain.countMktDrawPrizesByMarketingId(object.getId());
+            weChatMarketing.setPrizeNum(prizeQuantity.intValue());
+            weChatMarketingList.add(weChatMarketing);
+        });
+
+        return weChatMarketingList;
+    }
+
+
+    @RequestMapping(value = "update/draw04/success/{id}", method = RequestMethod.PUT)
+    public void updateSuccessWechatMarketing(@PathVariable(value = "id") String marketingId,
+                                      @RequestParam(value = "order_id", required = false) String orderId) {
+        if (marketingId == null) {
+            throw new BadRequestException("wechat marketing id can not be null");
+        }
+        marketingDomain.updateSuccessWechatMarketing(marketingId);
+    }
+
+    @RequestMapping(value = "update/draw04/failed/{id}", method = RequestMethod.PUT)
+    public void updateFailedWechatMarketing(@PathVariable(value = "id") String marketingId) {
+        if (marketingId == null) {
+            throw new BadRequestException("wechat marketing id can not be null");
+        }
+        marketingDomain.updateFailedWechatMarketing(marketingId);
+    }
+
+
 
     @RequestMapping(value = "update/{id}", method = RequestMethod.PUT)
     @com.yunsoo.api.aspect.OperationLog(operation = "'修改营销方案：' + #marketing.name", level = "P1")
@@ -779,7 +892,7 @@ public class MarketingController {
         if (marketingId == null) {
             throw new BadRequestException("marketing id can not be null");
         }
-        List<MarketWinUserLocationAnalysisObject> mktWinUserLocationAnalysisObjectList = marketingDomain.getMarketWinUserLocationReportByMarketingId(marketingId);
+        List<MarketWinUserLocationAnalysisObject> mktWinUserLocationAnalysisObjectList = marketingService.getMarketWinUserLocationReportByMarketingId(marketingId);
         return mktWinUserLocationAnalysisObjectList.stream().map(MarketWinUserLocationAnalysis::new).collect(Collectors.toList());
     }
 

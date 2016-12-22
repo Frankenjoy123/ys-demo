@@ -3,11 +3,13 @@ package com.yunsoo.api.rabbit.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.yunsoo.api.rabbit.third.dto.WeChatAccessToken;
 import com.yunsoo.common.databind.DateTimeJsonDeserializer;
 import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by:   Lijian
@@ -20,8 +22,8 @@ public class WebScanResponse {
     @JsonProperty("product")
     private Product product;
 
-    @JsonProperty("user_access_token")
-    private UserAccessToken userAccessToken;
+    @JsonProperty("wechat_config")
+    private Map<String, Object> weChatConfig;
 
     //生产企业信息
     @JsonProperty("organization")
@@ -34,13 +36,14 @@ public class WebScanResponse {
     @JsonProperty("marketing")
     private Marketing marketing;
 
-    public UserAccessToken getUserAccessToken() {
-        return userAccessToken;
+    public Map<String, Object> getWeChatConfig() {
+        return weChatConfig;
     }
 
-    public void setUserAccessToken(UserAccessToken userAccessToken) {
-        this.userAccessToken = userAccessToken;
+    public void setWeChatConfig(Map<String, Object> weChatConfig) {
+        this.weChatConfig = weChatConfig;
     }
+
 
     public Product getProduct() {
         return product;

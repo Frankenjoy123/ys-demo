@@ -1,5 +1,7 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.di.service.EMREventService;
+import com.yunsoo.api.di.service.EMRUserService;
 import com.yunsoo.api.domain.EMREventDomain;
 import com.yunsoo.api.domain.EMRUserDomain;
 import com.yunsoo.api.domain.EMRUserProductEventStasticsDomain;
@@ -31,10 +33,16 @@ public class EMRUserController {
     private EMRUserDomain emrUserDomain;
 
     @Autowired
+    private EMRUserService emrUserService;
+
+    @Autowired
     private UserBlockDomain userBlockDomain;
 
     @Autowired
     private EMREventDomain emrEventDomain;
+
+    @Autowired
+    private EMREventService emrEventService;
 
     @Autowired
     private EMRUserProductEventStasticsDomain emrUserProductEventStasticsDomain;
@@ -49,7 +57,7 @@ public class EMRUserController {
                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        EMRUserObject emrUserObject = emrUserDomain.getEMRUser(orgId, userId, ysId);
+        EMRUserObject emrUserObject = emrUserService.getEMRUser(orgId, userId, ysId);
 
         EMRUser emrUser = new EMRUser(emrUserObject);
 
@@ -61,10 +69,10 @@ public class EMRUserController {
 
         emrUser.setEmrUserProductEventStasticses(emrUserProductEventStasticses);
 
-        EMREventObject emrEventObject = emrEventDomain.getLatestEMREvent(orgId, userId, ysId);
+        EMREventObject emrEventObject = emrEventService.getLatestEMREvent(orgId, userId, ysId);
         emrUser.setEmrEvent(new EMREvent(emrEventObject));
 
-        PeriodUserConsumptionStatsObject periodUserConsumptionStatsObject = emrEventDomain.getPeriodUserConsumptionStatsObject(orgId, userId, ysId);
+        PeriodUserConsumptionStatsObject periodUserConsumptionStatsObject = emrEventService.getPeriodUserConsumptionStatsObject(orgId, userId, ysId);
         emrUser.setPeriodUserConsumptionStats(new PeriodUserConsumptionStats(periodUserConsumptionStatsObject));
 
         List<UserBlockObject> userBlockObjects = userBlockDomain.getUserBlockList(userId, ysId, orgId);
@@ -115,7 +123,7 @@ public class EMRUserController {
                                    HttpServletResponse response) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<EMRUserObject> entityPage = emrUserDomain.getEMRUserList(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStart, createdDateTimeEnd, userTags, wxUser, pageable);
+        Page<EMRUserObject> entityPage = emrUserService.getEMRUserList(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStart, createdDateTimeEnd, userTags, wxUser, pageable);
 
         return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
@@ -370,10 +378,11 @@ public class EMRUserController {
                                          @RequestParam(value = "create_datetime_start", required = false)
                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
                                          @RequestParam(value = "create_datetime_end", required = false)
-                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
+                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                         @RequestParam(value = "wx_user", required = false) Boolean wxUser) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        EMRUserReportObject userReportObject = emrUserDomain.getEMRUserFunnelCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+        EMRUserReportObject userReportObject = emrUserService.getEMRUserFunnelCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd,wxUser);
 
         return new EMRUserReport(userReportObject);
     }

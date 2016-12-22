@@ -2,10 +2,9 @@ package com.yunsoo.api.rabbit.controller;
 
 import com.yunsoo.api.rabbit.domain.OrganizationConfigDomain;
 import com.yunsoo.api.rabbit.domain.ProductBaseDomain;
-import com.yunsoo.api.rabbit.domain.ProductDomain;
+import com.yunsoo.api.rabbit.key.dto.Product;
+import com.yunsoo.api.rabbit.key.service.ProductService;
 import com.yunsoo.common.data.object.ProductBaseObject;
-import com.yunsoo.common.data.object.ProductObject;
-import com.yunsoo.common.util.KeyGenerator;
 import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,36 +25,28 @@ import java.util.Map;
 public class OrganizationConfigController {
 
     @Autowired
-    private ProductDomain productDomain;
-
-    @Autowired
     private ProductBaseDomain productBaseDomain;
 
     @Autowired
     private OrganizationConfigDomain organizationConfigDomain;
 
+    @Autowired
+    private ProductService productService;
+
+
     @RequestMapping(value = "config/key/{key}", method = RequestMethod.GET)
     public Map<String, Object> getOrgConfigByKey(@PathVariable("key") String key) {
-        ProductObject productObject = getProductByKey(key);
-        ProductBaseObject productBaseObject = getProductBaseById(productObject.getProductBaseId());
+        Product product = productService.getProductByKey(key);
+        if (product == null) {
+            throw new NotFoundException("product not found");
+        }
+        ProductBaseObject productBaseObject = getProductBaseById(product.getProductBaseId());
         return organizationConfigDomain.getConfig(productBaseObject.getOrgId(), false);
     }
 
     @RequestMapping(value = "config/{id}", method = RequestMethod.GET)
     public Map<String, Object> getOrgConfig(@PathVariable("id") String id) {
         return organizationConfigDomain.getConfig(id, false);
-    }
-
-
-    private ProductObject getProductByKey(String key) {
-        if (!KeyGenerator.validate(key)) {
-            throw new NotFoundException("product not found");
-        }
-        ProductObject productObject = productDomain.getProduct(key);
-        if (productObject == null || productObject.getProductBaseId() == null) {
-            throw new NotFoundException("product not found");
-        }
-        return productObject;
     }
 
     private ProductBaseObject getProductBaseById(String productBaseId) {

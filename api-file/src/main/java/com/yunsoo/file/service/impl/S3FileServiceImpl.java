@@ -8,6 +8,7 @@ import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.file.dao.S3ItemDao;
 import com.yunsoo.file.service.FileService;
 import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -34,7 +35,9 @@ public class S3FileServiceImpl implements FileService {
 
 
     @Override
-    public ResourceInputStream getFileByPath(String path) {
+    public ResourceInputStream getFileByPath(String path, String bucketName) {
+        if(!StringUtils.hasText(bucketName))
+            bucketName = this.bucketName;
         S3Object s3Object;
         try {
             s3Object = s3ItemDao.getItem(bucketName, path);

@@ -1,22 +1,19 @@
 package com.yunsoo.data.service.repository.impl;
 
 
-import com.amazonaws.util.StringUtils;
 import com.yunsoo.data.service.entity.EMRUserEntity;
 import com.yunsoo.data.service.entity.EMRUserProductEventStatistics;
 import com.yunsoo.data.service.entity.UserProfileLocationCountEntity;
 import com.yunsoo.data.service.entity.UserProfileTagCountEntity;
 import com.yunsoo.data.service.repository.CustomEMRUserRepository;
-
 import org.hibernate.annotations.common.util.StringHelper;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -38,11 +35,11 @@ public class EMRUserRepositoryImpl implements CustomEMRUserRepository {
 
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("orgId", orgId);
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+        if (!StringUtils.isEmpty(productBaseId)) {
             sql = sql + " and ev.product_base_id = :productBaseId";
             parameters.put("productBaseId", productBaseId);
         }
-        if (!StringUtils.isNullOrEmpty(province)) {
+        if (!StringUtils.isEmpty(province)) {
             sql = sql + " and ev.province like :province";
             parameters.put("province", "%" + province + "%");
         }
@@ -80,11 +77,11 @@ public class EMRUserRepositoryImpl implements CustomEMRUserRepository {
 
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("orgId", orgId);
-        if (!StringUtils.isNullOrEmpty(productBaseId)) {
+        if (!StringUtils.isEmpty(productBaseId)) {
             sql = sql + " and ev.product_base_id = :productBaseId";
             parameters.put("productBaseId", productBaseId);
         }
-        if (!StringUtils.isNullOrEmpty(province)) {
+        if (!StringUtils.isEmpty(province)) {
             sql = sql + " and ev.province like :province";
             parameters.put("province", "%" + province + "%");
         }
@@ -106,7 +103,7 @@ public class EMRUserRepositoryImpl implements CustomEMRUserRepository {
             query.setParameter(key, parameters.get(key));
         }
 
-        BigInteger value = (BigInteger) query.getSingleResult();
+        Number value = (Number) query.getSingleResult();
         return value.intValue();
     }
 
@@ -156,13 +153,13 @@ public class EMRUserRepositoryImpl implements CustomEMRUserRepository {
             item.setProductBaseId((String) data[0]);
             item.setProductName((String) data[1]);
             item.setOrgId((String) data[2]);
-            item.setScanCount(((BigDecimal) data[3]).intValue());
-            item.setDrawCount(((BigDecimal) data[4]).intValue());
-            item.setWinCount(((BigDecimal) data[5]).intValue());
-            item.setRewardCount(((BigDecimal) data[6]).intValue());
-            item.setCommentCount(((BigDecimal) data[7]).intValue());
-            item.setShareCount(((BigDecimal) data[8]).intValue());
-            item.setStoreCount(((BigDecimal) data[9]).intValue());
+            item.setScanCount(((Number) data[3]).intValue());
+            item.setDrawCount(((Number) data[4]).intValue());
+            item.setWinCount(((Number) data[5]).intValue());
+            item.setRewardCount(((Number) data[6]).intValue());
+            item.setCommentCount(((Number) data[7]).intValue());
+            item.setShareCount(((Number) data[8]).intValue());
+            item.setStoreCount(((Number) data[9]).intValue());
             resultList.add(item);
         }
         return resultList;
@@ -215,8 +212,8 @@ public class EMRUserRepositoryImpl implements CustomEMRUserRepository {
         timespanCount.put(UserProfileTagCountEntity.TimeSpan.T22_24, 0);
 
         for (Object[] data : queryList) {
-            int hourNum = ((Integer)data[0]).intValue();
-            int hourCount =((BigInteger)data[1]).intValue();
+            int hourNum = ((Number)data[0]).intValue();
+            int hourCount =((Number)data[1]).intValue();
             if (hourNum < 6) {
                 int count = timespanCount.get(UserProfileTagCountEntity.TimeSpan.T00_06);
                 count += hourCount;
@@ -282,7 +279,7 @@ public class EMRUserRepositoryImpl implements CustomEMRUserRepository {
         for(Object[] obj : queryList)
         {
             UserProfileTagCountEntity item = new UserProfileTagCountEntity();
-            item.setCount(((BigInteger)obj[1]).intValue());
+            item.setCount(((Number)obj[1]).intValue());
             item.setTag((String) obj[0]);
             list.add(item);
         }
@@ -311,8 +308,8 @@ public class EMRUserRepositoryImpl implements CustomEMRUserRepository {
         List<UserProfileTagCountEntity> list = new ArrayList<>();
         for(Object[] obj : queryList)
         {
-            int gender = ((BigDecimal)obj[0]).intValue();
-            int count = ((BigInteger)obj[1]).intValue();
+            int gender = ((Number)obj[0]).intValue();
+            int count = ((Number)obj[1]).intValue();
             String genderString = null;
             switch (gender)
             {
@@ -360,7 +357,7 @@ public class EMRUserRepositoryImpl implements CustomEMRUserRepository {
         for(Object[] obj : queryList)
         {
             String tagName = obj[0] == null ? "其他地区(港澳台，国外等)" : (String)obj[0];
-            int count = ((BigInteger)obj[1]).intValue();
+            int count = ((Number)obj[1]).intValue();
 
             UserProfileTagCountEntity item = new UserProfileTagCountEntity();
             item.setCount(count);
@@ -393,7 +390,7 @@ public class EMRUserRepositoryImpl implements CustomEMRUserRepository {
         {
             String province = (String)obj[0];
             String city = (String)obj[1];
-            int count = ((BigInteger)obj[2]).intValue();
+            int count = ((Number)obj[2]).intValue();
 
             UserProfileLocationCountEntity item = new UserProfileLocationCountEntity();
             item.setProvince(province);

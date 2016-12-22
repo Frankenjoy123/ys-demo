@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>full_run</name>
+    <name>&#x5168;&#x90e8;&#x5237;&#x65b0;</name>
     <description/>
     <extended_description/>
     <trans_version/>
@@ -71,7 +71,7 @@
   <created_date>2016&#x2f;10&#x2f;20 12&#x3a;08&#x3a;33.046</created_date>
   <modified_user>-</modified_user>
   <modified_date>2016&#x2f;10&#x2f;20 12&#x3a;08&#x3a;33.046</modified_date>
-    <key_for_session_key/>
+    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA&#x3d;</key_for_session_key>
     <is_key_private>N</is_key_private>
   </info>
   <notepads>
@@ -117,7 +117,58 @@
       <bordercolorblue>100</bordercolorblue>
       <drawshadow>Y</drawshadow>
     </notepad>
+    <notepad>
+      <note>&#x6309;id&#x63d2;&#x5165;draw rule&#xd;&#xa;&#x5176;&#x4ed6;&#x7531;&#x589e;&#x91cf;&#x7684;&#x6309;marketing_id&#x548c;consumer_right_id&#x6765;&#x66f4;&#x65b0;&#x63d2;&#x5165;</note>
+      <xloc>336</xloc>
+      <yloc>352</yloc>
+      <width>346</width>
+      <heigth>42</heigth>
+      <fontname>Microsoft YaHei UI</fontname>
+      <fontsize>9</fontsize>
+      <fontbold>N</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>0</fontcolorred>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorblue>0</fontcolorblue>
+      <backgroundcolorred>255</backgroundcolorred>
+      <backgroundcolorgreen>205</backgroundcolorgreen>
+      <backgroundcolorblue>112</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+      <drawshadow>Y</drawshadow>
+    </notepad>
   </notepads>
+  <connection>
+    <name>dev data</name>
+    <server>dev-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn</server>
+    <type>MYSQL</type>
+    <access>Native</access>
+    <database>yunsoo2015DB</database>
+    <port>3306</port>
+    <username>root</username>
+    <password>Encrypted 2be98afc86ac69689a217fc208fc7fe88</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>EXTRA_OPTION_MYSQL.characterEncoding</code><attribute>utf8</attribute></attribute>
+      <attribute><code>EXTRA_OPTION_MYSQL.defaultFetchSize</code><attribute>500</attribute></attribute>
+      <attribute><code>EXTRA_OPTION_MYSQL.useCursorFetch</code><attribute>true</attribute></attribute>
+      <attribute><code>EXTRA_OPTION_MYSQL.useUnicode</code><attribute>true</attribute></attribute>
+      <attribute><code>EXTRA_OPTION_MYSQL.zeroDateTimeBehavior</code><attribute>convertToNull</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>3306</attribute></attribute>
+      <attribute><code>PRESERVE_RESERVED_WORD_CASE</code><attribute>Y</attribute></attribute>
+      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
+      <attribute><code>STREAM_RESULTS</code><attribute>Y</attribute></attribute>
+      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>SUPPORTS_TIMESTAMP_DATA_TYPE</code><attribute>Y</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
   <connection>
     <name>dev di</name>
     <server>dev-yunsoo-di.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn</server>
@@ -150,12 +201,36 @@
     </attributes>
   </connection>
   <order>
-  <hop> <from>Table input</from><to>Insert &#x2f; Update</to><enabled>Y</enabled> </hop>
-  <hop> <from>Table input 2</from><to>Insert &#x2f; Update 2</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x83b7;&#x5f97;&#x6240;&#x6709;&#x65e5;&#x4e2d;&#x5956;&#x8bb0;&#x5f55;</from><to>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x4e2d;&#x5956;&#x8bb0;&#x5f55;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x8bfb;&#x53d6;&#x5168;&#x90e8;&#x65e5;&#x626b;&#x7801;&#x91cf;</from><to>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x65e5;&#x626b;&#x63cf;&#x6570;&#x636e;</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x83b7;&#x5f97;draw rule&#x7684;id,&#x65f6;&#x95f4;&#x6700;&#x5927;&#x503c;</from><to>&#x8bfb;&#x53d6;draw rule</to><enabled>Y</enabled> </hop>
+  <hop> <from>&#x8bfb;&#x53d6;draw rule</from><to>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x5230;draw rule</to><enabled>Y</enabled> </hop>
+  <hop> <from>Dummy &#x28;do nothing&#x29;</from><to>&#x8bfb;&#x53d6;&#x5168;&#x90e8;&#x65e5;&#x626b;&#x7801;&#x91cf;</to><enabled>Y</enabled> </hop>
+  <hop> <from>Dummy &#x28;do nothing&#x29;</from><to>&#x83b7;&#x5f97;&#x6240;&#x6709;&#x65e5;&#x4e2d;&#x5956;&#x8bb0;&#x5f55;</to><enabled>Y</enabled> </hop>
+  <hop> <from>Dummy &#x28;do nothing&#x29;</from><to>&#x83b7;&#x5f97;draw rule&#x7684;id,&#x65f6;&#x95f4;&#x6700;&#x5927;&#x503c;</to><enabled>Y</enabled> </hop>
   </order>
   <step>
-    <name>Table input</name>
-    <type>TableInput</type>
+    <name>Dummy &#x28;do nothing&#x29;</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>176</xloc>
+      <yloc>208</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x4e2d;&#x5956;&#x8bb0;&#x5f55;</name>
+    <type>InsertUpdate</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -165,22 +240,181 @@
            <schema_name/>
            </partitioning>
     <connection>dev di</connection>
-    <sql>SELECT date&#x28;dt.date&#x29; as &#x27;date&#x27;,  ev.org_id, ev.product_base_id, pb.name as &#x27;product_name&#x27;, &#x27;&#x6240;&#x6709;&#x6279;&#x6b21;&#x27; as &#x27;key_batch_id&#x27;, count&#x28;1&#x29; as pv, count&#x28;distinct ev.user_id, ev.ys_id&#x29; as uv, count&#x28;up.product_key&#x29; as product_count from di_event ev&#xd;&#xa;inner join di_time dt on ev.time_id &#x3d; dt.id &#xd;&#xa;inner join product_base pb on pb.id &#x3d; ev.product_base_id&#xd;&#xa;left join di_user_product up on up.scan_record_id &#x3d; ev.event_id&#xd;&#xa;where  ev.name &#x3d; &#x27;scan&#x27;&#xd;&#xa;group by dt.y, dt.m, dt.d, ev.org_id, ev.product_base_id&#xd;&#xa;union all &#xd;&#xa;SELECT date&#x28;dt.date&#x29; as &#x27;date&#x27;,  ev.org_id, &#x27;All&#x27; as &#x27;product_base_id&#x27;,&#x27;&#x6240;&#x6709;&#x4ea7;&#x54c1;&#x27; as &#x27;product_name&#x27;, &#x27;&#x27; &#x27;&#x6240;&#x6709;&#x6279;&#x6b21;&#x27; as &#x27;key_batch_id&#x27;, count&#x28;1&#x29; as pv, count&#x28;distinct ev.user_id, ev.ys_id&#x29; as uv, count&#x28;up.product_key&#x29; as product_count from di_event ev&#xd;&#xa;inner join di_time dt on ev.time_id &#x3d; dt.id &#xd;&#xa;inner join product_base pb on pb.id &#x3d; ev.product_base_id&#xd;&#xa;left join di_user_product up on up.scan_record_id &#x3d; ev.event_id&#xd;&#xa;where  ev.name &#x3d; &#x27;scan&#x27;&#xd;&#xa;group by dt.y, dt.m, dt.d, ev.org_id </sql>
-    <limit>0</limit>
-    <lookup/>
-    <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
-    <lazy_conversion_active>N</lazy_conversion_active>
+    <commit>100</commit>
+    <update_bypassed>N</update_bypassed>
+    <lookup>
+      <schema>di</schema>
+      <table>di_daily_draw_price</table>
+      <key>
+        <name>prize_date</name>
+        <field>draw_date</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>draw_rule_id</name>
+        <field>draw_rule_id</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>draw_date</name>
+        <rename>prize_date</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>marketing_id</name>
+        <rename>marketing_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>draw_rule_id</name>
+        <rename>draw_rule_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>draw_rule_name</name>
+        <rename>draw_rule_name</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>prize_type_code</name>
+        <rename>prize_type_code</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>count</name>
+        <rename>count</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>time_id</name>
+        <rename>time_id</rename>
+        <update>Y</update>
+      </value>
+    </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>224</xloc>
-      <yloc>48</yloc>
+      <xloc>528</xloc>
+      <yloc>160</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Insert &#x2f; Update</name>
+    <name>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x5230;draw rule</name>
+    <type>InsertUpdate</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>dev di</connection>
+    <commit>1000</commit>
+    <update_bypassed>N</update_bypassed>
+    <lookup>
+      <schema>di</schema>
+      <table>mkt_draw_rule</table>
+      <key>
+        <name>id</name>
+        <field>id</field>
+        <condition>&#x3d;</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>id</name>
+        <rename>id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>marketing_id</name>
+        <rename>marketing_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>consumer_right_id</name>
+        <rename>consumer_right_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>prize_type_code</name>
+        <rename>prize_type_code</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>amount</name>
+        <rename>amount</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>total_quantity</name>
+        <rename>total_quantity</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>available_quantity</name>
+        <rename>available_quantity</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>probability</name>
+        <rename>probability</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>comments</name>
+        <rename>comments</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>applied_env</name>
+        <rename>applied_env</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>weight</name>
+        <rename>weight</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>is_equal</name>
+        <rename>is_equal</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>created_account_id</name>
+        <rename>created_account_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>created_datetime</name>
+        <rename>created_datetime</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>modified_account_id</name>
+        <rename>modified_account_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>modified_datetime</name>
+        <rename>modified_datetime</rename>
+        <update>Y</update>
+      </value>
+    </lookup>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>640</xloc>
+      <yloc>272</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x63d2;&#x5165;&#x6216;&#x8005;&#x66f4;&#x65b0;&#x65e5;&#x626b;&#x63cf;&#x6570;&#x636e;</name>
     <type>InsertUpdate</type>
     <description/>
     <distribute>Y</distribute>
@@ -257,14 +491,40 @@
     </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>368</xloc>
+      <xloc>544</xloc>
       <yloc>48</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Table input 2</name>
+    <name>&#x83b7;&#x5f97;draw rule&#x7684;id,&#x65f6;&#x95f4;&#x6700;&#x5927;&#x503c;</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>dev di</connection>
+    <sql>SELECT IFNULL&#x28;max&#x28;id&#x29;, &#x27;0000&#x27;&#x29; as id, ifnull&#x28;max&#x28;created_datetime&#x29;, &#x27;1970-1-1&#x27;&#x29; as max_created,ifnull&#x28;max&#x28;modified_datetime&#x29;, &#x27;1970-1-1&#x27;&#x29; as max_modified FROM mkt_draw_rule </sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>Y</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>336</xloc>
+      <yloc>272</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x83b7;&#x5f97;&#x6240;&#x6709;&#x65e5;&#x4e2d;&#x5956;&#x8bb0;&#x5f55;</name>
     <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -275,7 +535,7 @@
            <schema_name/>
            </partitioning>
     <connection>dev di</connection>
-    <sql>select date&#x28;t.date&#x29; as prize_date, mdr.marketing_id,  mdrl.id as &#x27;draw_rule_id&#x27;, mdrl.comments as &#x27;draw_rule_name&#x27;,mdrl.prize_type_code, count&#x28;1&#x29; as &#x27;count&#x27;, t.id as &#x27;time_id&#x27; from mkt_draw_prize mdp inner join mkt_draw_record mdr&#xd;&#xa;on mdp.scan_record_id &#x3d; mdr.scan_record_id&#xd;&#xa;inner join mkt_draw_rule mdrl on mdrl.id &#x3d; mdp.draw_rule_id&#xd;&#xa;inner join di_time t on t.id &#x3d; date_format&#x28;date&#x28;convert_tz&#x28;mdp.created_datetime,&#x27;&#x2b;00&#x3a;00&#x27;,&#x27;&#x2b;08&#x3a;00&#x27;&#x29;&#x29;,&#x27;&#x25;Y&#x25;m&#x25;d&#x25;H&#x27;&#x29;&#xd;&#xa;group by prize_date, draw_rule_id</sql>
+    <sql>select prize_date, marketing_id,draw_rule_id,draw_rule_name,prize_type_code,time_id,count&#x28;1&#x29; as &#x27;count&#x27;&#xd;&#xa;from&#x28; select date&#x28;t.date&#x29; as prize_date, mdr.marketing_id,  mdrl.id as &#x27;draw_rule_id&#x27;, mdrl.comments as &#x27;draw_rule_name&#x27;,mdrl.prize_type_code,  t.id as &#x27;time_id&#x27; from mkt_draw_prize mdp inner join mkt_draw_record mdr&#xd;&#xa;on mdp.scan_record_id &#x3d; mdr.scan_record_id&#xd;&#xa;inner join mkt_draw_rule mdrl on mdrl.id &#x3d; mdp.draw_rule_id&#xd;&#xa;inner join di_time t on t.id &#x3d; date_format&#x28;date&#x28;convert_tz&#x28;mdp.created_datetime,&#x27;&#x2b;00&#x3a;00&#x27;,&#x27;&#x2b;08&#x3a;00&#x27;&#x29;&#x29;,&#x27;&#x25;Y&#x25;m&#x25;d&#x25;H&#x27;&#x29;&#xd;&#xa;union all&#xd;&#xa;select date&#x28;t.date&#x29; as prize_date, mdr.marketing_id,  mdr.id as &#x27;draw_rule_id&#x27;, mdr.comments as &#x27;draw_rule_name&#x27;,mdr.prize_type_code,  t.id as &#x27;time_id&#x27; &#xd;&#xa;from user_event ue inner join mkt_draw_rule mdr on &#x60;value&#x60; &#x3d; mdr.id &#xd;&#xa;inner join di_time t on t.id &#x3d; date_format&#x28;date&#x28;convert_tz&#x28;ue.created_datetime,&#x27;&#x2b;00&#x3a;00&#x27;,&#x27;&#x2b;08&#x3a;00&#x27;&#x29;&#x29;,&#x27;&#x25;Y&#x25;m&#x25;d&#x25;H&#x27;&#x29;&#xd;&#xa;&#x29; as total&#xd;&#xa;group by prize_date,draw_rule_id&#x3b;</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
@@ -283,15 +543,41 @@
     <lazy_conversion_active>N</lazy_conversion_active>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>224</xloc>
-      <yloc>128</yloc>
+      <xloc>384</xloc>
+      <yloc>160</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Insert &#x2f; Update 2</name>
-    <type>InsertUpdate</type>
+    <name>&#x8bfb;&#x53d6;draw rule</name>
+    <type>TableInput</type>
+    <description/>
+    <distribute>N</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>dev data</connection>
+    <sql>SELECT &#x2a; FROM mkt_draw_rule WHERE id &#x3e; &#x3f; or created_datetime &#x3e;&#x3d; &#x3f; or modified_datetime &#x3e;&#x3d;&#x3f; order by id</sql>
+    <limit>0</limit>
+    <lookup>&#x83b7;&#x5f97;draw rule&#x7684;id,&#x65f6;&#x95f4;&#x6700;&#x5927;&#x503c;</lookup>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>512</xloc>
+      <yloc>272</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>&#x8bfb;&#x53d6;&#x5168;&#x90e8;&#x65e5;&#x626b;&#x7801;&#x91cf;</name>
+    <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -301,63 +587,16 @@
            <schema_name/>
            </partitioning>
     <connection>dev di</connection>
-    <commit>100</commit>
-    <update_bypassed>N</update_bypassed>
-    <lookup>
-      <schema>di</schema>
-      <table>di_daily_draw_price</table>
-      <key>
-        <name>prize_date</name>
-        <field>draw_date</field>
-        <condition>&#x3d;</condition>
-        <name2/>
-      </key>
-      <key>
-        <name>draw_rule_id</name>
-        <field>draw_rule_id</field>
-        <condition>&#x3d;</condition>
-        <name2/>
-      </key>
-      <value>
-        <name>draw_date</name>
-        <rename>prize_date</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>marketing_id</name>
-        <rename>marketing_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>draw_rule_id</name>
-        <rename>draw_rule_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>draw_rule_name</name>
-        <rename>draw_rule_name</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>prize_type_code</name>
-        <rename>prize_type_code</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>count</name>
-        <rename>count</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>time_id</name>
-        <rename>time_id</rename>
-        <update>Y</update>
-      </value>
-    </lookup>
+    <sql>SELECT date&#x28;dt.date&#x29; as &#x27;date&#x27;,  ev.org_id, ev.product_base_id, pb.name as &#x27;product_name&#x27;, &#x27;&#x6240;&#x6709;&#x6279;&#x6b21;&#x27; as &#x27;key_batch_id&#x27;, count&#x28;1&#x29; as pv, count&#x28;distinct ev.user_id, ev.ys_id&#x29; as uv, count&#x28;up.product_key&#x29; as product_count from di_event ev&#xd;&#xa;inner join di_time dt on ev.time_id &#x3d; dt.id &#xd;&#xa;inner join product_base pb on pb.id &#x3d; ev.product_base_id&#xd;&#xa;left join di_user_product up on up.scan_record_id &#x3d; ev.event_id&#xd;&#xa;where  ev.name &#x3d; &#x27;scan&#x27;&#xd;&#xa;group by dt.y, dt.m, dt.d, ev.org_id, ev.product_base_id&#xd;&#xa;union all &#xd;&#xa;SELECT date&#x28;dt.date&#x29; as &#x27;date&#x27;,  ev.org_id, &#x27;All&#x27; as &#x27;product_base_id&#x27;,&#x27;&#x6240;&#x6709;&#x4ea7;&#x54c1;&#x27; as &#x27;product_name&#x27;, &#x27;&#x27; &#x27;&#x6240;&#x6709;&#x6279;&#x6b21;&#x27; as &#x27;key_batch_id&#x27;, count&#x28;1&#x29; as pv, count&#x28;distinct ev.user_id, ev.ys_id&#x29; as uv, count&#x28;up.product_key&#x29; as product_count from di_event ev&#xd;&#xa;inner join di_time dt on ev.time_id &#x3d; dt.id &#xd;&#xa;inner join product_base pb on pb.id &#x3d; ev.product_base_id&#xd;&#xa;left join di_user_product up on up.scan_record_id &#x3d; ev.event_id&#xd;&#xa;where  ev.name &#x3d; &#x27;scan&#x27;&#xd;&#xa;group by dt.y, dt.m, dt.d, ev.org_id </sql>
+    <limit>0</limit>
+    <lookup/>
+    <execute_each_row>N</execute_each_row>
+    <variables_active>N</variables_active>
+    <lazy_conversion_active>N</lazy_conversion_active>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>368</xloc>
-      <yloc>128</yloc>
+      <xloc>384</xloc>
+      <yloc>48</yloc>
       <draw>Y</draw>
       </GUI>
     </step>

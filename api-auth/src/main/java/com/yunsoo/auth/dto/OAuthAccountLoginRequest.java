@@ -13,11 +13,31 @@ public class OAuthAccountLoginRequest {
     @JsonProperty("oauth_open_type")
     private String oauthOpenType;
 
-    @JsonProperty("oauth_token")
-    private String oauthToken;
-
     @JsonProperty("login_token")
     private String loginToken;
+
+
+    @JsonProperty("oauth_name")
+    private String oauthName;
+
+    @JsonProperty("oauth_gravatar_url")
+    private String oauthGravatarUrl;
+
+    public String getOauthName() {
+        return oauthName;
+    }
+
+    public void setOauthName(String oauthName) {
+        this.oauthName = oauthName;
+    }
+
+    public String getOauthGravatarUrl() {
+        return oauthGravatarUrl;
+    }
+
+    public void setOauthGravatarUrl(String oauthGravatarUrl) {
+        this.oauthGravatarUrl = oauthGravatarUrl;
+    }
 
     public String getOauthOpenid() {
         return oauthOpenid;
@@ -43,11 +63,4 @@ public class OAuthAccountLoginRequest {
         this.loginToken = loginToken;
     }
 
-    public String getOauthToken() {
-        return oauthToken;
-    }
-
-    public void setOauthToken(String oauthToken) {
-        this.oauthToken = oauthToken;
-    }
 }

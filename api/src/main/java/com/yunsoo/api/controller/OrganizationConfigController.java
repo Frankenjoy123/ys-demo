@@ -67,8 +67,8 @@ public class OrganizationConfigController {
         String secret = configItems.get("webchat.app_secret").toString();
         String appId = configItems.get("webchat.app_id").toString();
 
-        WeChatOpenIdList list = weChatAPIDomain.getOpenIds(orgId, appId, secret);
-        if(list!=null)
+        WeChatOpenIdList list = weChatAPIDomain.getOpenIds(appId, secret);
+        if(list!=null && list.getTotal() > 0 )
             organizationConfigDomain.saveConfig(orgId, configItems);
         else
             throw new BadRequestException("app id or secret not correct");

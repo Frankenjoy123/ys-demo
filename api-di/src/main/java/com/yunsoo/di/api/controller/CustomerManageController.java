@@ -1,25 +1,28 @@
 package com.yunsoo.di.api.controller;
 
+import com.yunsoo.common.web.util.PageableUtils;
+import com.yunsoo.di.dao.entity.EMRUserEntity;
+import com.yunsoo.di.dao.entity.UserEntity;
 import com.yunsoo.di.dao.repository.CustomerEventRepository;
-import com.yunsoo.di.dto.EMREventCountObject;
-import com.yunsoo.di.dto.EMREventLocationReportObject;
-import com.yunsoo.di.dto.EMREventReportObject;
-import com.yunsoo.di.dto.EMRUserReportObject;
+import com.yunsoo.di.dao.repository.EMRUserRepository;
+import com.yunsoo.di.dao.repository.UserRepository;
+import com.yunsoo.di.dto.*;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by:   xiaowu
@@ -33,6 +36,9 @@ public class CustomerManageController {
     @Autowired
     private CustomerEventRepository customerEventRepository;
 
+    @Autowired
+    private EMRUserRepository userRepository;
+
     // event count and user count about scan, draw, win, reward
     @RequestMapping(value = "/funnel", method = RequestMethod.GET)
     public EMRUserReportObject queryUserFunnel(@RequestParam(value = "org_id") String orgId,
@@ -43,7 +49,7 @@ public class CustomerManageController {
                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
                                                @RequestParam(value = "create_datetime_end", required = false)
                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
-                                               @RequestParam(value = "scan_source", required = false) String scanSource) {
+                                               @RequestParam(value = "wx_user", required = false) Boolean wxUser) {
 
         DateTime startDateTime = null;
         DateTime endDateTime = null;
@@ -59,20 +65,20 @@ public class CustomerManageController {
         List<Integer> eventCount = new ArrayList<>();
         List<Integer> userCount = new ArrayList<>();
 
-        int[] scanData = customerEventRepository.scanCount(orgId, productBaseId, province, city, startDateTime, endDateTime,scanSource);
+        int[] scanData = customerEventRepository.scanCount(orgId, productBaseId, province, city, startDateTime, endDateTime,wxUser);
         eventCount.add(scanData[0]);
         userCount.add(scanData[1]);
 
 
-        int[] drawCount = customerEventRepository.drawCount(orgId, productBaseId, province, city, startDateTime, endDateTime,scanSource);
+        int[] drawCount = customerEventRepository.drawCount(orgId, productBaseId, province, city, startDateTime, endDateTime,wxUser);
         eventCount.add(drawCount[0]);
         userCount.add(drawCount[1]);
 
-        int[] winCount = customerEventRepository.winCount(orgId, productBaseId, province, city, startDateTime, endDateTime,scanSource);
+        int[] winCount = customerEventRepository.winCount(orgId, productBaseId, province, city, startDateTime, endDateTime,wxUser);
         eventCount.add(winCount[0]);
         userCount.add(winCount[1]);
 
-        int[] rewardCount = customerEventRepository.rewardCount(orgId, productBaseId, province, city, startDateTime, endDateTime,scanSource);
+        int[] rewardCount = customerEventRepository.rewardCount(orgId, productBaseId, province, city, startDateTime, endDateTime,wxUser);
         eventCount.add(rewardCount[0]);
         userCount.add(rewardCount[1]);
 
@@ -289,6 +295,85 @@ public class CustomerManageController {
         }
 
         return emrEventLocationReportObjectList;
+    }
+
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public List<EMRUserObject> findByFilter(@RequestParam(value = "org_id") String orgId,
+                                            @RequestParam(value = "sex", required = false) Boolean sex,
+                                            @RequestParam(value = "wx_user", required = false) Boolean wxUser,
+                                            @RequestParam(value = "phone", required = false) String phone,
+                                            @RequestParam(value = "name", required = false) String name,
+                                            @RequestParam(value = "province", required = false) String province,
+                                            @RequestParam(value = "city", required = false) String city,
+                                            @RequestParam(value = "age_start", required = false) Integer ageStart,
+                                            @RequestParam(value = "age_end", required = false) Integer ageEnd,
+                                            @RequestParam(value = "user_tags", required = false) String userTags,
+                                            @RequestParam(value = "create_datetime_start", required = false)
+                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
+                                            @RequestParam(value = "create_datetime_end", required = false)
+                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                            Pageable pageable,
+                                            HttpServletResponse response) {
+
+        DateTime createdDateTimeStartTo = null;
+        DateTime createdDateTimeEndTo = null;
+
+        if (createdDateTimeStart != null && !StringUtils.isEmpty(createdDateTimeStart.toString()))
+            createdDateTimeStartTo = createdDateTimeStart.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
+
+        if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
+            createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+
+        List<String> tags;
+        if (userTags != null && !StringUtils.isEmpty(userTags)) {
+            tags = Arrays.asList(userTags.split(","));
+        } else {
+            tags = null;
+        }
+
+        List<EMRUserEntity> entityList = userRepository.findUsersByFilter(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStartTo, createdDateTimeEndTo,
+                tags == null || tags.size() == 0 ? null : tags,
+                tags == null || tags.size() == 0, wxUser, pageable);
+
+        int totalCount = userRepository.countUsersByFilter(orgId, sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStartTo, createdDateTimeEndTo,
+                tags == null || tags.size() == 0 ? null : tags,
+                tags == null || tags.size() == 0, wxUser);
+
+        Page<EMRUserEntity> entityPage = new PageImpl<EMRUserEntity>(entityList.stream().collect(Collectors.toList()),
+                pageable, totalCount);
+
+        if (pageable != null) {
+            response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
+        }
+
+        return entityPage.getContent().stream()
+                .map(this::toEMRUserObject)
+                .collect(Collectors.toList());
+    }
+
+    private EMRUserObject toEMRUserObject(EMRUserEntity entity) {
+        if (entity == null) {
+            return null;
+        }
+        EMRUserObject object = new EMRUserObject();
+        object.setId(entity.getId());
+        object.setUserId(entity.getUserId());
+        object.setYsId(entity.getYsId());
+        object.setOrgId(entity.getOrgId());
+        object.setName(entity.getName());
+        object.setProvince(entity.getProvince());
+        object.setCity(entity.getCity());
+        object.setPhone(entity.getPhone());
+        object.setWxOpenid(entity.getWxOpenId());
+        object.setAge(entity.getAge());
+        object.setSex(entity.getSex());
+        object.setEmail(entity.getEmail());
+        object.setGravatarUrl(entity.getGravatarUrl());
+        object.setJoinDateTime(entity.getJoinDateTime());
+        object.setIp(entity.getIp());
+        object.setDevice(entity.getDevice());
+        return object;
     }
 
 }

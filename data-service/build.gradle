@@ -25,9 +25,6 @@ dependencies {
     //compile('org.hibernate:hibernate-ehcache:4.3.10.Final'
     compile 'org.apache.commons:commons-dbcp2:2.1.1'
 
-    compile 'com.amazonaws:aws-java-sdk-dynamodb:1.10.52'
-    compile 'com.amazonaws:aws-java-sdk-s3:1.10.52'
-
     runtime 'mysql:mysql-connector-java:5.1.38'
     runtime 'com.h2database:h2'
 

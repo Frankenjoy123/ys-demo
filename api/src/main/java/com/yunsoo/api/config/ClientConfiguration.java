@@ -37,6 +37,12 @@ public class ClientConfiguration {
     @Value("${yunsoo.client.key_api.base_url}")
     private String keyApiBaseUrl;
 
+    @Value("${yunsoo.client.di_api.base_url}")
+    private String diApiBaseUrl;
+
+    @Value("${yunsoo.client.third_api.base_url}")
+    private String thirdApiBaseUrl;
+
     @Bean
     public AuthApiClient authApiClient() {
         AuthApiClient authApiClient = new AuthApiClient(authApiBaseUrl);
@@ -79,5 +85,15 @@ public class ClientConfiguration {
     @Bean
     public KeyApiClient keyApiClient() {
         return new KeyApiClient(keyApiBaseUrl);
+    }
+
+    @Bean
+    public DiApiClient diApiClient() {
+        return new DiApiClient(diApiBaseUrl);
+    }
+
+    @Bean
+    public ThirdApiClient thirdApiClient() {
+        return new ThirdApiClient(thirdApiBaseUrl);
     }
 }

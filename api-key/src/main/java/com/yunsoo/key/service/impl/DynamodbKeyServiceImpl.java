@@ -1,5 +1,6 @@
 package com.yunsoo.key.service.impl;
 
+import com.yunsoo.common.util.SerialNoGenerator;
 import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.key.dao.dao.ProductDao;
@@ -62,6 +63,7 @@ public class DynamodbKeyServiceImpl implements KeyService {
     @Override
     public void batchSave(String keyBatchId,
                           List<String> keyTypeCodes,
+                          String serialNoPattern,
                           List<List<String>> productKeys,
                           Product productTemplate) {
         Assert.notNull(keyBatchId, "keyBatchId must not be null");
@@ -75,7 +77,7 @@ public class DynamodbKeyServiceImpl implements KeyService {
         DateTime startDateTime = DateTime.now();
 
         //generate ProductModel List
-        List<ProductModel> productModels = generateProductModelList(keyBatchId, keyTypeCodes, productKeys, productTemplate);
+        List<ProductModel> productModels = generateProductModelList(keyBatchId, keyTypeCodes, serialNoPattern, productKeys, productTemplate);
 
         //save productModel
         productDao.batchSave(productModels);
@@ -89,29 +91,35 @@ public class DynamodbKeyServiceImpl implements KeyService {
 
     private List<ProductModel> generateProductModelList(String keyBatchId,
                                                         List<String> keyTypeCodes,
+                                                        String serialNoPattern,
                                                         List<List<String>> productKeys,
                                                         Product productTemplate) {
         if (productTemplate.getCreatedDateTime() == null) {
             productTemplate.setCreatedDateTime(DateTime.now());
         }
-
+        SerialNoGenerator serialNoGenerator = serialNoPattern != null ? new SerialNoGenerator(serialNoPattern) : null;
         int keyTypeCodesSize = keyTypeCodes.size();
         List<ProductModel> productModelList = new ArrayList<>(productKeys.size() * keyTypeCodesSize);
         if (keyTypeCodesSize == 1) {
-            productKeys.stream().forEach(keys -> {
+            for (int i = 0; i < productKeys.size(); i++) {
+                List<String> keys = productKeys.get(i);
                 if (keys != null && keys.size() > 0) {
                     ProductModel productModel = generateProductModel(productTemplate);
                     productModel.setKey(keys.get(0));
                     productModel.setKeyTypeCode(keyTypeCodes.get(0));
                     productModel.setKeyBatchId(keyBatchId);
+                    if (serialNoGenerator != null) {
+                        productModel.setSerialNo(serialNoGenerator.getSerialNo(i));
+                    }
                     productModelList.add(productModel);
                 }
-            });
+            }
         } else { //multi keys for each product
-            productKeys.stream().forEach(keys -> {
+            for (int i = 0; i < productKeys.size(); i++) {
+                List<String> keys = productKeys.get(i);
                 if (keys != null && keys.size() >= keyTypeCodesSize) {
                     Set<String> keySet = new HashSet<>();
-                    String primaryKey = keys.get(0);
+                    String primaryKey = keys.get(0); //first key is the primary key
                     for (int j = 0; j < keyTypeCodesSize; j++) {
                         String key = keys.get(j);
                         keySet.add(key);
@@ -121,13 +129,16 @@ public class DynamodbKeyServiceImpl implements KeyService {
                         productModel.setKeyBatchId(keyBatchId);
                         if (j == 0) {
                             productModel.setKeySet(keySet);
+                            if (serialNoGenerator != null) {
+                                productModel.setSerialNo(serialNoGenerator.getSerialNo(i));
+                            }
                         } else {
                             productModel.setPrimaryKey(primaryKey);
                         }
                         productModelList.add(productModel);
                     }
                 }
-            });
+            }
         }
         return productModelList;
     }

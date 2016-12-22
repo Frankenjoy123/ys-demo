@@ -9,7 +9,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class MktDraw {
 
     @JsonProperty("scan_record_id")
-    @NotEmpty(message = "scan_record_id不能为空")
     private String scanRecordId;
 
     @JsonProperty("product_base_id")

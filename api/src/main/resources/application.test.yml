@@ -28,6 +28,10 @@ yunsoo:
       base_url: http://localhost:4180/
     key_api:
       base_url: http://localhost:4280/
+    di_api:
+      base_url: http://localhost:4380/
+    third_api:
+      base_url: http://dev-api.yunsu.co:4480/
 
   product_key_base_url: https://t-m.yunsu.co:9443/
   cache:
@@ -46,10 +50,6 @@ yunsoo:
     direct_notify_url: https://test-api.yunsu.co:6443/payment/brand/alipay/notify
   tinify:
     key: VE7EeYz5AdEmDXXabOj3oHm7Kt_ioDQY
-  wechat:
-    app_id: wxe3804cb3dff62fe3
-    app_secret: 7d553f1bbfbe9f86f973bce5d0ee7852
-    refresh_token: true
 
 logging:
   file: /var/log/yunsoo/api.log

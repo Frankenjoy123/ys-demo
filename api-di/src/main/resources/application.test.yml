@@ -1,12 +1,12 @@
 server:
-  port: 6180
+  port: 4380
 management:
-  port: 6181
+  port: 4381
   add-application-context-header: false
 
 spring:
   profiles.active: test
-  application.name: 'api-auth'
+  application.name: 'api-di'
   mvc.throw-exception-if-no-handler-found: true
   jpa:
     show_sql: false
@@ -14,19 +14,19 @@ spring:
     generate_ddl: false
 
 jdbc:
-  auth:
+  di:
     driver_class_name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://test-yunsoo.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/auth?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    url: jdbc:mysql://dev-yunsoo-di.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn:3306/test-di?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
     username: root
     password: admin201609
     initial_size: 1
-    min_idle: 5
-    max_idle: 30
+    min_idle: 1
+    max_idle: 5
     test_on_borrow: true
     validation_query: select 1
 
 logging:
-  file: /var/log/yunsoo/api-auth.log
+  file: /var/log/yunsoo/api-di.log
   level:
     org.springframework: 'INFO'
     org.hibernate: 'INFO'
@@ -34,14 +34,3 @@ logging:
 yunsoo:
   debug: false
   environment: test
-  access_token:
-    expires_minutes: 60
-    hash_salt: lvtHDkfIUxJ2bLWHc0MNztUqCJSVPSJO
-  login_token:
-    expires_minutes: 5
-    hash_salt: nC9UYPUupMaViIG3UBODY7B19IYW6Z0X
-  cache:
-    type: redis
-    default_expire_time: 600 #seconds
-    redis:
-      host: test-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn

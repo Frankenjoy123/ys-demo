@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +33,8 @@ public class KeyController {
     {
         DateTime startDateTime = startDate.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8));
         DateTime endDateTime = endDate.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
+        if(StringUtils.isEmpty(productBaseId))
+            productBaseId = null;
         return keyService.getDailyKeyUsageReport(orgId,productBaseId,startDateTime, endDateTime);
     }
 }

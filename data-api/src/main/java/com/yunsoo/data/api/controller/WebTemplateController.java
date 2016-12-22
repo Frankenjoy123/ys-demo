@@ -1,19 +1,19 @@
 package com.yunsoo.data.api.controller;
 
 import com.yunsoo.common.data.object.WebTemplateObject;
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.data.service.entity.WebTemplateEntity;
 import com.yunsoo.data.service.repository.WebTemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by Admin on 7/20/2016.
+ * Created by:   Admin
+ * Created on:   7/20/2016
+ * Descriptions:
  */
 @RestController
 @RequestMapping("webTemplate")
@@ -21,6 +21,16 @@ public class WebTemplateController {
 
     @Autowired
     private WebTemplateRepository webTemplateRepository;
+
+
+    @RequestMapping(value = "{id}", method = RequestMethod.GET)
+    public WebTemplateObject getById(@PathVariable(value = "id") String id) {
+        WebTemplateEntity entity = webTemplateRepository.findOne(id);
+        if (entity == null) {
+            throw new NotFoundException("web template not found");
+        }
+        return toWebTemplateObject(entity);
+    }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<WebTemplateObject> getList(@RequestParam(value = "type_code", required = false) String typeCode,
@@ -36,29 +46,31 @@ public class WebTemplateController {
             return null;
         }
 
-        WebTemplateObject object = new WebTemplateObject();
-        object.setName(entity.getName());
-        object.setVersion(entity.getVersion());
-        object.setDescription(entity.getDescription());
-        object.setRestriction(entity.getRestriction());
-        object.setTypeCode(entity.getTypeCode());
-        object.setCreatedDateTime(entity.getCreatedDateTime());
+        WebTemplateObject obj = new WebTemplateObject();
+        obj.setId(entity.getId());
+        obj.setName(entity.getName());
+        obj.setVersion(entity.getVersion());
+        obj.setTypeCode(entity.getTypeCode());
+        obj.setDescription(entity.getDescription());
+        obj.setRestriction(entity.getRestriction());
+        obj.setCreatedDateTime(entity.getCreatedDateTime());
 
-        return object;
+        return obj;
     }
 
-    private WebTemplateEntity toWebTemplateEntity(WebTemplateObject object) {
-        if (object == null) {
+    private WebTemplateEntity toWebTemplateEntity(WebTemplateObject obj) {
+        if (obj == null) {
             return null;
         }
 
         WebTemplateEntity entity = new WebTemplateEntity();
-        entity.setName(object.getName());
-        entity.setVersion(object.getVersion());
-        entity.setDescription(object.getDescription());
-        entity.setRestriction(object.getRestriction());
-        entity.setTypeCode(object.getTypeCode());
-        entity.setCreatedDateTime(object.getCreatedDateTime());
+        entity.setId(obj.getId());
+        entity.setName(obj.getName());
+        entity.setVersion(obj.getVersion());
+        entity.setTypeCode(obj.getTypeCode());
+        entity.setDescription(obj.getDescription());
+        entity.setRestriction(obj.getRestriction());
+        entity.setCreatedDateTime(obj.getCreatedDateTime());
 
         return entity;
     }

@@ -1,86 +1,96 @@
 package com.yunsoo.api.domain;
 
-import com.yunsoo.api.client.DataApiClient;
-import com.yunsoo.api.client.WeChatApiClient;
-import com.yunsoo.api.dto.AccessToken;
-import com.yunsoo.api.dto.JsApi_Ticket;
-import com.yunsoo.api.dto.WeChatOpenIdList;
-import com.yunsoo.common.data.object.UserAccessTokenObject;
+import com.yunsoo.api.client.ThirdApiClient;
+import com.yunsoo.api.dto.*;
+import com.yunsoo.common.data.object.MarketingObject;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.util.Map;
+
 /**
- * Created by Admin on 6/29/2016.
+ * Created by:   Admin
+ * Created on:   6/29/2016
+ * Descriptions:
  */
 @Component
 public class WeChatAPIDomain {
 
     @Autowired
-    private DataApiClient dataAPIClient;
+    private ThirdApiClient thirdApiClient;
 
     @Autowired
-    private WeChatApiClient wxapiClient;
+    private MarketingDomain marketingDomain;
 
-    public UserAccessTokenObject getUserAccessTokenByOrgId(String orgId) {
+
+    public WeChatAccessToken getUserAccessTokenByAppId(String appId) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId)
+                .append("app_id", appId)
                 .build();
 
-        return  dataAPIClient.get("userAccessToken" + query, UserAccessTokenObject.class);
+        return thirdApiClient.get("wechat/token" + query, WeChatAccessToken.class);
     }
 
-    public UserAccessTokenObject getUserAccessTokenObject(String orgId, String appId, String secret) {
+    public WeChatUser getWebUser(String code, Boolean detailsFlag) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId)
+                .append("code", code)
                 .build();
+        WeChatWebAccessToken weChatAccessToken = thirdApiClient.get("wechat/web_token" + query, WeChatWebAccessToken.class);
+        if (detailsFlag) {
+            query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                    .append("access_token", weChatAccessToken.getAccessToken())
+                    .append("openid", weChatAccessToken.getOpenId())
+                    .build();
 
-        UserAccessTokenObject userAccessTokenObject = dataAPIClient.get("userAccessToken" + query, UserAccessTokenObject.class);
-        if (userAccessTokenObject == null || userAccessTokenObject.getExpiredDatetime() == null || userAccessTokenObject.getExpiredDatetime().isBeforeNow()) {
-           return getWechatAccessToken(orgId,appId, secret);
+            return thirdApiClient.get("wechat/user" + query, WeChatUser.class);
         } else {
-            return userAccessTokenObject;
+            WeChatUser user = new WeChatUser();
+            user.setOpenId(weChatAccessToken.getOpenId());
+            return user;
         }
     }
 
-    public UserAccessTokenObject getWechatAccessToken(String orgId, String appId, String secret){
-        AccessToken accessToken = wxapiClient.get("token?grant_type=client_credential&appid=" + appId + "&secret=" + secret, AccessToken.class);
-        if (accessToken != null && accessToken.getAccessToken() != null) {
-            JsApi_Ticket jsApi_ticket = wxapiClient.get("ticket/getticket?access_token=" + accessToken.getAccessToken() + "&type=jsapi", JsApi_Ticket.class);
-            if (jsApi_ticket != null && jsApi_ticket.getTicket() != null) {
-                UserAccessTokenObject newUserATObj = new UserAccessTokenObject();
-                newUserATObj.setId(null);
-                newUserATObj.setCreatedDateTime(DateTime.now());
-                newUserATObj.setAccessToken(accessToken.getAccessToken());
-                newUserATObj.setJsapiTicket(jsApi_ticket.getTicket());
-                newUserATObj.setOrgId(orgId);
-                newUserATObj.setExpiredDatetime(DateTime.now().plusSeconds(jsApi_ticket.getExpiresIn().intValue() - 200));
 
-                return dataAPIClient.post("userAccessToken", newUserATObj, UserAccessTokenObject.class);
-            }
-        }
-
-        return null;
+    public WeChatOpenIdList getOpenIds(String appId, String secret) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("app_id", appId).append("app_secret", secret)
+                .build();
+        return thirdApiClient.get("wechat/openid_list" + query, WeChatOpenIdList.class);
     }
 
-    public WeChatOpenIdList getOpenIds(String orgId, String appId, String secret){
-
-        UserAccessTokenObject tokenObject = getUserAccessTokenObject(orgId, appId, secret);
-        if(tokenObject!=null) {
-            String url = "user/get?access_token={token}&next_openid={id}";
-            WeChatOpenIdList list = wxapiClient.get(url, WeChatOpenIdList.class, tokenObject.getAccessToken(), "");
-            return list;
-        }
-
-        return null;
+    public Map<String, Object> getConfig(String appId, String url) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("app_id", appId).append("url", url)
+                .build();
+        return thirdApiClient.get("wechat/jssdk/config" + query, new ParameterizedTypeReference<Map<String, Object>>() {
+        });
     }
 
+    public Map<String, Object> getPayConfig(String appId, String openId, String marketingId,
+                                            String nonceString, long timestamp, String notifyUrl) {
 
+        MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
+        WeChatOrderRequest request = new WeChatOrderRequest();
+        request.setId(marketingId);
+        request.setNonceString(nonceString);
+        request.setOpenId(openId);
+        request.setPrice(new BigDecimal(marketingObject.getBudget() * 100));
+        request.setProdName(marketingObject.getName());
+        request.setNotifyUrl(notifyUrl);
+        request.setOrderType("marketing");
+        String preOrderId = thirdApiClient.post("wechat/unified", request, String.class);
 
-
-
-
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("pre_pay_id", preOrderId)
+                .append("nonce_str", nonceString)
+                .append("timestamp", timestamp)
+                .build();
+        return thirdApiClient.get("wechat/jssdk/pay_config" + query, new ParameterizedTypeReference<Map<String, Object>>() {
+        });
+    }
 
 
 }

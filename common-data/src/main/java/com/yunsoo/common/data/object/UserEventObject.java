@@ -23,6 +23,9 @@ public class UserEventObject implements Serializable {
     @JsonProperty("product_key")
     private String productKey;
 
+    @JsonProperty("product_base_id")
+    private String productBaseId;
+
     @JsonProperty("type_code")
     private String typeCode;
 
@@ -56,6 +59,14 @@ public class UserEventObject implements Serializable {
 
     public void setProductKey(String productKey) {
         this.productKey = productKey;
+    }
+
+    public String getProductBaseId() {
+        return productBaseId;
+    }
+
+    public void setProductBaseId(String productBaseId) {
+        this.productBaseId = productBaseId;
     }
 
     public String getTypeCode() {

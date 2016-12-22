@@ -3,7 +3,6 @@ package com.yunsoo.di.dao.repository.Impl;
 import com.yunsoo.di.dao.entity.UserProfileLocationCountEntity;
 import com.yunsoo.di.dao.entity.UserProfileTagCountEntity;
 import com.yunsoo.di.dao.repository.UserProfileRepository;
-import org.eclipse.jetty.util.StringUtil;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -11,8 +10,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -77,8 +74,8 @@ public class UserProfileRepositoryImpl implements UserProfileRepository{
         timespanCount.put(UserProfileTagCountEntity.TimeSpan.T22_24, 0);
 
         for (Object[] data : queryList) {
-            int hourNum = ((Integer)data[0]).intValue();
-            int hourCount =((BigInteger)data[1]).intValue();
+            int hourNum = ((Number)data[0]).intValue();
+            int hourCount =((Number)data[1]).intValue();
             if (hourNum < 6) {
                 int count = timespanCount.get(UserProfileTagCountEntity.TimeSpan.T00_06);
                 count += hourCount;
@@ -141,17 +138,16 @@ public class UserProfileRepositoryImpl implements UserProfileRepository{
         }
         List<Object[]> queryList = query.getResultList();
         HashMap<String , Integer> deviceCountMap=new LinkedHashMap<>();
-        List<UserProfileTagCountEntity> list = new ArrayList<>();
 
         for(Object[] obj : queryList)
         {
             //合并null和unknown计数
             if (StringUtils.isEmpty((String) obj[0]) || ((String) obj[0]).equals(UNKNOWN)){
                 int unknownCount=deviceCountMap.getOrDefault(UNKNOWN, 0);
-                deviceCountMap.put(UNKNOWN,((BigInteger)obj[1]).intValue()+unknownCount);
+                deviceCountMap.put(UNKNOWN,((Number)obj[1]).intValue()+unknownCount);
             }
             else {
-                deviceCountMap.put((String) obj[0],((BigInteger)obj[1]).intValue());
+                deviceCountMap.put((String) obj[0],((Number)obj[1]).intValue());
             }
         }
 
@@ -181,8 +177,8 @@ public class UserProfileRepositoryImpl implements UserProfileRepository{
         List<UserProfileTagCountEntity> list = new ArrayList<>();
         for(Object[] obj : queryList)
         {
-            int gender = ((BigDecimal)obj[0]).intValue();
-            int count = ((BigInteger)obj[1]).intValue();
+            int gender = ((Number)obj[0]).intValue();
+            int count = ((Number)obj[1]).intValue();
             String genderString = null;
             switch (gender)
             {
@@ -230,7 +226,7 @@ public class UserProfileRepositoryImpl implements UserProfileRepository{
         for(Object[] obj : queryList)
         {
             String tagName = obj[0] == null ? "其他地区(港澳台，国外等)" : (String)obj[0];
-            int count = ((BigInteger)obj[1]).intValue();
+            int count = ((Number)obj[1]).intValue();
 
             UserProfileTagCountEntity item = new UserProfileTagCountEntity();
             item.setCount(count);
@@ -259,7 +255,7 @@ public class UserProfileRepositoryImpl implements UserProfileRepository{
         {
             String province = (String)obj[0];
             String city = (String)obj[1];
-            int count = ((BigInteger)obj[2]).intValue();
+            int count = ((Number)obj[2]).intValue();
 
             UserProfileLocationCountEntity item = new UserProfileLocationCountEntity();
             item.setProvince(province);

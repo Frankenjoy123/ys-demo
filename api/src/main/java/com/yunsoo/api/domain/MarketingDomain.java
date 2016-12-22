@@ -1,8 +1,10 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.client.ThirdApiClient;
 import com.yunsoo.api.dto.MktDrawPrize;
 import com.yunsoo.api.payment.AlipayParameters;
 import com.yunsoo.api.payment.ParameterNames;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.RestClient;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -46,6 +49,8 @@ public class MarketingDomain {
     @Value("${yunsoo.alipay.notify_url}")
     private String alipayNotifyUrl;
 
+    @Autowired
+    private ThirdApiClient thirdApiClient;
 
     public MktDrawRuleObject createMktDrawRule(MktDrawRuleObject mktDrawRuleObject) {
         mktDrawRuleObject.setId(null);
@@ -205,6 +210,11 @@ public class MarketingDomain {
         return totalQuantity;
     }
 
+    public Long countMktDrawPrizesByMarketingId(String marketingId) {
+        Long totalPrizeQuantity = dataApiClient.get("marketing/drawPrize/totalcount/marketing/{id}", Long.class, marketingId);
+        return totalPrizeQuantity;
+    }
+
 
     public Long countDrawPrizeByDrawRuleId(String drawRuleId, org.joda.time.LocalDate startTime, org.joda.time.LocalDate endTime) {
 
@@ -243,6 +253,21 @@ public class MarketingDomain {
         });
     }
 
+    public void updateSuccessWechatMarketing(String marketingId) {
+        String orderId = thirdApiClient.get("wechat/pay/{id}", String.class, marketingId);
+        MarketingObject marketingObject = getMarketingById(marketingId);
+        marketingObject.setStatusCode(LookupCodes.MktStatus.PAID);
+        if (StringUtils.hasText(orderId)) {
+            marketingObject.setComments(orderId);
+            dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
+        }
+    }
+
+    public void updateFailedWechatMarketing(String marketingId) {
+        MarketingObject marketingObject = getMarketingById(marketingId);
+        marketingObject.setStatusCode(LookupCodes.MktStatus.FAILED);
+        dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
+    }
 
     public void updateMarketing(MarketingObject marketingObject){
         dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
@@ -302,6 +327,14 @@ public class MarketingDomain {
         dataApiClient.patch("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
     }
 
+    public MktSellerObject getMktSellerByOpenid(String openid) {
+        return dataApiClient.get("marketing/seller/wechat/{openid}", MktSellerObject.class, openid);
+    }
+
+    public List<MarketingObject> getWechatMarketingByAccountId(String accountId) {
+        return dataApiClient.get("marketing/seller/wechat/marketing/{id}", new ParameterizedTypeReference<List<MarketingObject>>() {
+        }, accountId);
+    }
 
     public Map<String, String> getAlipayBatchTansferParameters(List<MktDrawPrize> mktDrawPrizeList) {
 

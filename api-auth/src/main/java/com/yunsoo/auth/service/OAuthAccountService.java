@@ -38,14 +38,19 @@ public class OAuthAccountService {
         return new OAuthAccount(entity);
     }
 
+    public OAuthAccount getByAccountId(String id){
+        OAuthAccountEntity entity = repository.getByAccountIdAndDisabled(id, false);
+        return new OAuthAccount(entity);
+    }
+
     public OAuthAccount save(OAuthAccount account){
         OAuthAccountEntity entity = new OAuthAccountEntity(account);
         repository.save(entity);
         return new OAuthAccount(entity);
     }
 
-    public List<OAuthAccount> getByOAuthOpenIdAndOAuthTypeCode(String openId, String openType){
-        List<OAuthAccountEntity> accounts = repository.findByOAuthTypeCodeAndOAuthOpenIdAndDisabled(openType, openId, false);
+    public List<OAuthAccount> getByOAuthOpenIdAndOAuthTypeCode(String openId, String openType, String sourceType, String sourceId){
+        List<OAuthAccountEntity> accounts = repository.findByOAuthTypeCodeAndOAuthOpenIdAndSourceAndSourceTypeCodeAndDisabled(openType, openId, sourceId, sourceType, false);
         return accounts.stream().map(OAuthAccount::new).collect(Collectors.toList());
     }
 

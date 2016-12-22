@@ -20,6 +20,7 @@ public interface KeyService {
 
     void batchSave(String keyBatchId,
                    List<String> keyTypeCodes,
+                   String serialNoPattern,
                    List<List<String>> productKeys,
                    Product productTemplate);
 }

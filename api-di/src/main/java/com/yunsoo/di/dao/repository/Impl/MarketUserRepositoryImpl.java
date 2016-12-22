@@ -11,8 +11,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -66,26 +64,18 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
         }
         List<Object[]> queryList = query.getResultList();
         List<UserProfileTagCountEntity> list = new ArrayList<>();
-        int nullCount=0;
         for(Object[] obj : queryList)
         {
-            if (obj[0] == null){
-                nullCount=((BigInteger)obj[1]).intValue();
-            }else {
-                String tagName = (String)obj[0];
-                int count = ((BigInteger)obj[1]).intValue();
-                UserProfileTagCountEntity item = new UserProfileTagCountEntity();
-                item.setCount(count);
-                item.setTag(tagName);
-                list.add(item);
-            }
+            String tagName = (String)obj[0];
+            int count = ((Number)obj[1]).intValue();
+            UserProfileTagCountEntity item = new UserProfileTagCountEntity();
+            item.setCount(count);
+            item.setTag(tagName);
+            list.add(item);
         }
-        UserProfileTagCountEntity otherEntity=new UserProfileTagCountEntity();
-        otherEntity.setCount(nullCount);
-        otherEntity.setTag("其他地区(港澳台，国外等)");
-        list.add(otherEntity);
         return list;
     }
+
 
     @Override
     public List<UserProfileTagCountEntity> queryMarketUserDeviceAnalysis(String orgId, DateTime startTime, DateTime endTime, String marketingId) {
@@ -130,10 +120,10 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
             //合并null和unknown计数
             if (StringUtils.isEmpty((String) obj[0]) || ((String) obj[0]).equals(UNKNOWN)){
                 int unknownCount=deviceCountMap.getOrDefault(UNKNOWN, 0);
-                deviceCountMap.put(UNKNOWN,((BigInteger)obj[1]).intValue()+unknownCount);
+                deviceCountMap.put(UNKNOWN,((Number)obj[1]).intValue()+unknownCount);
             }
             else {
-                deviceCountMap.put((String) obj[0],((BigInteger)obj[1]).intValue());
+                deviceCountMap.put((String) obj[0],((Number)obj[1]).intValue());
             }
         }
 
@@ -151,7 +141,8 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
         HashMap<String, Object> parameters = new HashMap<>();
 
         String sql = "SELECT ifnull(sex, 2) as gender, count(1) FROM di.mkt_draw_record dr " +
-                "LEFT JOIN di.di_user u ON dr.user_id=u.id "+
+                "inner join di.di_event e on e.event_id=dr.scan_record_id and e.name='scan' "+
+                "inner JOIN di.di_user u ON e.user_id=u.user_id and e.ys_id=u.ys_id and e.org_id=u.org_id "+
                 "where u.org_id = :orgId ";
 
         parameters.put("orgId", orgId);
@@ -178,8 +169,8 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
         List<UserProfileTagCountEntity> list = new ArrayList<>();
         for(Object[] obj : queryList)
         {
-            int gender = ((BigDecimal)obj[0]).intValue();
-            int count = ((BigInteger)obj[1]).intValue();
+            int gender = ((Number)obj[0]).intValue();
+            int count = ((Number)obj[1]).intValue();
             String genderString = null;
             switch (gender)
             {
@@ -206,9 +197,9 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
     public List<UserProfileTagCountEntity> queryMarketUserUsageAnalysis(String orgId, DateTime startTime, DateTime endTime, String marketingId) {
         HashMap<String, Object> parameters = new HashMap<>();
 
-        String sql = "select hour(convert_tz(dr.created_datetime,'+00:00','+08:00')) as hourNum, count(distinct dr.user_id) " +
+        String sql = "select hour(convert_tz(dr.created_datetime,'+00:00','+08:00')) as hourNum, count(1) " +
                 "FROM di.mkt_draw_record dr " +
-                "left join di.di_event e on dr.scan_record_id = e.event_id and e.name='scan' "+
+                "inner join di.di_event e on dr.scan_record_id = e.event_id and e.name='scan' "+
                 "where e.org_id = :orgId";
 
         parameters.put("orgId", orgId);
@@ -244,8 +235,8 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
         timespanCount.put(UserProfileTagCountEntity.TimeSpan.T22_24, 0);
 
         for (Object[] data : queryList) {
-            int hourNum = ((Integer)data[0]).intValue();
-            int hourCount =((BigInteger)data[1]).intValue();
+            int hourNum = ((Number)data[0]).intValue();
+            int hourCount =((Number)data[1]).intValue();
             if (hourNum < 6) {
                 int count = timespanCount.get(UserProfileTagCountEntity.TimeSpan.T00_06);
                 count += hourCount;
@@ -325,7 +316,7 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
         {
             String province = (String)obj[0];
             String city = (String)obj[1];
-            int count = ((BigInteger)obj[2]).intValue();
+            int count = ((Number)obj[2]).intValue();
 
             UserProfileLocationCountEntity item = new UserProfileLocationCountEntity();
             item.setProvince(province);
@@ -338,7 +329,8 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
 
     @Override
     public List<MarketUserLocationAnalysisEntity> queryRewardLocationReport(String marketingId) {
-        String sql = "select lu.province, lu.city, count(1) from di.mkt_draw_record dr LEFT JOIN di.di_event ev ON dr.scan_record_id=ev.event_id left join lu_province_city lu on ev.location_id = lu.id " +
+        String sql = "select lu.province, lu.city, count(1) from di.mkt_draw_record dr LEFT JOIN di.di_event ev ON dr.scan_record_id=ev.event_id  and ev.name='scan' "
+                +"left join lu_province_city lu on ev.location_id = lu.id " +
                 " where dr.isPrized = 1 and dr.marketing_id =:marketingId " +
                 " group by lu.id ";
 
@@ -354,7 +346,7 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
             MarketUserLocationAnalysisEntity entity = new MarketUserLocationAnalysisEntity();
             entity.setProvince(item[0] == null ? "未知地区" : (String) item[0]);
             entity.setCity(item[1] == null ? "未知地区" : (String) item[1]);
-            entity.setCount(((BigInteger) item[2]).intValue());
+            entity.setCount(((Number) item[2]).intValue());
             list.add(entity);
         }
         return list;

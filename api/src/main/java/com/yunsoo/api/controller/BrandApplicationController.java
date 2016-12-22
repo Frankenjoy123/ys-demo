@@ -22,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,7 +66,6 @@ public class BrandApplicationController {
     }
 
     @RequestMapping(value = "count", method = RequestMethod.GET)
-    @PreAuthorize("hasPermission(#carrierId, 'org', 'brand_application:read')")
     public int count(@RequestParam("carrier_id") String carrierId,
                      @RequestParam("status_code") String statusCode,
                      @RequestParam("has_payment") boolean hasPayment) {

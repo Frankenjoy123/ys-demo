@@ -11,9 +11,14 @@ import org.joda.time.DateTime;
 import java.io.Serializable;
 
 /**
- * Created by Admin on 7/20/2016.
+ * Created by:   Admin
+ * Created on:   7/20/2016
+ * Descriptions:
  */
 public class WebTemplate implements Serializable {
+
+    @JsonProperty("id")
+    private String id;
 
     @JsonProperty("name")
     private String name;
@@ -21,11 +26,11 @@ public class WebTemplate implements Serializable {
     @JsonProperty("version")
     private String version;
 
-    @JsonProperty("description")
-    private String description;
-
     @JsonProperty("type_code")
     private String typeCode;
+
+    @JsonProperty("description")
+    private String description;
 
     @JsonProperty("restriction")
     private String restriction;
@@ -34,6 +39,14 @@ public class WebTemplate implements Serializable {
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     @JsonProperty("created_datetime")
     private DateTime createdDateTime;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -51,20 +64,20 @@ public class WebTemplate implements Serializable {
         this.version = version;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getTypeCode() {
         return typeCode;
     }
 
     public void setTypeCode(String typeCode) {
         this.typeCode = typeCode;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getRestriction() {
@@ -86,14 +99,15 @@ public class WebTemplate implements Serializable {
     public WebTemplate() {
     }
 
-    public WebTemplate(WebTemplateObject object) {
-        if (object != null) {
-            this.setTypeCode(object.getTypeCode());
-            this.setRestriction(object.getRestriction());
-            this.setDescription(object.getDescription());
-            this.setName(object.getName());
-            this.setVersion(object.getVersion());
-            this.setCreatedDateTime(object.getCreatedDateTime());
+    public WebTemplate(WebTemplateObject obj) {
+        if (obj != null) {
+            this.setId(obj.getId());
+            this.setName(obj.getName());
+            this.setVersion(obj.getVersion());
+            this.setTypeCode(obj.getTypeCode());
+            this.setRestriction(obj.getRestriction());
+            this.setDescription(obj.getDescription());
+            this.setCreatedDateTime(obj.getCreatedDateTime());
         }
     }
 }

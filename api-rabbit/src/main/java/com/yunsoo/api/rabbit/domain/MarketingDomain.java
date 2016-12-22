@@ -1,5 +1,8 @@
 package com.yunsoo.api.rabbit.domain;
 
+import com.yunsoo.api.rabbit.third.dto.JuheMobileLocation;
+import com.yunsoo.api.rabbit.third.dto.JuheOrder;
+import com.yunsoo.api.rabbit.third.service.JuheService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
@@ -11,6 +14,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +31,9 @@ public class MarketingDomain {
 
     @Autowired
     private RestClient dataApiClient;
+
+    @Autowired
+    private JuheService juheService;
 
     public MarketingObject getMarketingById(String id) {
         if (id == null) {
@@ -47,9 +55,56 @@ public class MarketingDomain {
         return dataApiClient.get("marketing/draw/{key}", MktDrawRecordObject.class, key);
     }
 
+    public MarketingObject createMarketing(MarketingObject marketingObject) {
+        marketingObject.setId(null);
+        return dataApiClient.post("marketing", marketingObject, MarketingObject.class);
+    }
+
+    public MktDrawRuleObject createMktDrawRuleList(List<MktDrawRuleObject> mktDrawRuleObjectList) {
+        return dataApiClient.post("marketing/drawRule/list", mktDrawRuleObjectList, MktDrawRuleObject.class);
+    }
+
+    public MktSellerObject getMktSellerByOpenid(String openid) {
+        return dataApiClient.get("marketing/seller/wechat/{openid}", MktSellerObject.class, openid);
+    }
+
+    public List<MarketingObject> getWechatMarketingByOpenid(String openid) {
+        return dataApiClient.get("marketing/seller/wechat/marketing/{openid}", new ParameterizedTypeReference<List<MarketingObject>>() {
+        }, openid);
+    }
+
+
+
+    // query marketing draw record by product key and ysid
+    public MktDrawRecordObject getMktDrawRecordByProductKeyAndUser(String key, String ysId) {
+        return dataApiClient.get("marketing/draw/{key}/user/{id}", MktDrawRecordObject.class, key, ysId);
+    }
+
+    // query marketing draw prize by product key and ysid and oauthOpenId
+    public MktDrawRecordObject getMktDrawRecordByProductKeyAndUserAndOauthOpenId(String key, String ysId, String oauthOpenId, String marketingId) {
+        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                .append("oauth_openid", oauthOpenId)
+                .append("marketing_id", marketingId)
+                .build();
+
+        return dataApiClient.get("marketing/draw/{key}/user/{id}" + query, MktDrawRecordObject.class, key, ysId);
+    }
+
+
     public MktDrawPrizeObject getMktDrawPrizeByProductKey(String key) {
         return dataApiClient.get("marketing/drawprize/{key}", MktDrawPrizeObject.class, key);
     }
+
+    // query marketing draw prize by product key and ysid
+    public MktDrawPrizeObject getMktDrawPrizeByProductKeyAndUser(String key, String ysId) {
+        return dataApiClient.get("marketing/drawprize/{key}/user/{id}", MktDrawPrizeObject.class, key, ysId);
+    }
+
+    // query marketing draw prize by product key and ysid and oauthOpenId
+    public MktDrawPrizeObject getMktDrawPrizeByProductKeyAndUserAndOauthOpenId(String key, String ysId, String oauthOpenId) {
+        return dataApiClient.get("marketing/drawprize/{key}/user/{id}" + "?oauth_openid=" + oauthOpenId, MktDrawPrizeObject.class, key, ysId);
+    }
+
 
     public MktDrawPrizeObject getMktDrawPrizeByPrizeId(String prizeId) {
         return dataApiClient.get("marketing/drawPrize/record/{id}", MktDrawPrizeObject.class, prizeId);
@@ -72,8 +127,12 @@ public class MarketingDomain {
         return dataApiClient.get("marketing/consumer/key/{key}", MktConsumerRightObject.class, productKey);
     }
 
+    // query consumer right by product key and ysid
+    public MktConsumerRightObject getConsumerRightByProductKeyAndUser(String productKey, String ysId) {
+        return dataApiClient.get("marketing/consumer/key/{key}/user/{id}", MktConsumerRightObject.class, productKey, ysId);
+    }
 
-    public MktDrawRuleObject getDrawRuleById(String id){
+    public MktDrawRuleObject getDrawRuleById(String id) {
         return dataApiClient.get("marketing/Rule/{id}", MktDrawRuleObject.class, id);
     }
 
@@ -96,10 +155,21 @@ public class MarketingDomain {
         return dataApiClient.post("marketing/drawPrize/{id}/contact", mktPrizeContactObject, MktPrizeContactObject.class, mktPrizeContactObject.getMktPrizeId());
     }
 
+    public void updateWechatMarketing(String marketingId) {
+        MarketingObject marketingObject = getMarketingById(marketingId);
+        marketingObject.setStatusCode(LookupCodes.MktStatus.PAID);
+        dataApiClient.put("marketing/{id}", marketingObject, marketingObject.getId());
+    }
+
 
     public void updateMktDrawPrize(MktDrawPrizeObject mktDrawPrizeObject) {
         dataApiClient.patch("marketing/drawPrize", mktDrawPrizeObject, MktDrawPrizeObject.class);
     }
+
+    public void updateWechatPrize(MktDrawPrizeObject mktDrawPrizeObject) {
+        dataApiClient.patch("marketing/drawPrize/wechat", mktDrawPrizeObject, MktDrawPrizeObject.class);
+    }
+
 
     public void updateMktPrizeContact(MktPrizeContactObject mktPrizeContactObject) {
         dataApiClient.patch("marketing/drawPrize/{id}/contact", mktPrizeContactObject, mktPrizeContactObject.getMktPrizeId());
@@ -116,11 +186,16 @@ public class MarketingDomain {
 
     }
 
+    public Long getPrizeNumberByMarketingId(String marketingId) {
+        return dataApiClient.get("marketing/drawPrize/totalcount/marketing/{id}", Long.class, marketingId);
+    }
+
+
     public List<MktDrawPrizeObject> getTop10PrizeList(String marketingId, String ysId) {
-        if(StringUtils.hasText(ysId)) {
+        if (StringUtils.hasText(ysId)) {
             List<MktDrawRecordObject> objectList = getMktDrawRecordList(marketingId, ysId);
             List<String> ids = new ArrayList<>();
-            objectList.forEach(item->{
+            objectList.forEach(item -> {
                 ids.add(item.getId());
             });
 
@@ -131,8 +206,7 @@ public class MarketingDomain {
 
             return dataApiClient.get("marketing/drawPrize/{id}/top" + query, new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
             }, marketingId);
-        }
-        else
+        } else
             return dataApiClient.get("marketing/drawPrize/{id}/top?status_code_in=" + LookupCodes.MktDrawPrizeStatus.PAID, new ParameterizedTypeReference<List<MktDrawPrizeObject>>() {
             }, marketingId);
     }
@@ -479,32 +553,108 @@ public class MarketingDomain {
             }
             return null;
         }
+        if (LookupCodes.MktType.DRAW04.equals(obj.getTypeCode())) {
+
+            List<MktDrawRuleObject> envelopeRuleList = getRuleList(marketId);
+            if (envelopeRuleList == null || envelopeRuleList.size() != 2 || envelopeRuleList.get(0).getAvailableQuantity() < 1) {
+                return null;
+            }
+            Integer probability = (int) (envelopeRuleList.get(0).getProbability() * 100);
+            Integer chance = (int) (Math.random() * 100) + 1;
+            if (chance <= probability) {
+                Double amountMin = envelopeRuleList.get(0).getAmount();
+                Double amountMax = envelopeRuleList.get(1).getAmount();
+                if (amountMin > amountMax) {
+                    Double temp = amountMin;
+                    amountMin = amountMax;
+                    amountMax = temp;
+                }
+
+                DecimalFormat df = new DecimalFormat("0.00");
+                double randomAmount = amountMin + Math.random() * (amountMax - amountMin);
+                randomAmount = new Double(df.format(randomAmount).toString());
+                if (randomAmount >= obj.getBalance()) {
+                    randomAmount = new Double(df.format(obj.getBalance()).toString());
+                }
+                MktDrawRuleObject envelopeMktDrawRuleObject = envelopeRuleList.get(0);
+                envelopeMktDrawRuleObject.setAmount(randomAmount);
+                return envelopeMktDrawRuleObject;
+
+            } else {
+                return null;
+            }
+        }
         return null;
     }
 
-    public boolean createMobileOrder(String prizeId) {
+    public boolean createMobileOrder(MktDrawPrizeObject prize) {
         //return  true;
-        return dataApiClient.get("juhe/mobile/order?draw_prize_id=" + prizeId, Boolean.class);
+
+        if (StringUtils.hasText(prize.getMobile())) {
+            JuheOrder order = juheService.saveMobileFee(prize.getMobile(), prize.getDrawRecordId(),prize.getAmount().intValue() );
+            if (order != null) {
+                MktPrizeCostObject costObject = new MktPrizeCostObject();
+                costObject.setName(order.getCardName());
+                costObject.setCost(new BigDecimal(order.getOrderPrice()));
+                costObject.setDrawRecordId(prize.getDrawRecordId());
+                costObject.setMobile(prize.getMobile());
+                costObject.setOrderId(order.getJuheOrderId());
+                costObject.setType(LookupCodes.MktPrizeCostType.MOBILE_FEE);
+                dataApiClient.post("marketing/cost", costObject, MktPrizeCostObject.class);
+
+                return true;
+            }
+        }
+        return false;
     }
 
-    public boolean createMobileDataFlow(String prizeId) {
+    public boolean createMobileDataFlow(MktDrawPrizeObject prize) {
         //return true;
-        return dataApiClient.get("juhe/mobile/data?draw_prize_id=" + prizeId, Boolean.class);
+
+        if (StringUtils.hasText(prize.getMobile())) {
+            MktDrawRuleObject ruleObject = getDrawRuleById(prize.getDrawRuleId());
+            if (ruleObject == null)
+                return false;
+
+            String consumerRightId = ruleObject.getConsumerRightId();
+            if (!StringUtils.hasText(consumerRightId))
+                return false;
+
+            MktConsumerRightObject consumerRightObj = getConsumerRightById(consumerRightId);
+
+            if (consumerRightObj == null)
+                return false;
+
+            JuheMobileLocation location = juheService.getMobileLocation(prize.getMobile());
+            int dataFlowId = 0;
+            if (location == null)
+                return false;
+
+            String mobileType = location.getCompany();
+            if ("中国移动".equals(mobileType))
+                dataFlowId = consumerRightObj.getCmccFlowId();
+            if ("中国联通".equals(mobileType))
+                dataFlowId = consumerRightObj.getCuccFlowId();
+            if ("中国电信".equals(mobileType))
+                dataFlowId = consumerRightObj.getCtccFlowId();
+
+            JuheOrder order =  juheService.saveMobileData(prize.getMobile(),prize.getDrawRecordId(), dataFlowId);
+
+            if (order != null) {
+                MktPrizeCostObject costObject = new MktPrizeCostObject();
+                costObject.setName(order.getCardName());
+                costObject.setCost(new BigDecimal(order.getOrderPrice()));
+                costObject.setDrawRecordId(prize.getDrawRecordId());
+                costObject.setMobile(prize.getMobile());
+                costObject.setOrderId(order.getJuheOrderId());
+                costObject.setType(LookupCodes.MktPrizeCostType.MOBILE_FEE);
+                dataApiClient.post("marketing/cost", costObject, MktPrizeCostObject.class);
+
+                return true;
+            }
+        }
+        return false;
     }
-
-    public boolean sendVerificationCode(String mobile, String templateName) {
-        return dataApiClient.get("juhe/verificationCode/{mobile}?temp_name={name}", Boolean.class, mobile, templateName);
-    }
-
-    public boolean validateVerificationCode(String mobile, String verificationCode) {
-        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("mobile", mobile)
-                .append("verification_code", verificationCode)
-                .build();
-
-        return dataApiClient.post("juhe/verifycode" + query, null, Boolean.class);
-    }
-
 
     public String validateMobileType(String mobile) {
         String returnString = "";

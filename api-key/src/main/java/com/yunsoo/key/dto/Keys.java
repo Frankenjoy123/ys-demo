@@ -17,6 +17,9 @@ import java.util.List;
  */
 public class Keys implements Serializable {
 
+    @JsonProperty("org_id")
+    private String orgId;
+
     @JsonProperty("key_batch_id")
     private String keyBatchId;
 
@@ -26,6 +29,9 @@ public class Keys implements Serializable {
     @JsonProperty("key_type_codes")
     private List<String> keyTypeCodes;
 
+    @JsonProperty("serial_no_pattern")
+    private String serialNoPattern;
+
     @JsonProperty("keys")
     private List<List<String>> keys;
 
@@ -33,6 +39,14 @@ public class Keys implements Serializable {
     @JsonSerialize(using = DateTimeJsonSerializer.class)
     @JsonDeserialize(using = DateTimeJsonDeserializer.class)
     private DateTime createdDateTime;
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
 
     public String getKeyBatchId() {
         return keyBatchId;
@@ -56,6 +70,14 @@ public class Keys implements Serializable {
 
     public void setKeyTypeCodes(List<String> keyTypeCodes) {
         this.keyTypeCodes = keyTypeCodes;
+    }
+
+    public String getSerialNoPattern() {
+        return serialNoPattern;
+    }
+
+    public void setSerialNoPattern(String serialNoPattern) {
+        this.serialNoPattern = serialNoPattern;
     }
 
     public List<List<String>> getKeys() {
