@@ -36,6 +36,8 @@ public class HealthController extends AbstractHealthController {
     @Autowired
     private KeyApiClient keyApiClient;
 
+    @Autowired
+    private DiApiClient diApiClient;
 
     @Override
     public void expandHealth(Health health, List<String> path, boolean debug) {
@@ -51,7 +53,8 @@ public class HealthController extends AbstractHealthController {
                 .checkClient(dataApiClient, path, debug)
                 .checkClient(processorClient, path, debug)
                 .checkClient(fileApiClient, path, debug)
-                .checkClient(keyApiClient, path, debug);
+                .checkClient(keyApiClient, path, debug)
+                .checkClient(diApiClient, path, debug);
     }
 
 }
