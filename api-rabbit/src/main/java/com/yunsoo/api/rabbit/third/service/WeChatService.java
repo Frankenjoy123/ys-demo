@@ -2,6 +2,7 @@ package com.yunsoo.api.rabbit.third.service;
 
 import com.yunsoo.api.rabbit.client.ThirdApiClient;
 import com.yunsoo.api.rabbit.third.dto.WeChatAccessToken;
+import com.yunsoo.api.rabbit.third.dto.WeChatRedPackRequest;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -25,10 +26,10 @@ public class WeChatService {
                 .append("app_id", appId)
                 .build();
 
-        return  thirdApiClient.get("wechat/token" + query, WeChatAccessToken.class);
+        return thirdApiClient.get("wechat/token" + query, WeChatAccessToken.class);
     }
 
-    public Map<String, Object> getConfig(String appId, String url){
+    public Map<String, Object> getConfig(String appId, String url) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("app_id", appId).append("url", url)
                 .build();
@@ -36,5 +37,8 @@ public class WeChatService {
         });
     }
 
+    public boolean sendRedPack(WeChatRedPackRequest redPackRequest) {
+        return thirdApiClient.post("wechat/redpack", redPackRequest, boolean.class);
+    }
 
 }

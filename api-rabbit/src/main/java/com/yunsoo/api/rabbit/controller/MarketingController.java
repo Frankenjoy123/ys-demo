@@ -5,7 +5,9 @@ import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.key.dto.Product;
 import com.yunsoo.api.rabbit.key.service.ProductService;
+import com.yunsoo.api.rabbit.third.dto.WeChatRedPackRequest;
 import com.yunsoo.api.rabbit.third.service.JuheService;
+import com.yunsoo.api.rabbit.third.service.WeChatService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.error.ErrorResult;
@@ -15,13 +17,9 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -38,9 +36,6 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/marketing")
 public class MarketingController {
 
-    @Value("${yunsoo.wechat.redpack_url}")
-    private String redPackUrl;
-
     @Autowired
     private MarketingDomain marketingDomain;
 
@@ -52,6 +47,9 @@ public class MarketingController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private WeChatService weChatService;
 
 
     //获取Key所对应的抽奖记录
@@ -173,21 +171,16 @@ public class MarketingController {
             throw new BadRequestException("marketing can not be found.");
         }
 
-        RestTemplate restTemplate = new RestTemplate();
+        WeChatRedPackRequest redPackRequest = new WeChatRedPackRequest();
+        redPackRequest.setId(mktDrawPrizeObject.getDrawRecordId());
+        redPackRequest.setMchName(marketingObject.getName());
+        redPackRequest.setPrice(mktDrawPrizeObject.getAmount());
+        redPackRequest.setOpenId(mktDrawPrizeObject.getPrizeAccount());
+        redPackRequest.setWishing(marketingObject.getWishes());
+        redPackRequest.setRemark(marketingObject.getComments());
+        redPackRequest.setActionName(marketingObject.getName());
 
-        WeChatPrizeRequest weChatPrizeRequest = new WeChatPrizeRequest();
-        weChatPrizeRequest.setOrderId(mktDrawPrizeObject.getDrawRecordId());
-        weChatPrizeRequest.setMchName(marketingObject.getName());
-        weChatPrizeRequest.setPrice(mktDrawPrizeObject.getAmount());
-        weChatPrizeRequest.setOpenId(mktDrawPrizeObject.getPrizeAccount());
-        weChatPrizeRequest.setWishing(marketingObject.getWishes());
-        weChatPrizeRequest.setRemark(marketingObject.getComments());
-        weChatPrizeRequest.setActionName(marketingObject.getName());
-
-        HttpEntity<WeChatPrizeRequest> requestEntity = new HttpEntity<WeChatPrizeRequest>(weChatPrizeRequest);
-        ResponseEntity<Boolean> result = restTemplate.postForEntity(redPackUrl, requestEntity, Boolean.class);
-
-        Boolean prizeResult = result.getBody();
+        Boolean prizeResult = weChatService.sendRedPack(redPackRequest);
         if (prizeResult) {
             mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
             mktDrawPrizeObject.setPaidDateTime(DateTime.now());
