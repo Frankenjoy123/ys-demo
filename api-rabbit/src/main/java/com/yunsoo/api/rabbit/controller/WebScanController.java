@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by:   Lijian
@@ -67,7 +68,8 @@ public class WebScanController {
     //region 一物一码
 
     @RequestMapping(value = "{key}", method = RequestMethod.GET)
-    public WebScanResponse getKeyScan(@PathVariable(value = "key") String key) {
+    public WebScanResponse getKeyScan(@PathVariable(value = "key") String key,
+                                      @RequestParam(value = "url", required = false)String url) {
 
         //search product by key
         Product product = getProductByKey(key);
@@ -91,8 +93,8 @@ public class WebScanController {
 
         //security info
         webScanResponse.setSecurity(getSecurityInfo(product));
-
-        webScanResponse.setWeChatAccessToken(getUserAccessToken());
+        if(StringUtils.hasText(url))
+            webScanResponse.setWeChatConfig(getWeChatConfig(productKeyBatchObject.getOrgId(), url));
 
         return webScanResponse;
     }
@@ -152,7 +154,8 @@ public class WebScanController {
     }
 
     @RequestMapping(value = "/key/{key}", method = RequestMethod.GET)
-    public WebScanResponse getProductKeyScan(@PathVariable(value = "key") String key) {
+    public WebScanResponse getProductKeyScan(@PathVariable(value = "key") String key,
+                                             @RequestParam(value = "url", required = false)String url) {
         //search product by key
         Product product = getProductByKey(key);
         ProductBaseObject productBaseObject = getProductBaseById(product.getProductBaseId());
@@ -179,9 +182,8 @@ public class WebScanController {
 
         //security info
         webScanResponse.setSecurity(getSecurityInfo(product));
-
-        webScanResponse.setWeChatAccessToken(getUserAccessToken());
-
+        if(StringUtils.hasText(url))
+            webScanResponse.setWeChatConfig(getWeChatConfig(productKeyBatchObject.getOrgId(), url));
         return webScanResponse;
     }
 
@@ -192,16 +194,15 @@ public class WebScanController {
     //region 产品码
 
     @RequestMapping(value = "productbase/{id}", method = RequestMethod.GET)
-    public WebScanResponse getProductBaseScan(@PathVariable(value = "id") String productBaseId) {
+    public WebScanResponse getProductBaseScan(@PathVariable(value = "id") String productBaseId,  @RequestParam(value = "url", required = false)String url) {
 
         //get basic info for product base by id
         WebScanResponse webScanResponse = getBasicInfo(productBaseId);
 
         //marketing info
         webScanResponse.setMarketing(null);
-
-        webScanResponse.setWeChatAccessToken(getUserAccessToken());
-
+        if(StringUtils.hasText(url))
+            webScanResponse.setWeChatConfig(getWeChatConfig(webScanResponse.getMarketing().getId(), url));
         return webScanResponse;
     }
 
@@ -392,10 +393,9 @@ public class WebScanController {
         return scanRecord;
     }
 
-    private WeChatAccessToken getUserAccessToken() {
+    private Map<String, Object> getWeChatConfig(String orgId, String url){
         //todo: add the mapping of orgId and appId
-        WeChatAccessToken weChatAccessToken = weChatService.getUserAccessTokenByAppId(null);
-        return weChatAccessToken;
+        return weChatService.getConfig(null, url);
     }
 
 }

@@ -303,6 +303,25 @@ public class WeChatService {
         return null;
     }
 
+    public WeChatQRCodeResponse createQRCode(String id, boolean permanent){
+        ThirdWeChatAccessTokenEntity tokenEntity = getAccessTokenFromDB(null, null);
+        String url = "cgi-bin/qrcode/create?access_token={token}";
+        WeChatQRCodeRequest request = new WeChatQRCodeRequest();
+        if(permanent){
+            request.setActionName("QR_LIMIT_SCENE");
+            request.setActionInfo("", id);
+        }
+        else{
+            request.setActionName("QR_SCENE");
+            request.setActionInfo(id, "");
+        }
+
+        request.setExpiresSeconds(7*24*60*60); //7days
+
+
+        return weChatClient.post(url, request, WeChatQRCodeResponse.class, tokenEntity.getAccessToken());
+    }
+
 
 
     public boolean sendRedPack(String openId, String mchName, String orderId,

@@ -44,6 +44,7 @@ public class WeChatController {
 
     @RequestMapping(value = "token", method = RequestMethod.GET)
     public WeChatAccessToken getWeChatToken(@RequestParam(value = "app_id", required = false) String appId) {
+        //todo: get appSecret with appId
         if(StringUtils.hasText(appId))
             return new WeChatAccessToken(weChatService.getAccessTokenFromDB(appId, null));
         return new WeChatAccessToken(weChatService.getAccessTokenFromDB(null, null));
@@ -107,5 +108,16 @@ public class WeChatController {
         else
             throw new BadRequestException("get wechat pay info error");
     }
+
+    @RequestMapping(value = "qrcode/{id}", method = RequestMethod.POST)
+    public String createQRCode(@PathVariable("id") String id, @RequestParam(value = "permanent", required = false) Boolean permanent){
+
+        WeChatQRCodeResponse response = weChatService.createQRCode(id, permanent== null ? false : permanent);
+        if(response.getErrorCode() == 0)
+            return  response.getTicket();
+
+        throw new BadRequestException("create QRCode failed: error message: " + response.getErrorMsg());
+    }
+
 
 }

@@ -9,6 +9,7 @@ import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import org.joda.time.DateTime;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by:   Lijian
@@ -21,8 +22,8 @@ public class WebScanResponse {
     @JsonProperty("product")
     private Product product;
 
-    @JsonProperty("user_access_token")
-    private WeChatAccessToken weChatAccessToken;
+    @JsonProperty("wechat_config")
+    private Map<String, Object> weChatConfig;
 
     //生产企业信息
     @JsonProperty("organization")
@@ -35,13 +36,14 @@ public class WebScanResponse {
     @JsonProperty("marketing")
     private Marketing marketing;
 
-    public WeChatAccessToken getWeChatAccessToken() {
-        return weChatAccessToken;
+    public Map<String, Object> getWeChatConfig() {
+        return weChatConfig;
     }
 
-    public void setWeChatAccessToken(WeChatAccessToken weChatAccessToken) {
-        this.weChatAccessToken = weChatAccessToken;
+    public void setWeChatConfig(Map<String, Object> weChatConfig) {
+        this.weChatConfig = weChatConfig;
     }
+
 
     public Product getProduct() {
         return product;
