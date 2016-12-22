@@ -34,10 +34,13 @@ yunsoo:
       base_url: http://localhost:4180/
     key_api:
       base_url: http://localhost:4280/
+    third_api:
+      base_url: http://localhost:4480/
   access_token:
     expires_minutes: 5256000
     hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU
   cache:
     type: redis
+    default_expire_time: 600 #seconds
     redis:
       host: test-yunsoo-cache.tpcoru.0001.cnn1.cache.amazonaws.com.cn
