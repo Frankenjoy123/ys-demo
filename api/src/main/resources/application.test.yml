@@ -31,7 +31,7 @@ yunsoo:
     di_api:
       base_url: http://localhost:4380/
     third_api:
-      base_url: http://localhost:4480/
+      base_url: http://dev-api.yunsu.co:4480/
 
   product_key_base_url: https://t-m.yunsu.co:9443/
   cache:
