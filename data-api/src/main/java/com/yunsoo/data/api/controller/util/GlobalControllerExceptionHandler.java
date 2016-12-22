@@ -5,7 +5,6 @@ import com.yunsoo.common.error.ErrorResult;
 import com.yunsoo.common.error.TraceInfo;
 import com.yunsoo.common.web.error.RestErrorResultCode;
 import com.yunsoo.common.web.exception.RestErrorResultException;
-import com.yunsoo.data.service.service.exception.ServiceException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -91,26 +90,6 @@ public class GlobalControllerExceptionHandler {
         ErrorResult result = new ErrorResult(RestErrorResultCode.METHOD_NOT_ALLOWED, "method not allowed");
         log.info(String.format("[from: %s, status: 405, message: %s]", FROM, ex.getMessage()));
         return appendTraceInfo(result, ex);
-    }
-
-    @ExceptionHandler(ServiceException.class)
-    @ResponseBody
-    public ResponseEntity<ErrorResult> handleServiceException(HttpServletRequest req, ServiceException ex) {
-        HttpStatus status;
-        ErrorResult result;
-        ServiceException.Type type = ex.getType();
-        switch (type) {
-            case NotFound:
-                status = HttpStatus.NOT_FOUND;
-                result = new ErrorResult(RestErrorResultCode.NOT_FOUND, ex.getMessage());
-                break;
-            case InternalServerError:
-            default:
-                status = HttpStatus.INTERNAL_SERVER_ERROR;
-                result = new ErrorResult(RestErrorResultCode.INTERNAL_SERVER_ERROR, ex.getMessage());
-        }
-        log.info(String.format("[from: %s, status: %s, message: %s]", FROM, status, result));
-        return new ResponseEntity<>(appendTraceInfo(result, ex), status);
     }
 
     //500

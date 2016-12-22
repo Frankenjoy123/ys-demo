@@ -6,10 +6,6 @@ spring:
 
 yunsoo:
   environment: dev
-  aws:
-    region: cn-north-1
-    s3:
-      bucket_name: dev-yunsoo
 
 jdbc:
   master:
