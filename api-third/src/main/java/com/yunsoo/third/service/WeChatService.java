@@ -184,7 +184,7 @@ public class WeChatService {
         else
             config.setNoncestr(nonceStr);
         config.setTimestamp(new DateTime().getMillis());
-        ThirdWeChatAccessTokenEntity token = weChatAccessTokenRepository.findTop1ByAppIdOrderByUpdatedDateTimeDesc(appId);
+        ThirdWeChatAccessTokenEntity token = getAccessTokenFromDB(appId, null);
         String jsapi_ticket = token.getJsapiTicket();
         String param = "jsapi_ticket=" + jsapi_ticket + "&noncestr=" + config.getNoncestr() + "&timestamp=" + config.getTimestamp() + "&url=" + url;
         config.setSignature(HashUtils.sha1HexString(param));

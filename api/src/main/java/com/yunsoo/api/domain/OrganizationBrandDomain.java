@@ -119,7 +119,7 @@ public class OrganizationBrandDomain {
                                                              String searchText,
                                                              Pageable pageable) {
         Integer page, total, count;
-        List<OrgBrandObject> list = getOrgBrandObjectPaged(carrierId, null, orgName, categoryId, createdDateTimeGE, createdDateTimeLE, searchText, null).getContent();
+        List<OrgBrandObject> list = getOrgBrandObjectPaged(carrierId, null, orgName, categoryId, createdDateTimeGE, createdDateTimeLE, searchText, pageable).getContent();
         List<String> ids = list.stream().map(OrgBrandObject::getOrgId).collect(Collectors.toList());
         Map<String, Organization> organizationMap = authOrganizationService.getByIdsIn(ids)
                 .stream().collect(Collectors.toMap(Organization::getId, o -> o));
