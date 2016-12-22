@@ -62,11 +62,6 @@ public class WeChatService {
     @Value("${yunsoo.wechat.mch_id}")
     private String mchId;
 
-    @Value("${yunsoo.wechat.base_url}")
-    private String baseUrl;
-
-
-
     private RestClient weChatClient;
     private RestTemplate weChatMchClient;
 
