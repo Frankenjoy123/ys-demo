@@ -2,6 +2,7 @@ package com.yunsoo.third.api;
 
 import com.yunsoo.common.exception.ErrorResultException;
 import com.yunsoo.common.web.exception.BadRequestException;
+import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.third.dao.entity.ThirdWeChatAccessTokenEntity;
 import com.yunsoo.third.dao.util.IpUtils;
 import com.yunsoo.third.dto.wechat.*;
@@ -29,6 +30,16 @@ public class WeChatController {
     public WeChatUser getWeChatWebUser(@RequestParam("access_token") String accessToken, @RequestParam("openid") String openId) {
         return weChatService.getUserInfo(accessToken, openId);
     }
+
+    @RequestMapping(value = "user/{openid}", method = RequestMethod.GET)
+    public WeChatUser getWeChatUser(@PathVariable("openid") String openId) {
+        WeChatUser user = weChatService.getUserInfo(openId);
+        if(user == null)
+            throw new NotFoundException("wechat user not existed");
+
+        return user;
+    }
+
 
     @RequestMapping(value = "web_token", method = RequestMethod.GET)
     public WeChatWebAccessToken getWeChatWebAccessToken(@RequestParam("code") String code, HttpServletRequest request) {

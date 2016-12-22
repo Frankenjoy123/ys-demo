@@ -138,6 +138,18 @@ public class WeChatService {
 
     }
 
+    public WeChatUser getUserInfo(String openId){
+        ThirdWeChatAccessTokenEntity entity = getAccessTokenFromDB(null,null);
+        WeChatUser user = weChatClient.get("cgi-bin/user/info?access_token={token}&openid={openid}&lang=zh_CN",
+                WeChatUser.class, entity.getAccessToken(), openId);
+
+        if(user.getErrorCode() == 0)
+            return user;
+        else
+            return null;
+
+    }
+
 
     public WeChatWebAccessToken getWebAccessToken(String code) {
         String url = "sns/oauth2/access_token?" +
