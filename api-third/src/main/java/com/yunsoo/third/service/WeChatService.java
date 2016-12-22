@@ -42,7 +42,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Admin on 6/29/2016.
+ * Created by:   Admin
+ * Created on:   6/29/2016
+ * Descriptions:
  */
 @Service
 public class WeChatService {
@@ -59,11 +61,6 @@ public class WeChatService {
 
     @Value("${yunsoo.wechat.mch_id}")
     private String mchId;
-
-    @Value("${yunsoo.wechat.base_url}")
-    private String baseUrl;
-
-
 
     private RestClient weChatClient;
     private RestTemplate weChatMchClient;
@@ -159,8 +156,6 @@ public class WeChatService {
             }
 
             return token;
-        } catch (UnsupportedEncodingException e) {
-            logger.error(e);
         } catch (IOException e) {
             logger.error(e);
         }
@@ -235,9 +230,7 @@ public class WeChatService {
                 else
                     logger.error("get wechat unified pay error: code: " + orderResult.getErrCode() + ", message: " + orderResult.getErrCodeDes());
             }
-        } catch (JAXBException e) {
-            logger.error(e);
-        } catch (UnsupportedEncodingException e) {
+        } catch (JAXBException | UnsupportedEncodingException e) {
             logger.error(e);
         }
 
@@ -265,9 +258,7 @@ public class WeChatService {
                 else
                     logger.error("get wechat pay result error: code: " + payResult.getErrCode() + ", message: " + payResult.getErrCodeDes());
             }
-        } catch (JAXBException e) {
-            logger.error(e);
-        } catch (UnsupportedEncodingException e) {
+        } catch (JAXBException | UnsupportedEncodingException e) {
             logger.error(e);
         }
 
@@ -293,10 +284,8 @@ public class WeChatService {
             }
 
 
-        } catch (JAXBException e) {
+        } catch (JAXBException | UnsupportedEncodingException e) {
             logger.error(e);
-        } catch (UnsupportedEncodingException ex) {
-            logger.error(ex);
         }
 
 
@@ -355,9 +344,7 @@ public class WeChatService {
                 else
                     logger.error("send wechat redpack error: code: " + requestResult.getErrCode() + ", message: " + requestResult.getErrCodeDes());
             }
-        } catch (JAXBException e) {
-            logger.error(e);
-        } catch (UnsupportedEncodingException e) {
+        } catch (JAXBException | UnsupportedEncodingException e) {
             logger.error(e);
         }
 
@@ -367,11 +354,8 @@ public class WeChatService {
 
     private void initWeChatMchClient(String keyFile, String mchId) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyManagementException {
         KeyStore keyStore  = KeyStore.getInstance("PKCS12");
-        FileInputStream instream = new FileInputStream(new File(keyFile));
-        try {
+        try (FileInputStream instream = new FileInputStream(new File(keyFile))) {
             keyStore.load(instream, mchId.toCharArray());
-        } finally {
-            instream.close();
         }
 
         // Trust own CA and all self-signed certs
@@ -404,8 +388,7 @@ public class WeChatService {
     public WeChatOpenIdList getOpenIdList(WeChatAccessToken token){
         if(token != null) {
             String url = "cgi-bin/user/get?access_token={token}";
-            WeChatOpenIdList list = weChatClient.get(url, WeChatOpenIdList.class, token.getAccessToken());
-            return list;
+            return weChatClient.get(url, WeChatOpenIdList.class, token.getAccessToken());
         }
 
         return null;

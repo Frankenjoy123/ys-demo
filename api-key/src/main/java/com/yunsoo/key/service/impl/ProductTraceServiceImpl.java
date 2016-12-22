@@ -31,7 +31,7 @@ public class ProductTraceServiceImpl implements ProductTraceService {
     public List<ProductTrace> getByKey(String key) {
 
         ProductTraceModel traceModel = productTraceDao.getByKey(key);
-        if(traceModel == null)
+        if (traceModel == null)
             return null;
 
         return convertToTraceList(traceModel);
@@ -43,7 +43,7 @@ public class ProductTraceServiceImpl implements ProductTraceService {
         List<ProductTraceModel> traceModelList = productTraceDao.batchLoad(keys);
         traceModelList.forEach(model -> {
             List<ProductTrace> convertTraceList = convertToTraceList(model);
-            if(convertTraceList != null)
+            if (convertTraceList != null)
                 traceList.addAll(convertTraceList);
         });
 
@@ -63,7 +63,7 @@ public class ProductTraceServiceImpl implements ProductTraceService {
         List<ProductTraceModel> modelList = new ArrayList<>();
         Map<String, ProductTraceModel> modelMap = new HashMap<>();
         traceList.forEach(trace -> {
-            if(modelMap.containsKey(trace.getProductKey())){
+            if (modelMap.containsKey(trace.getProductKey())) {
                 ProductTraceModel traceModel = modelMap.get(trace.getProductKey());
                 traceModel.getActionList().add(trace.getAction());
                 traceModel.getDateTimeList().add(trace.getCreatedDateTime().getMillis());
@@ -71,38 +71,35 @@ public class ProductTraceServiceImpl implements ProductTraceService {
                 traceModel.getSourceTypeList().add(trace.getSourceType());
                 traceModel.getCreatedSourceIdList().add(trace.getCreatedSourceId());
                 traceModel.getCreatedSourceTypeList().add(trace.getCreatedSourceType());
-            }
-            else{
+            } else {
                 ProductTraceModel traceModel = new ProductTraceModel(trace);
                 modelMap.put(trace.getProductKey(), traceModel);
             }
         });
 
-        modelMap.keySet().forEach(key->{
+        modelMap.keySet().forEach(key -> {
             ProductTraceModel model = modelMap.get(key);
 
             ProductTraceModel traceModel = productTraceDao.getByKey(key);
-            if(traceModel == null){
+            if (traceModel == null) {
                 modelList.add(model);
-            }
-            else{
+            } else {
 
                 int length = traceModel.getActionList().size();
-                String latestCreatedSourceId = traceModel.getCreatedSourceIdList().get(length-1);
-                String latestCreatedSourceType = traceModel.getSourceTypeList().get(length-1);
+                String latestCreatedSourceId = traceModel.getCreatedSourceIdList().get(length - 1);
+                String latestCreatedSourceType = traceModel.getSourceTypeList().get(length - 1);
 
                 String firstCreatedSourceId = model.getCreatedSourceIdList().get(0);
                 String firstCreatedSourceType = model.getCreatedSourceTypeList().get(0);
 
-                if(latestCreatedSourceId.equals(firstCreatedSourceId) && latestCreatedSourceType.equals(firstCreatedSourceType)){
-                    traceModel.getActionList().remove(length-1);
+                if (latestCreatedSourceId.equals(firstCreatedSourceId) && latestCreatedSourceType.equals(firstCreatedSourceType)) {
+                    traceModel.getActionList().remove(length - 1);
                     traceModel.getDateTimeList().remove(length - 1);
                     traceModel.getSourceIdList().remove(length - 1);
                     traceModel.getSourceTypeList().remove(length - 1);
                     traceModel.getCreatedSourceIdList().remove(length - 1);
-                    traceModel.getCreatedSourceTypeList().remove(length-1);
+                    traceModel.getCreatedSourceTypeList().remove(length - 1);
                 }
-
 
                 traceModel.getActionList().addAll(model.getActionList());
                 traceModel.getDateTimeList().addAll(model.getDateTimeList());
@@ -123,16 +120,16 @@ public class ProductTraceServiceImpl implements ProductTraceService {
     public void batchSaveInMySql(List<ProductTrace> traceList) {
         //save in db
         int length = traceList.size();
-        List<String> idList = traceList.stream().map(trace -> trace.getId()).collect(Collectors.toList());
+        List<String> idList = traceList.stream().map(ProductTrace::getId).collect(Collectors.toList());
         List<ProductTraceEntity> entities = repository.findByIdIn(idList);
-        entities.forEach(entity->{
-            for(int i=0; i<length; i++){
+        entities.forEach(entity -> {
+            for (int i = 0; i < length; i++) {
                 ProductTrace trace = traceList.get(i);
-                if(trace.getId().equals(entity.getId())){
-                    if(trace.getProductCount() != null) {
-                         entity.setProductCount(trace.getProductCount());
+                if (trace.getId().equals(entity.getId())) {
+                    if (trace.getProductCount() != null) {
+                        entity.setProductCount(trace.getProductCount());
                     }
-                    if(trace.getStatusCode()!=null)
+                    if (trace.getStatusCode() != null)
                         entity.setStatusCode(trace.getStatusCode());
 
                     break;
@@ -145,13 +142,12 @@ public class ProductTraceServiceImpl implements ProductTraceService {
     }
 
 
-
     @Override
     public ProductTrace saveInMySql(ProductTrace trace) {
         ProductTraceEntity entity = new ProductTraceEntity(trace);
 
         ProductTraceEntity existEntity = repository.findByProductKeyAndCreatedSourceIdAndCreatedSourceType(trace.getProductKey(), trace.getCreatedSourceId(), trace.getCreatedSourceType());
-        if(existEntity != null)
+        if (existEntity != null)
             repository.delete(existEntity);
 
         repository.save(entity);
@@ -170,16 +166,16 @@ public class ProductTraceServiceImpl implements ProductTraceService {
         return repository.sumProduct(sourceId, sourceType, action, start, end);
     }
 
-    private List<ProductTrace> convertToTraceList(ProductTraceModel traceModel){
+    private List<ProductTrace> convertToTraceList(ProductTraceModel traceModel) {
         List<ProductTrace> traceList = new ArrayList<>();
-        int size = traceModel.getActionList() == null? 0 : traceModel.getActionList().size();
+        int size = traceModel.getActionList() == null ? 0 : traceModel.getActionList().size();
 
-        if(traceModel.getDateTimeList() == null || size != traceModel.getDateTimeList().size()
+        if (traceModel.getDateTimeList() == null || size != traceModel.getDateTimeList().size()
                 || traceModel.getSourceIdList() == null || size != traceModel.getSourceIdList().size()
                 || traceModel.getSourceTypeList() == null || size != traceModel.getSourceTypeList().size())
             return null;
 
-        for(int i=0; i<size; i++){
+        for (int i = 0; i < size; i++) {
             ProductTrace trace = new ProductTrace();
             trace.setProductKey(traceModel.getProductKey());
             trace.setAction(traceModel.getActionList().get(i));
@@ -194,12 +190,11 @@ public class ProductTraceServiceImpl implements ProductTraceService {
         return traceList;
     }
 
-    private ProductTraceModel toModel(ProductTrace trace){
+    private ProductTraceModel toModel(ProductTrace trace) {
         ProductTraceModel traceModel = productTraceDao.getByKey(trace.getProductKey());
-        if(traceModel == null){
+        if (traceModel == null) {
             new ProductTraceModel(trace);
-        }
-        else{
+        } else {
             traceModel.getActionList().add(trace.getAction());
             traceModel.getDateTimeList().add(trace.getCreatedDateTime().getMillis());
             traceModel.getSourceIdList().add(trace.getSourceId());

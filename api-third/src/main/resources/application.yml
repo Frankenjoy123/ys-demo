@@ -34,14 +34,10 @@ logging:
 yunsoo:
   debug: true
   environment: dev
-  client:
-    data_api:
-      base_url: http://dev-api.yunsu.co:3080/
   wechat:
     app_id: wxe3804cb3dff62fe3
     app_secret: 7d553f1bbfbe9f86f973bce5d0ee7852
     private_key: H97q3vDa6z2rsRppSyQW60aeaewED23d
-    base_url: http://dev.yunsu.co/wechat/  # to-do: need to be replaced
     mch_id: 1405965002
     key_file: d:/wx_cert/apiclient_cert.p12
   juhe:

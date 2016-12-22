@@ -47,6 +47,24 @@ public class SerialNoGenerator {
         totalCount = end - start + 1;
     }
 
+    public SerialNoGenerator(String prefix, String suffix, int serialLength, int start, int end) {
+        if (serialLength < 0 || start < 0 || start > end || end > Math.pow(10, serialLength) - 1) {
+            throw new IllegalArgumentException();
+        }
+        this.prefix = prefix == null ? "" : prefix;
+        this.suffix = suffix == null ? "" : suffix;
+        this.serialLength = serialLength;
+        this.start = start;
+        this.end = end;
+        this.totalLength = this.prefix.length() + serialLength + this.suffix.length();
+        this.totalCount = end - start + 1;
+        this.pattern = String.format("%s[%0" + serialLength + "d-%0" + serialLength + "d]%s", this.prefix, this.start, this.end, this.suffix);
+    }
+
+    public SerialNoGenerator(String prefix, String suffix, int serialLength, int start) {
+        this(prefix, suffix, serialLength, start, (int) Math.pow(10, serialLength) - 1);
+    }
+
     public String getPattern() {
         return pattern;
     }

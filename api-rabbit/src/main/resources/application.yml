@@ -19,7 +19,7 @@ yunsoo:
   environment: dev
   client:
     auth_api:
-      base_url: http://dev.yunsu.co/api/auth/
+      base_url: http://localhost:6180/
       system_account_access_token: IGHXxgXYIO3yaWb3zvWgZW1smloFu42snAB0lG9KRDV8MW40NzF0NnBrLDAwMTAwMDAwMDAwMDAwMDAwMDAsMmswcjFsNTVpMnJzNTU0NHd6NQ
     data_api:
       base_url: http://dev-api.yunsu.co:3080/
@@ -32,8 +32,6 @@ yunsoo:
   access_token:
     expires_minutes: 5256000
     hash_salt: CGicLqNpyxpGEpDLI3UtWCzgfwczfZqU
-  wechat:
-    redpack_url: http://dev-api.yunsu.co:4480/wechat/redpack
 
 ---
 spring:
@@ -57,10 +55,9 @@ yunsoo:
       base_url: http://dev-api.yunsu.co:4180/
     key_api:
       base_url: http://dev-api.yunsu.co:4280/
+    third_api:
+      base_url: http://dev-api.yunsu.co:4480/
   cache.type: local
-  wechat:
-    redpack_url: http://dev-api.yunsu.co:4480/wechat/redpack
-
 
 ---
 spring:
