@@ -59,8 +59,8 @@ public class DrawAnalysisRepositoryImpl implements DrawAnalysisRepository {
     @Override
     public List<DrawReportEntity> getDrawPrizeRankBy(String marketingId, DateTime startDateTime, DateTime endDateTime) {
         HashMap<String, Object> parameters = new HashMap<>();
-        String sql = "SELECT ev.value as rule_id, rl.comments, count(1) as count FROM di.user_event ev " +
-                "inner join di.mkt_draw_rule rl on ev.value=rl.id and rl.is_equal=0 " +
+        String sql = "SELECT ev.value as rule_id, rl.comments, count(1) as count FROM  user_event ev " +
+                "inner join  mkt_draw_rule rl on ev.value=rl.id and rl.is_equal=0 " +
                 "where rl.marketing_id=:marketingId  " ;
 
         parameters.put("marketingId",marketingId);

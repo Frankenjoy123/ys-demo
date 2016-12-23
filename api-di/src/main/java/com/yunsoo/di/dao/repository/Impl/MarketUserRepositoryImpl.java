@@ -34,8 +34,8 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
     public List<UserProfileTagCountEntity> queryMarketUserAreaAnalysis(String orgId, DateTime startTime, DateTime endTime, String marketingId) {
         HashMap<String, Object> parameters = new HashMap<>();
 
-        String sql = "SELECT (tag.name) as area, count(1) FROM di.mkt_draw_record dr " +
-                "left join di.di_event e on dr.scan_record_id = e.event_id and e.name='scan' "+
+        String sql = "SELECT (tag.name) as area, count(1) FROM  mkt_draw_record dr " +
+                "left join  di_event e on dr.scan_record_id = e.event_id and e.name='scan' "+
                 "left join lu_province_city pc on e.location_id = pc.id " +
                 "left join lu_tag tag on pc.tag_id = tag.id " +
                 "where org_id = :orgId";
@@ -82,11 +82,11 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
 
         HashMap<String, Object> parameters = new HashMap<>();
 
-        String sql = "SELECT ua.os, count(1) FROM di.mkt_draw_record dr " +
+        String sql = "SELECT ua.os, count(1) FROM  mkt_draw_record dr " +
 
-                "left join di.di_event e on dr.scan_record_id = e.event_id and e.name='scan' "+
+                "left join  di_event e on dr.scan_record_id = e.event_id and e.name='scan' "+
 
-                "left join di.lu_user_agent ua on e.user_agent_id=ua.id "+
+                "left join  lu_user_agent ua on e.user_agent_id=ua.id "+
 
                 "where org_id = :orgId ";
 
@@ -140,9 +140,9 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
     public List<UserProfileTagCountEntity> queryMarketUserGenderAnalysis(String orgId, DateTime startTime, DateTime endTime, String marketingId) {
         HashMap<String, Object> parameters = new HashMap<>();
 
-        String sql = "SELECT ifnull(sex, 2) as gender, count(1) FROM di.mkt_draw_record dr " +
-                "inner join di.di_event e on e.event_id=dr.scan_record_id and e.name='scan' "+
-                "inner JOIN di.di_user u ON e.user_id=u.user_id and e.ys_id=u.ys_id and e.org_id=u.org_id "+
+        String sql = "SELECT ifnull(sex, 2) as gender, count(1) FROM  mkt_draw_record dr " +
+                "inner join  di_event e on e.event_id=dr.scan_record_id and e.name='scan' "+
+                "inner JOIN  di_user u ON e.user_id=u.user_id and e.ys_id=u.ys_id and e.org_id=u.org_id "+
                 "where u.org_id = :orgId ";
 
         parameters.put("orgId", orgId);
@@ -198,8 +198,8 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
         HashMap<String, Object> parameters = new HashMap<>();
 
         String sql = "select hour(convert_tz(dr.created_datetime,'+00:00','+08:00')) as hourNum, count(1) " +
-                "FROM di.mkt_draw_record dr " +
-                "inner join di.di_event e on dr.scan_record_id = e.event_id and e.name='scan' "+
+                "FROM  mkt_draw_record dr " +
+                "inner join  di_event e on dr.scan_record_id = e.event_id and e.name='scan' "+
                 "where e.org_id = :orgId";
 
         parameters.put("orgId", orgId);
@@ -285,8 +285,8 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
     public List<UserProfileLocationCountEntity> queryMarketUserLocationAnalysis(String orgId, DateTime startTime, DateTime endTime, String marketingId) {
         HashMap<String, Object> parameters = new HashMap<>();
         String sql = "select case when province is null or province ='' then '未公开省份'  else  province END as provinceA, case when city is null or city = '' then '未公开城市' else city END as cityA, count(1) " +
-                "FROM di.mkt_draw_record dr " +
-                "left join di.di_event e on dr.scan_record_id = e.event_id and e.name='scan' "+
+                "FROM  mkt_draw_record dr " +
+                "left join  di_event e on dr.scan_record_id = e.event_id and e.name='scan' "+
                 "left JOIN  lu_province_city pc ON e.location_id=pc.id where e.org_id = :orgId " ;
 
         parameters.put("orgId", orgId);
@@ -329,7 +329,7 @@ public class MarketUserRepositoryImpl implements MarketUserRepository {
 
     @Override
     public List<MarketUserLocationAnalysisEntity> queryRewardLocationReport(String marketingId) {
-        String sql = "select lu.province, lu.city, count(1) from di.mkt_draw_record dr LEFT JOIN di.di_event ev ON dr.scan_record_id=ev.event_id  and ev.name='scan' "
+        String sql = "select lu.province, lu.city, count(1) from  mkt_draw_record dr LEFT JOIN  di_event ev ON dr.scan_record_id=ev.event_id  and ev.name='scan' "
                 +"left join lu_province_city lu on ev.location_id = lu.id " +
                 " where dr.isPrized = 1 and dr.marketing_id =:marketingId " +
                 " group by lu.id ";

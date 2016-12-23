@@ -122,11 +122,11 @@ public class UserProfileRepositoryImpl implements UserProfileRepository{
     public List<UserProfileTagCountEntity> queryUserProfileDeviceUsage(String orgId) {
         HashMap<String, Object> parameters = new HashMap<>();
 
-        String sql = "SELECT ua.os, count(1) FROM di.di_user u " +
+        String sql = "SELECT ua.os, count(1) FROM  di_user u " +
 
-                "left join di.di_event ev on u.latest_scan_id=ev.event_id  and ev.name='scan' "+
+                "left join  di_event ev on u.latest_scan_id=ev.event_id  and ev.name='scan' "+
 
-                "left join di.lu_user_agent ua on ev.user_agent_id=ua.id "+
+                "left join  lu_user_agent ua on ev.user_agent_id=ua.id "+
 
                 "where u.org_id = :orgId group by ua.os;";
 
@@ -164,7 +164,7 @@ public class UserProfileRepositoryImpl implements UserProfileRepository{
     public List<UserProfileTagCountEntity> queryUserProfileGenderUsage(String orgId) {
         HashMap<String, Object> parameters = new HashMap<>();
 
-        String sql = "SELECT ifnull(sex, 2) as gender, count(1) FROM di.di_user " +
+        String sql = "SELECT ifnull(sex, 2) as gender, count(1) FROM  di_user " +
                 "where org_id = :orgId group by gender";
 
         parameters.put("orgId", orgId);
@@ -210,7 +210,7 @@ public class UserProfileRepositoryImpl implements UserProfileRepository{
     public List<UserProfileTagCountEntity> queryUserProfileAreaReport(String orgId) {
         HashMap<String, Object> parameters = new HashMap<>();
 
-        String sql = "SELECT (tag.name) as area, count(1) FROM di.di_user u " +
+        String sql = "SELECT (tag.name) as area, count(1) FROM  di_user u " +
                 "left join lu_province_city pc on u.location_id = pc.id " +
                 "left join lu_tag tag on pc.tag_id = tag.id " +
                 "where org_id = :orgId group by area;";
