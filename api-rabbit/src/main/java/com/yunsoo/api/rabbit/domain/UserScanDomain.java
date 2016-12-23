@@ -82,4 +82,13 @@ public class UserScanDomain {
         });
     }
 
+    public UserScanRecordObject getLatestScanRecordByProductKey(String productKey) {
+        try {
+            return dataApiClient.get("userScanRecord/key/{key}", UserScanRecordObject.class, productKey);
+        }
+        catch (Exception e){
+            return null;
+        }
+    }
+
 }

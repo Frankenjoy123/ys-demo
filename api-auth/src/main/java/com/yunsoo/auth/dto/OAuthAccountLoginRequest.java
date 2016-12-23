@@ -16,27 +16,15 @@ public class OAuthAccountLoginRequest {
     @JsonProperty("login_token")
     private String loginToken;
 
+    @JsonProperty("oauth_token")
+    private String oauthToken;
 
-    @JsonProperty("oauth_name")
-    private String oauthName;
-
-    @JsonProperty("oauth_gravatar_url")
-    private String oauthGravatarUrl;
-
-    public String getOauthName() {
-        return oauthName;
+    public String getOauthToken() {
+        return oauthToken;
     }
 
-    public void setOauthName(String oauthName) {
-        this.oauthName = oauthName;
-    }
-
-    public String getOauthGravatarUrl() {
-        return oauthGravatarUrl;
-    }
-
-    public void setOauthGravatarUrl(String oauthGravatarUrl) {
-        this.oauthGravatarUrl = oauthGravatarUrl;
+    public void setOauthToken(String oauthToken) {
+        this.oauthToken = oauthToken;
     }
 
     public String getOauthOpenid() {

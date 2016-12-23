@@ -78,6 +78,16 @@ public class UserScanRecordController {
         return entityPage.getContent().stream().map(this::toUserScanRecordObject).collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "key/{key}", method = RequestMethod.GET)
+    public UserScanRecordObject getLatest(@PathVariable(value = "key") String productKey) {
+        UserScanRecordEntity entity = userScanRecordRepository.findTop1ByProductKeyOrderByCreatedDateTimeDesc(productKey);
+        if (entity == null) {
+            throw new NotFoundException(String.format("userScanRecord not found by [id: %s]", productKey));
+        }
+        return toUserScanRecordObject(entity);
+    }
+
+
 
     private UserScanRecordObject toUserScanRecordObject(UserScanRecordEntity entity) {
         if (entity == null) {

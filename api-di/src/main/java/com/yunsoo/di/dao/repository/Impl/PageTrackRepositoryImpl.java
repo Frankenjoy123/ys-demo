@@ -23,7 +23,7 @@ public class PageTrackRepositoryImpl implements PageViewAnalysisRepository {
 
     @Override
     public List<PageViewDailyEntity> query(String hostUrl, DateTime startDateTime, DateTime endDateTime) {
-        String sql = "SELECT date(convert_tz(created_datetime, '+00:00','+00:08')) as view_date, count(1) as pv, count(distinct ys_id) as uv FROM di.page_view\n" +
+        String sql = "SELECT date(convert_tz(created_datetime, '+00:00','+00:08')) as view_date, count(1) as pv, count(distinct ys_id) as uv FROM  page_view\n" +
                 "where url like :hostUrl and created_datetime >=:ds and created_datetime < :de \n" +
                 "group by view_date\n";
         HashMap<String, Object> parameters = new HashMap<>();
@@ -49,7 +49,7 @@ public class PageTrackRepositoryImpl implements PageViewAnalysisRepository {
 
     @Override
     public int[] totalPageView(String hostUrl) {
-        String sql = "SELECT count(1) as pv, count(distinct ys_id) as uv FROM di.page_view\n" +
+        String sql = "SELECT count(1) as pv, count(distinct ys_id) as uv FROM  page_view\n" +
                 "where url like :hostUrl";
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("hostUrl",hostUrl +"%");

@@ -15,8 +15,8 @@ public enum CacheType {
     PRODUCT_CATEGORY("product_category"),
     PERMISSION("permission"),
     DOMAIN_DIRECTORY("domain_directory"),
-    TAGS("market_tags");
-
+    TAGS("market_tags"),
+    PRODUCTKEYSCENARIO("product_key_scenario");
 
     private String typeName;
 

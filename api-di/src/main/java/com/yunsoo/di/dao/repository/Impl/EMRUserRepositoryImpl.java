@@ -28,8 +28,8 @@ public class EMRUserRepositoryImpl implements EMRUserRepository {
     @Override
     public int countUsersByFilter(String orgId, Boolean sex, String phone, String name, String province, String city, Integer ageStart, Integer ageEnd, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, List<String> userTags, boolean userTagsIgnored, Boolean wxUser) {
         String sql = "select count(DISTINCT u.user_id, u.ys_id, u.org_id) " +
-                "from di.di_user u left join di.lu_province_city pc on u.location_id = pc.id left join di.user_tag tag on tag.org_id=u.org_id and (tag.user_id = u.user_id and tag.ys_id = u.ys_id) " +
-                "LEFT JOIN  di.di_event ev on u.latest_scan_id=ev.event_id and ev.name='scan' LEFT JOIN di.lu_user_agent ua ON ua.id=ev.user_agent_id "+
+                "from  di_user u left join  lu_province_city pc on u.location_id = pc.id left join  user_tag tag on tag.org_id=u.org_id and (tag.user_id = u.user_id and tag.ys_id = u.ys_id) " +
+                "LEFT JOIN   di_event ev on u.latest_scan_id=ev.event_id and ev.name='scan' LEFT JOIN  lu_user_agent ua ON ua.id=ev.user_agent_id "+
                 "where u.org_id =:orgId ";
 
         HashMap<String, Object> parameters = new HashMap<>();
@@ -102,8 +102,8 @@ public class EMRUserRepositoryImpl implements EMRUserRepository {
                                               boolean userTagsIgnored, Boolean wxUser, Pageable pageable) {
 
         String sql = "select DISTINCT u.*, pc.province, pc.city, ev.ip, ua.os " +
-                "from di.di_user u left join di.lu_province_city pc on u.location_id = pc.id left join di.user_tag tag on tag.org_id=u.org_id and (tag.user_id = u.user_id and tag.ys_id = u.ys_id) " +
-                "LEFT JOIN  di.di_event ev on u.latest_scan_id=ev.event_id and ev.name='scan' LEFT JOIN di.lu_user_agent ua ON ua.id=ev.user_agent_id "+
+                "from  di_user u left join  lu_province_city pc on u.location_id = pc.id left join  user_tag tag on tag.org_id=u.org_id and (tag.user_id = u.user_id and tag.ys_id = u.ys_id) " +
+                "LEFT JOIN   di_event ev on u.latest_scan_id=ev.event_id and ev.name='scan' LEFT JOIN  lu_user_agent ua ON ua.id=ev.user_agent_id "+
                 "where u.org_id =:orgId ";
 
         HashMap<String, Object> parameters = new HashMap<>();
@@ -202,8 +202,8 @@ public class EMRUserRepositoryImpl implements EMRUserRepository {
     @Override
     public EMRUserEntity getUser(String orgId, String userId, String ysId) {
         String sql = "select DISTINCT u.*, pc.province, pc.city, ev.ip, ua.os " +
-                "from di.di_user u left join di.lu_province_city pc on u.location_id = pc.id " +
-                "LEFT JOIN  di.di_event ev on u.latest_scan_id=ev.event_id and ev.name='scan' LEFT JOIN di.lu_user_agent ua ON ua.id=ev.user_agent_id "+
+                "from  di_user u left join  lu_province_city pc on u.location_id = pc.id " +
+                "LEFT JOIN   di_event ev on u.latest_scan_id=ev.event_id and ev.name='scan' LEFT JOIN  lu_user_agent ua ON ua.id=ev.user_agent_id "+
                 "where u.org_id =:orgId ";
 
         HashMap<String, Object> parameters = new HashMap<>();

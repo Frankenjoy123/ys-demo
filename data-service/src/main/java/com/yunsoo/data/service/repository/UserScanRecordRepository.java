@@ -24,4 +24,6 @@ public interface UserScanRecordRepository extends FindOneAndSaveRepository<UserS
             "(o.productKeyBatchId = :productKeyBatchId) ")
     Long countByBatchId(@Param("productKeyBatchId") String productKeybatchId);
 
+    UserScanRecordEntity findTop1ByProductKeyOrderByCreatedDateTimeDesc(String productKey);
+
 }

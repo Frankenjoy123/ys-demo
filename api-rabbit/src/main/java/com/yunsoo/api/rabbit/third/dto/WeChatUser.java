@@ -1,4 +1,4 @@
-package com.yunsoo.auth.dto;
+package com.yunsoo.api.rabbit.third.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

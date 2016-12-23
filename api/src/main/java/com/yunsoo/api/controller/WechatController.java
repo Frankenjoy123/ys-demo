@@ -3,10 +3,7 @@ package com.yunsoo.api.controller;
 import com.yunsoo.api.Constants;
 import com.yunsoo.api.auth.service.OAuthAccountService;
 import com.yunsoo.api.domain.WeChatAPIDomain;
-import com.yunsoo.api.dto.OAuthAccount;
-import com.yunsoo.api.dto.WeChatAccessToken;
-import com.yunsoo.api.dto.WeChatPayRequest;
-import com.yunsoo.api.dto.WeChatUser;
+import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +36,10 @@ public class WechatController {
         return domain.getWebUser(code, detailsFlag);
     }
 
+    @RequestMapping(value = "web_token", method = RequestMethod.GET)
+    public WeChatWebAccessToken getWebToken(@RequestParam("code")String code){
+        return domain.getWebToken(code);
+    }
 
     @RequestMapping(value = "config", method = RequestMethod.GET)
     public Map getWeChatConfig(@RequestParam("url")String url){
