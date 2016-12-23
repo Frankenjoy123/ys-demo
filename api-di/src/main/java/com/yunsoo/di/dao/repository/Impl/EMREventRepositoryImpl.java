@@ -29,16 +29,16 @@ public class EMREventRepositoryImpl implements EMREventRepository {
 
         StringBuilder builder1=new StringBuilder("select ev.org_id, ev.user_id, ev.ys_id, ev.name as event_name, ev.product_base_id, ev.product_key, ev.key_batch_id, " );
         builder1.append(" 0 as is_priced, ev.event_datetime,  pc.province, pc.city, ev.ip, p.name, '' as marketing_id ");
-        builder1.append("from di.di_event ev left join di.lu_province_city pc on ev.location_id = pc.id ");
-        builder1.append("LEFT JOIN di.product_base p on p.id=ev.product_base_id ");
+        builder1.append("from  di_event ev left join  lu_province_city pc on ev.location_id = pc.id ");
+        builder1.append("LEFT JOIN  product_base p on p.id=ev.product_base_id ");
         builder1.append("where ev.org_id =:orgId  and ev.ys_id =:ysId  and ev.user_id = :userId ");
 
         StringBuilder builder2=new StringBuilder("select ev.org_id, ev.user_id, ev.ys_id, 'draw' as event_name, ev.product_base_id, ev.product_key, ev.key_batch_id, ");
         builder2.append("dr.isPrized as is_priced, dr.created_datetime as event_datetime, pc.province, pc.city, ev.ip, p.name, dr.marketing_id " );
-        builder2.append("from di.mkt_draw_record dr ");
-        builder2.append("left join di.di_event ev on dr.scan_record_id=ev.event_id ");
-        builder2.append("left join di.lu_province_city pc on ev.location_id = pc.id ");
-        builder2.append("LEFT JOIN di.product_base p on p.id=ev.product_base_id ");
+        builder2.append("from  mkt_draw_record dr ");
+        builder2.append("left join  di_event ev on dr.scan_record_id=ev.event_id ");
+        builder2.append("left join  lu_province_city pc on ev.location_id = pc.id ");
+        builder2.append("LEFT JOIN  product_base p on p.id=ev.product_base_id ");
         builder2.append("where ev.org_id =:orgId and ev.ys_id=:ysId and ev.user_id= :userId ");
 
         HashMap<String, Object> parameters = new HashMap<>();
@@ -122,15 +122,15 @@ public class EMREventRepositoryImpl implements EMREventRepository {
     @Override
     public int countEventByFilter(String orgId, String userId, String ysId, DateTime eventDateTimeStart, DateTime eventDateTimeEnd) {
         StringBuilder builder1=new StringBuilder("select count(1) " );
-        builder1.append("from di.di_event ev left join di.lu_province_city pc on ev.location_id = pc.id ");
-        builder1.append("LEFT JOIN di.product_base p on p.id=ev.product_base_id ");
+        builder1.append("from  di_event ev left join  lu_province_city pc on ev.location_id = pc.id ");
+        builder1.append("LEFT JOIN  product_base p on p.id=ev.product_base_id ");
         builder1.append("where ev.org_id =:orgId  and ev.ys_id =:ysId  and ev.user_id = :userId ");
 
         StringBuilder builder2=new StringBuilder("select count(1) ");
-        builder2.append("from di.mkt_draw_record dr ");
-        builder2.append("left join di.di_event ev on dr.scan_record_id=ev.event_id ");
-        builder2.append("left join di.lu_province_city pc on ev.location_id = pc.id ");
-        builder2.append("LEFT JOIN di.product_base p on p.id=ev.product_base_id ");
+        builder2.append("from  mkt_draw_record dr ");
+        builder2.append("left join  di_event ev on dr.scan_record_id=ev.event_id ");
+        builder2.append("left join  lu_province_city pc on ev.location_id = pc.id ");
+        builder2.append("LEFT JOIN  product_base p on p.id=ev.product_base_id ");
         builder2.append("where ev.org_id =:orgId and ev.ys_id=:ysId and ev.user_id= :userId ");
 
         HashMap<String, Object> parameters = new HashMap<>();
@@ -187,7 +187,7 @@ public class EMREventRepositoryImpl implements EMREventRepository {
 
         String sql="select ev.org_id, ev.user_id, ev.ys_id, ev.name as event_name, ev.product_base_id, ev.product_key, ev.key_batch_id,  0 as is_priced, ev.event_datetime,  pc.province, pc.city, ev.ip, p.name, '' as marketing_id  from di_event ev " +
                 "left join lu_province_city pc on ev.location_id=pc.id " +
-                "LEFT JOIN di.product_base p on p.id=ev.product_base_id "+
+                "LEFT JOIN  product_base p on p.id=ev.product_base_id "+
                 "where ev.event_id = " +
                 "(select up.scan_record_id " +
                 "from di_user_product up " +

@@ -30,7 +30,7 @@ public class JobRepositoryImpl implements JobRepository {
     public List<JobEntity> queryLatestJobs() {
        String sql = "SELECT job.JOBNAME, job.STATUS, job.ERRORS, job.REPLAYDATE, job.LOGDATE, \n" +
                "case when job.ERRORS > 0 then job.LOG_FIELD else '' end as 'error_msg' \n" +
-               "FROM di.job_log job inner join (select max(ID_JOB) as id from job_log group by JOBNAME) as LatestJob\n" +
+               "FROM  job_log job inner join (select max(ID_JOB) as id from job_log group by JOBNAME) as LatestJob\n" +
                "on job.ID_JOB = LatestJob.id order by job.REPLAYDATE";
         List<Object[]> data =  entityManager.createNativeQuery(sql).getResultList();
         List<JobEntity> list = new ArrayList<>();

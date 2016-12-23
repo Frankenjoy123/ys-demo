@@ -34,7 +34,7 @@ public class RankRepositoryImpl implements RankRepository {
 
         StringBuilder builder=new StringBuilder("select t.count , t.user_id , t.ys_id, t.org_id, u.name, pc.province , pc.city  from " +
                 "(SELECT count(1) as count, up.user_id, up.ys_id, up.org_id " +
-                "FROM di.di_user_product up where up.org_id=:orgId " );
+                "FROM  di_user_product up where up.org_id=:orgId " );
 
         if (!StringUtils.isEmpty(productBaseId)){
             builder.append(" and up.product_base_id=:productBaseId");
@@ -51,9 +51,9 @@ public class RankRepositoryImpl implements RankRepository {
 
         builder.append(" ) as t ");
 
-        builder.append(" inner join di.di_user u on u.user_id=t.user_id and u.ys_id=t.ys_id and u.org_id=:orgId " +
-                "inner join di.di_event ev on u.latest_scan_id=ev.event_id and ev.name='scan' " +
-                "inner join di.lu_province_city pc on pc.id=ev.location_id " +
+        builder.append(" inner join  di_user u on u.user_id=t.user_id and u.ys_id=t.ys_id and u.org_id=:orgId " +
+                "inner join  di_event ev on u.latest_scan_id=ev.event_id and ev.name='scan' " +
+                "inner join  lu_province_city pc on pc.id=ev.location_id " +
                 "order by count desc ");
 
         Query query = entityManager.createNativeQuery(builder.toString());
@@ -93,7 +93,7 @@ public class RankRepositoryImpl implements RankRepository {
 
         StringBuilder builder=new StringBuilder("select count(*) from ("
                 +"SELECT count(1) as count " +
-                "FROM di.di_user_product up where up.org_id=:orgId " );
+                "FROM  di_user_product up where up.org_id=:orgId " );
 
         if (!StringUtils.isEmpty(productBaseId)){
             builder.append(" and up.product_base_id=:productBaseId");
