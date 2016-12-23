@@ -9,6 +9,7 @@ import com.yunsoo.api.rabbit.key.dto.Product;
 import com.yunsoo.api.rabbit.key.service.KeyService;
 import com.yunsoo.api.rabbit.key.service.ProductService;
 import com.yunsoo.api.rabbit.third.dto.WeChatRedPackRequest;
+import com.yunsoo.api.rabbit.third.dto.WeChatUser;
 import com.yunsoo.api.rabbit.third.service.JuheService;
 import com.yunsoo.api.rabbit.third.service.WeChatService;
 import com.yunsoo.common.data.LookupCodes;
@@ -696,16 +697,83 @@ public class MarketingController {
         String key = productDomain.saveKeyToRadis(scenarioId, "");
         if(StringUtils.hasText(key)){
             Product product = productService.getProductByKey(key);
+
+            marketingDomain.getMktDrawRecordByProductKey(key);
+
             ProductKeyBatchObject keyBatchObject = productDomain.getProductKeyBatch(product.getKeyBatchId());
             UserScanRecordObject recordObject = userScanDomain.getLatestScanRecordByProductKey(key);
+            WeChatUser weChatUser = weChatService.getWeChatUser(openId);
+            MarketingObject marketingObject = marketingDomain.getMarketingById(keyBatchObject.getMarketingId());
 
-            MktDraw draw = new MktDraw();
-            draw.setMarketingId(keyBatchObject.getMarketingId());
-            draw.setOauthOpenId(openId);
-            draw.setProductBaseId(product.getProductBaseId());
-            draw.setProductKey(key);
-            draw.setScanRecordId(recordObject.getId());
+            UserObject existUser = userDomain.getUserByOpenIdAndType(openId, "wechat");
+            if(existUser == null) {
+                UserObject userObject = new UserObject();
+                userObject.setOauthOpenid(openId);
+                userObject.setOauthTypeCode("wechat");
+                userObject.setCity(weChatUser.getCity());
+                userObject.setProvince(weChatUser.getProvince());
+                userObject.setGravatarUrl(weChatUser.getImageUrl());
+                userObject.setSex(weChatUser.getSex().equals("1") ? false : true);
+                userObject.setName(weChatUser.getNickName());
+                existUser = userDomain.createUser(userObject);
+            }
+            MktDrawPrizeObject prize = new MktDrawPrizeObject();
+            prize.setPrizeAccountName(existUser.getName());
+            prize.setMarketingId(marketingObject.getId());
+            prize.setProductKey(key);
+            prize.setScanRecordId(recordObject.getId());
 
+            //save prize
+            MktDrawRecordObject record = new MktDrawRecordObject();
+            record.setOauthOpenid(openId);
+            record.setProductBaseId(product.getProductBaseId());
+            record.setProductKey(key);
+            record.setMarketingId(marketingObject.getId());
+            record.setUserId(existUser.getId());
+
+            // apply to no scan record id
+            if (recordObject == null) {
+                String tempScanRecordId = ObjectIdGenerator.getNew();
+                record.setScanRecordId(tempScanRecordId);
+                prize.setScanRecordId(tempScanRecordId);
+            }
+            else
+                record.setScanRecordId(recordObject.getId());
+
+            MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingObject.getId(), record.getScanRecordId(), key);
+
+            if (mktDrawRuleObject != null) {
+                record.setIsPrized(true);
+                prize.setPrizeTypeCode(LookupCodes.MktPrizeType.WEBCHAT);
+                prize.setPrizeAccount(openId);
+                prize.setAccountType(LookupCodes.MktPrizeType.WEBCHAT);
+
+                MktDrawRule mktDrawRule = new MktDrawRule(mktDrawRuleObject);
+
+                //save prize
+                MktDrawRecordObject saveRecord = marketingDomain.createMktDrawRecord(record);
+                prize.setDrawRuleId(mktDrawRule.getId());
+                prize.setAmount(mktDrawRule.getAmount());
+                prize.setDrawRecordId(saveRecord.getId());
+                marketingDomain.createMktDrawPrize(prize);
+
+                //send red pack
+                WeChatRedPackRequest request = new WeChatRedPackRequest();
+                request.setActionName(marketingObject.getName());
+                request.setOpenId(openId);
+                request.setPrice(mktDrawRule.getAmount());
+                request.setWishing(marketingObject.getWishes());
+                request.setRemark(marketingObject.getComments());
+                request.setId(saveRecord.getId());
+                request.setMchName("云溯科技");
+                weChatService.sendRedPack(request);
+
+                return true;
+
+            } else {
+                record.setIsPrized(false);
+                marketingDomain.createMktDrawRecord(record);
+            }
         }
 
         return false;

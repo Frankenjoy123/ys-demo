@@ -4,6 +4,7 @@ import com.yunsoo.api.rabbit.client.ThirdApiClient;
 import com.yunsoo.api.rabbit.domain.ProductDomain;
 import com.yunsoo.api.rabbit.third.dto.WeChatAccessToken;
 import com.yunsoo.api.rabbit.third.dto.WeChatRedPackRequest;
+import com.yunsoo.api.rabbit.third.dto.WeChatUser;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,10 @@ public class WeChatService {
         Number scenarioId = millis * 1000 + random.nextInt(1000);
         productDomain.saveKeyToRadis(scenarioId, key);
         return thirdApiClient.post("wechat/qrcode/{id}", null, String.class, scenarioId);
+    }
+
+    public WeChatUser getWeChatUser(String openId){
+        return thirdApiClient.get("wechat/user/{id}", WeChatUser.class, openId);
     }
 
 
