@@ -1,20 +1,16 @@
-package com.yunsoo.third.api;
+package com.yunsoo.third.api.controller;
 
-import com.yunsoo.common.exception.ErrorResultException;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
-import com.yunsoo.third.dao.entity.ThirdWeChatAccessTokenEntity;
 import com.yunsoo.third.dao.util.IpUtils;
 import com.yunsoo.third.dto.wechat.*;
 import com.yunsoo.third.service.WeChatService;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.util.Map;
 
 /**
