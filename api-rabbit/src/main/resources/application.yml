@@ -50,13 +50,13 @@ yunsoo:
       base_url: http://dev.yunsu.co/api/auth
       system_account_access_token: IGHXxgXYIO3yaWb3zvWgZW1smloFu42snAB0lG9KRDV8MW40NzF0NnBrLDAwMTAwMDAwMDAwMDAwMDAwMDAsMmswcjFsNTVpMnJzNTU0NHd6NQ
     data_api:
-      base_url: http://localhost:3080/
+      base_url: http://dev-api.yunsu.co:3080/
     file_api:
       base_url: http://dev-api.yunsu.co:4180/
     key_api:
       base_url: http://dev-api.yunsu.co:4280/
     third_api:
-      base_url: http://localhost:4480/
+      base_url: http://dev-api.yunsu.co:4480/
   cache.type: local
 
 ---

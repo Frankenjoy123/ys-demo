@@ -202,7 +202,7 @@ public class WebScanController {
         //marketing info
         webScanResponse.setMarketing(null);
         if(StringUtils.hasText(url))
-            webScanResponse.setWeChatConfig(getWeChatConfig(webScanResponse.getMarketing().getId(), url));
+            webScanResponse.setWeChatConfig(getWeChatConfig(webScanResponse.getOrganization().getId(), url));
         return webScanResponse;
     }
 

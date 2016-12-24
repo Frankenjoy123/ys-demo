@@ -50,9 +50,8 @@ public class WeChatService {
     }
 
     public String createQRCode(String key){
-        long millis = new DateTime().getMillis();
         Random random = new Random();
-        Number scenarioId = millis * 1000 + random.nextInt(1000);
+        Number scenarioId = random.nextInt();
         productDomain.saveKeyToRadis(scenarioId, key);
         return thirdApiClient.post("wechat/qrcode/{id}", null, String.class, scenarioId);
     }
