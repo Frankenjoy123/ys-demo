@@ -6,11 +6,9 @@ import com.yunsoo.api.rabbit.third.dto.WeChatAccessToken;
 import com.yunsoo.api.rabbit.third.dto.WeChatRedPackRequest;
 import com.yunsoo.api.rabbit.third.dto.WeChatUser;
 import com.yunsoo.common.web.util.QueryStringBuilder;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Map;
 import java.util.Random;
@@ -52,7 +50,7 @@ public class WeChatService {
     public String createQRCode(String key){
         Random random = new Random();
         Number scenarioId = random.nextInt();
-        productDomain.saveKeyToRadis(scenarioId, key);
+        productDomain.getKeyFromRadis(scenarioId, key);
         return thirdApiClient.post("wechat/qrcode/{id}", null, String.class, scenarioId);
     }
 

@@ -9,6 +9,7 @@ import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
@@ -65,8 +66,13 @@ public class ProductDomain {
     }
 
     @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTKEYSCENARIO.toString(), #ScenarioId)")
-    public String saveKeyToRadis(Number ScenarioId, String key){
+    public String getKeyFromRadis(Number ScenarioId, String key){
         return key;
+    }
+
+    @CacheEvict(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTKEYSCENARIO.toString(), #ScenarioId)")
+    public void clearKeyToRadis(Number ScenarioId){
+
     }
 
 

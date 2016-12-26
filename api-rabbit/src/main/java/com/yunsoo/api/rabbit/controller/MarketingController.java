@@ -6,7 +6,6 @@ import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserScanDomain;
 import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.key.dto.Product;
-import com.yunsoo.api.rabbit.key.service.KeyService;
 import com.yunsoo.api.rabbit.key.service.ProductService;
 import com.yunsoo.api.rabbit.third.dto.WeChatRedPackRequest;
 import com.yunsoo.api.rabbit.third.dto.WeChatUser;
@@ -19,6 +18,7 @@ import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,6 +40,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/marketing")
 public class MarketingController {
+
+    private org.apache.commons.logging.Log logger = LogFactory.getLog(this.getClass());
 
     @Autowired
     private MarketingDomain marketingDomain;
@@ -695,7 +697,9 @@ public class MarketingController {
 
     @RequestMapping(value = "redpack/{scenario_id}", method = RequestMethod.POST)
     public MktRedPackResult sendWeChatRedPack(@PathVariable("scenario_id") Number scenarioId, @RequestParam("openid")String openId){
-        String key = productDomain.saveKeyToRadis(scenarioId, "");
+        String key = productDomain.getKeyFromRadis(scenarioId, "");
+        logger.info("current key is: " + key + ", with scenarioId: " + scenarioId);
+        productDomain.clearKeyToRadis(scenarioId);  //clear the key
         MktRedPackResult result = new MktRedPackResult();
         result.setExisted(true);
         if(StringUtils.hasText(key)){
@@ -725,7 +729,6 @@ public class MarketingController {
                 prize.setPrizeAccountName(existUser.getName());
                 prize.setMarketingId(marketingObject.getId());
                 prize.setProductKey(key);
-                prize.setScanRecordId(recordObject.getId());
 
                 //save prize
                 MktDrawRecordObject record = new MktDrawRecordObject();
