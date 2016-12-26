@@ -284,7 +284,7 @@ public class MarketingDomain {
             }
             return null;
         }
-        if (LookupCodes.MktType.ENVELOPE.equals(obj.getTypeCode())) {
+        if (LookupCodes.MktType.ENVELOPE.equals(obj.getTypeCode()) || LookupCodes.MktType.FANS.equals(obj.getTypeCode())) {
             List<MktDrawRuleObject> envelopeRuleList = getRuleList(marketId);
             if (envelopeRuleList == null || envelopeRuleList.size() != 2 || envelopeRuleList.get(0).getAvailableQuantity() < 1) {
                 return null;

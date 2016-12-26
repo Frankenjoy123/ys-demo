@@ -7,6 +7,7 @@ import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.client.RestClient;
 import com.yunsoo.common.web.exception.NotFoundException;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -26,6 +27,8 @@ import java.util.Random;
 @Component
 @ObjectCacheConfig
 public class ProductDomain {
+
+    private org.apache.commons.logging.Log logger = LogFactory.getLog(this.getClass());
 
     @Autowired
     private RestClient dataApiClient;
@@ -65,14 +68,15 @@ public class ProductDomain {
         return dataApiClient.get("productcomments/avgscore/{id}", Long.class, productBaseId);
     }
 
-    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTKEYSCENARIO.toString(), #ScenarioId)")
-    public String getKeyFromRadis(Number ScenarioId, String key){
+    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTKEYSCENARIO.toString(), #scenarioId)")
+    public String getKeyFromRadis(Number scenarioId, String key){
+        logger.info("save redis cache, scenarioId: " + scenarioId + ", key: " + key);
         return key;
     }
 
-    @CacheEvict(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTKEYSCENARIO.toString(), #ScenarioId)")
-    public void clearKeyToRadis(Number ScenarioId){
-
+    @CacheEvict(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTKEYSCENARIO.toString(), #scenarioId)")
+    public void clearKeyToRadis(Number scenarioId){
+        logger.info("clear redis cache, scenarioId: " + scenarioId);
     }
 
 
