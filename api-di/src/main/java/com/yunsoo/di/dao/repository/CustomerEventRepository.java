@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CustomerEventRepository {
     /**
-     * 消费者行为分析（漏斗），扫码
+     * 消费者行为分析（漏斗），扫码，第一个为事件数，第二个为人数
      * @param orgId
      * @param productBaseId
      * @param province
@@ -24,7 +24,7 @@ public interface CustomerEventRepository {
                     Boolean wxUser);
 
     /**
-     * 消费者行为分析（漏斗），抽奖
+     * 消费者行为分析（漏斗），抽奖，第一个为事件数，第二个为人数
      * @param orgId
      * @param productBaseId
      * @param province
