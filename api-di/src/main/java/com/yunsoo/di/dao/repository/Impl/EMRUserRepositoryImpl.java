@@ -25,6 +25,210 @@ public class EMRUserRepositoryImpl implements EMRUserRepository {
     @PersistenceContext(unitName = "di")
     private EntityManager entityManager;
 
+    /**
+     *  消费者行为分析，扫描用户列表
+     * @param orgId
+     * @param productBaseId
+     * @param province
+     * @param city
+     * @param createdDateTimeStart
+     * @param createdDateTimeEnd
+     * @param wxUser 判断是否为微信用户
+     * @param pageable
+     * @return
+     */
+    @Override
+    public List<EMRUserEntity> findEventUsersFilterByScan(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Boolean wxUser, Pageable pageable) {
+        String sql = "select DISTINCT u.*, pc.province, pc.city, ev.ip, ua.os  from  di_event ev " +
+                "inner join  di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) " +
+                "left join  lu_province_city pc on u.location_id = pc.id "+
+                " LEFT JOIN  lu_user_agent ua ON ua.id=ev.user_agent_id "+
+                "where ev.name= :eventName " +
+                " and ev.org_id =:orgId ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("eventName", "scan");
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isEmpty(province)) {
+            sql = sql + " and pc.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and pc.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and ev.event_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+
+        if (wxUser!=null && wxUser){
+            sql = sql + " and u.wx_openid is not null";
+        }
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        if (pageable != null) {
+            query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+            query.setMaxResults(pageable.getPageSize());
+        }
+
+        List<Object[]> queryList = query.getResultList();
+        return getUserListByQueryList(queryList);
+    }
+
+    /**
+     *  消费者行为分析，抽奖用户列表
+     * @param orgId
+     * @param productBaseId
+     * @param province
+     * @param city
+     * @param createdDateTimeStart
+     * @param createdDateTimeEnd
+     * @param wxUser 判断是否为微信用户
+     * @param pageable
+     * @return
+     */
+    @Override
+    public List<EMRUserEntity> findEventUsersFilterByDraw(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart,
+                                                          DateTime createdDateTimeEnd, Boolean wxUser, Pageable pageable) {
+
+        return getDrawOrWinUserList( orgId,  productBaseId,  province,  city,  createdDateTimeStart,
+                 createdDateTimeEnd,  wxUser,  pageable,2);
+    }
+
+    /**
+     *  消费者行为分析，中奖用户列表
+     * @param orgId
+     * @param productBaseId
+     * @param province
+     * @param city
+     * @param createdDateTimeStart
+     * @param createdDateTimeEnd
+     * @param wxUser 判断是否为微信用户
+     * @param pageable
+     * @return
+     */
+    @Override
+    public List<EMRUserEntity> findEventUsersFilterByWin(String orgId, String productBaseId, String province, String city,
+                                                           DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Boolean wxUser, Pageable pageable) {
+        return getDrawOrWinUserList( orgId,  productBaseId,  province,  city,  createdDateTimeStart,
+                createdDateTimeEnd,  wxUser,  pageable,3);
+    }
+
+
+    private    List<EMRUserEntity> getDrawOrWinUserList(String orgId, String productBaseId, String province, String city,
+                                                                     DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Boolean wxUser, Pageable pageable,int level){
+        String sql = "select count(1), count(distinct u.id) from  mkt_draw_record dr left join  di_event ev on dr.scan_record_id=ev.event_id  " +
+                "inner join  di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) " +
+                " LEFT JOIN  lu_user_agent ua ON ua.id=ev.user_agent_id "+
+                "where ev.org_id =:orgId  ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isEmpty(province)) {
+            sql = sql + " and pc.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and pc.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and ev.event_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+
+        if (wxUser!=null && wxUser){
+            sql = sql + " and u.wx_openid is not null";
+        }
+
+        if (level > 1) {
+            sql = sql + " and dr.isPrized is not null";
+        }
+        if (level > 2) {
+            sql = sql + " and dr.isPrized = 1";
+        }
+
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        if (pageable != null) {
+            query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+            query.setMaxResults(pageable.getPageSize());
+        }
+
+        List<Object[]> queryList = query.getResultList();
+        return getUserListByQueryList(queryList);
+    }
+
+    @Override
+    public List<EMRUserEntity> findEventUsersFilterByReward(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Boolean wxUser, Pageable pageable) {
+        String sql = "select DISTINCT u.*, pc.province, pc.city, ev.ip, ua.os from  mkt_draw_record dr left join  di_event ev on dr.scan_record_id=ev.event_id INNER JOIN  mkt_draw_prize dp ON dr.id=dp.draw_record_id " +
+                "inner join  di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) " +
+                " LEFT JOIN  lu_user_agent ua ON ua.id=ev.user_agent_id "+
+                "where ev.org_id =:orgId  and dr.isPrized = 1 and dp.status_code in ('submit','paid') ";
+
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("orgId", orgId);
+        if (!StringUtils.isEmpty(productBaseId)) {
+            sql = sql + " and ev.product_base_id = :productBaseId";
+            parameters.put("productBaseId", productBaseId);
+        }
+        if (!StringUtils.isEmpty(province)) {
+            sql = sql + " and pc.province like :province";
+            parameters.put("province", "%" + province + "%");
+        }
+        if (!org.springframework.util.StringUtils.isEmpty(city)) {
+            sql = sql + " and pc.city like :city";
+            parameters.put("city", "%" + city + "%");
+        }
+        if (createdDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeStart.toString())) {
+            sql = sql + " and ev.event_datetime >=:createdDateTimeStart";
+            parameters.put("createdDateTimeStart", createdDateTimeStart.toString("yyyy-MM-dd"));
+        }
+        if (createdDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(createdDateTimeEnd.toString())) {
+            sql = sql + " and ev.event_datetime <=:createdDateTimeEnd";
+            parameters.put("createdDateTimeEnd", createdDateTimeEnd.toString("yyyy-MM-dd"));
+        }
+
+        if (wxUser!=null && wxUser){
+            sql = sql + " and u.wx_openid is not null";
+        }
+
+        Query query = entityManager.createNativeQuery(sql);
+        for (String key : parameters.keySet()) {
+            query.setParameter(key, parameters.get(key));
+        }
+        if (pageable != null) {
+            query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+            query.setMaxResults(pageable.getPageSize());
+        }
+
+        List<Object[]> queryList = query.getResultList();
+        return getUserListByQueryList(queryList);
+    }
+
     @Override
     public int countUsersByFilter(String orgId, Boolean sex, String phone, String name, String province, String city, Integer ageStart, Integer ageEnd, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, List<String> userTags, boolean userTagsIgnored, Boolean wxUser) {
         String sql = "select count(DISTINCT u.user_id, u.ys_id, u.org_id) " +
@@ -170,6 +374,10 @@ public class EMRUserRepositoryImpl implements EMRUserRepository {
         }
 
         List<Object[]> queryList = query.getResultList();
+        return getUserListByQueryList(queryList);
+    }
+
+    private List<EMRUserEntity> getUserListByQueryList(List<Object[]> queryList){
         List<EMRUserEntity> list = new ArrayList<>();
 
         for(Object[] obj : queryList)
