@@ -799,6 +799,7 @@ public class MarketingController {
                     request.setId(saveRecord.getId());
                     request.setMchName("云溯科技");
                     request.setOrgId(config.getOrgId());
+                    logger.info("the red pack amount is: " + mktDrawRule.getAmount() + ", key is: " + key);
                     weChatService.sendRedPack(request);
 
                     //set paid status
@@ -811,7 +812,7 @@ public class MarketingController {
                     marketingDomain.createMktDrawRecord(record);
                 }
             }
-
+            logger.info("wechat red pack result: " + result.toString());
             return result;
         }
 

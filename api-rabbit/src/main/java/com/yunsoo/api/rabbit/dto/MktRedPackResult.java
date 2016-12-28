@@ -41,4 +41,8 @@ public class MktRedPackResult {
     public void setExisted(boolean existed) {
         this.existed = existed;
     }
+
+    public String toString(){
+        return "amount: " + amount+", is prized: " + isPrized + ", existed: " + existed;
+    }
 }
