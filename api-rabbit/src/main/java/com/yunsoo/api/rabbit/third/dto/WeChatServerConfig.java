@@ -3,10 +3,12 @@ package com.yunsoo.api.rabbit.third.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import java.io.Serializable;
+
 /**
  * Created by yan on 12/27/2016.
  */
-public class WeChatServerConfig {
+public class WeChatServerConfig implements Serializable {
 
     @JsonProperty("app_id")
     @NotEmpty
