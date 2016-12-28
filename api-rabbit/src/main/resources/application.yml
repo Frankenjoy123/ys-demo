@@ -56,7 +56,7 @@ yunsoo:
     key_api:
       base_url: http://dev-api.yunsu.co:4280/
     third_api:
-      base_url: http://dev-api.yunsu.co:4480/
+      base_url: http://localhost:4480/
   cache.type: local
 
 ---

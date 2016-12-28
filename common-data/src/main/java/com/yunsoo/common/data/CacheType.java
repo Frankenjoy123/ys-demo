@@ -10,13 +10,14 @@ public enum CacheType {
     ACCOUNT("account"),
     LOOKUP("lookup"),
     PRODUCTBASE("productbase"),
-    PRODUCT("product"),
+    PRODUCTKEY("product_key"),
     PRODUCT_BATCH("product_batch"),
     PRODUCT_CATEGORY("product_category"),
     PERMISSION("permission"),
     DOMAIN_DIRECTORY("domain_directory"),
     TAGS("market_tags"),
-    PRODUCTKEYSCENARIO("product_key_scenario");
+    PRODUCTKEYSCENARIO("product_key_scenario"),
+    WECHAT("wechat");
 
     private String typeName;
 

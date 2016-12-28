@@ -40,7 +40,7 @@ public class ProductDomain {
     private FileService fileService;
 
 
-    //@Cacheable(key = "T(com.yunsoo.api.rabbit.cache.CustomKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT_BATCH.toString(),#productKeyBatchId)")
+    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCT_BATCH.toString(),#productKeyBatchId)")
     public ProductKeyBatchObject getProductKeyBatch(String productKeyBatchId) {
         try {
             return dataApiClient.get("productkeybatch/{id}", ProductKeyBatchObject.class, productKeyBatchId);

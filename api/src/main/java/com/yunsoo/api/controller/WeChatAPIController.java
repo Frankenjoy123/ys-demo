@@ -1,16 +1,17 @@
 package com.yunsoo.api.controller;
 
-import com.yunsoo.api.Constants;
 import com.yunsoo.api.auth.service.OAuthAccountService;
-import com.yunsoo.api.domain.WeChatAPIDomain;
+import com.yunsoo.api.third.service.WeChatAPIService;
 import com.yunsoo.api.dto.*;
+import com.yunsoo.api.third.dto.WeChatAccessToken;
+import com.yunsoo.api.third.dto.WeChatPayRequest;
+import com.yunsoo.api.third.dto.WeChatUser;
+import com.yunsoo.api.third.dto.WeChatWebAccessToken;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -18,17 +19,18 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("wechat")
-public class WechatController {
+public class WeChatAPIController {
 
     @Autowired
-    private WeChatAPIDomain domain;
+    private WeChatAPIService domain;
 
     @Autowired
     private OAuthAccountService oAuthAccountService;
 
     @RequestMapping(value = "token", method = RequestMethod.GET)
     public WeChatAccessToken getWechatToken(){
-        return domain.getUserAccessTokenByAppId(null);
+        String orgId = domain.getOrgIdHasWeChatSettings(AuthUtils.fixOrgId(null));
+        return domain.getUserAccessTokenByOrgId(orgId);
     }
 
     @RequestMapping(value = "web_user", method = RequestMethod.GET)
@@ -43,7 +45,8 @@ public class WechatController {
 
     @RequestMapping(value = "config", method = RequestMethod.GET)
     public Map getWeChatConfig(@RequestParam("url")String url){
-        return domain.getConfig(null, url);
+
+        return domain.getConfig(domain.getOrgIdHasWeChatSettings(AuthUtils.fixOrgId(null)), url);
     }
 
     @RequestMapping(value = "pay/{marketing_id}", method = RequestMethod.POST)
@@ -54,7 +57,7 @@ public class WechatController {
         if(authAccount == null)
             throw new NotFoundException("current account don't have oauth account");
 
-        Map payConfig = domain.getPayConfig(null, authAccount.getoAuthOpenId(), marketingId, payRequest.getNonceString(),
+        Map payConfig = domain.getPayConfig(domain.getOrgIdHasWeChatSettings(AuthUtils.fixOrgId(null)), authAccount.getoAuthOpenId(), marketingId, payRequest.getNonceString(),
                 payRequest.getTimestamp(), payRequest.getNotifyUrl());
         return payConfig;
     }

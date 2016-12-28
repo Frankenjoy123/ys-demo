@@ -7,6 +7,7 @@ import com.yunsoo.api.di.service.MarketingService;
 import com.yunsoo.api.domain.*;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.payment.ParameterNames;
+import com.yunsoo.api.third.dto.WeChatMarketing;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.LookupCodes;

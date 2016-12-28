@@ -8,6 +8,7 @@ import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.key.dto.Product;
 import com.yunsoo.api.rabbit.key.service.ProductService;
 import com.yunsoo.api.rabbit.third.dto.WeChatRedPackRequest;
+import com.yunsoo.api.rabbit.third.dto.WeChatServerConfig;
 import com.yunsoo.api.rabbit.third.dto.WeChatUser;
 import com.yunsoo.api.rabbit.third.service.JuheService;
 import com.yunsoo.api.rabbit.third.service.WeChatService;
@@ -186,6 +187,11 @@ public class MarketingController {
             throw new BadRequestException("marketing can not be found.");
         }
 
+        WeChatServerConfig config = weChatService.getOrgIdHasWeChatSettings(marketingObject.getOrgId());
+        if(config == null)
+            throw new NotFoundException("wechat settings not found with org: " + marketingObject.getOrgId());
+
+
         WeChatRedPackRequest redPackRequest = new WeChatRedPackRequest();
         redPackRequest.setId(mktDrawPrizeObject.getDrawRecordId());
         redPackRequest.setMchName(marketingObject.getName());
@@ -194,7 +200,7 @@ public class MarketingController {
         redPackRequest.setWishing(marketingObject.getWishes());
         redPackRequest.setRemark(marketingObject.getComments());
         redPackRequest.setActionName(marketingObject.getName());
-
+        redPackRequest.setOrgId(config.getOrgId());
         Boolean prizeResult = weChatService.sendRedPack(redPackRequest);
         if (prizeResult) {
             mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
@@ -710,7 +716,11 @@ public class MarketingController {
                 result.setExisted(false);
                 ProductKeyBatchObject keyBatchObject = productDomain.getProductKeyBatch(product.getKeyBatchId());
                 UserScanRecordObject recordObject = userScanDomain.getLatestScanRecordByProductKey(key);
-                WeChatUser weChatUser = weChatService.getWeChatUser(openId);
+                WeChatServerConfig config = weChatService.getOrgIdHasWeChatSettings(keyBatchObject.getOrgId());
+                if(config == null)
+                    throw new NotFoundException("wechat settings not found with org: " + keyBatchObject.getOrgId());
+
+                WeChatUser weChatUser = weChatService.getWeChatUser(openId, config.getOrgId());
                 MarketingObject marketingObject = marketingDomain.getMarketingById(keyBatchObject.getMarketingId());
 
                 UserObject existUser = userDomain.getUserByOpenIdAndType(openId, "webchat");
@@ -775,6 +785,7 @@ public class MarketingController {
                     request.setRemark(marketingObject.getComments());
                     request.setId(saveRecord.getId());
                     request.setMchName("云溯科技");
+                    request.setOrgId(config.getOrgId());
                     weChatService.sendRedPack(request);
 
                 } else {

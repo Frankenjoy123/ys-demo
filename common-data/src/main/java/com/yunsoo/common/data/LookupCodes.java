@@ -144,6 +144,13 @@ public class LookupCodes {
         public static final String DISABLED = "disabled";
     }
 
+    public static class UserOAuthType {
+        private UserOAuthType() {
+        }
+
+        public static final String WECHAT = "webchat";
+    }
+
     public static class OrgAgencyStatus {
         private OrgAgencyStatus() {
         }

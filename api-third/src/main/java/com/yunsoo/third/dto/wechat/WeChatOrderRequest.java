@@ -41,6 +41,18 @@ public class WeChatOrderRequest {
     @NotEmpty
     private String orderType;
 
+    @JsonProperty("org_id")
+    @NotEmpty
+    private String orgId;
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
     public String getId() {
         return id;
     }
