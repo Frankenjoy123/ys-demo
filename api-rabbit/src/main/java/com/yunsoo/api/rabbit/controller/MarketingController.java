@@ -417,11 +417,11 @@ public class MarketingController {
 
                     WeChatRedPackRequest request = new WeChatRedPackRequest();
                     request.setActionName(marketingObject.getName());
-                    request.setOpenId(mktDrawPrize.getPrizeAccount());
-                    request.setPrice(mktDrawPrize.getAmount());
+                    request.setOpenId(currentPrize.getPrizeAccount());
+                    request.setPrice(currentPrize.getAmount());
                     request.setWishing(marketingObject.getWishes());
                     request.setRemark(marketingObject.getComments());
-                    request.setId(mktDrawPrize.getDrawRecordId());
+                    request.setId(currentPrize.getDrawRecordId());
                     request.setMchName("云溯科技");
                     request.setOrgId(config.getOrgId());
                     weChatService.sendRedPack(request);
