@@ -9,6 +9,8 @@ import com.yunsoo.api.rabbit.third.dto.*;
 import com.yunsoo.common.data.object.OrgBrandObject;
 import com.yunsoo.common.util.RandomUtils;
 import com.yunsoo.common.web.util.QueryStringBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
@@ -26,6 +28,7 @@ import java.util.Random;
 @Service
 @ObjectCacheConfig
 public class WeChatService {
+    Log logger = LogFactory.getLog(this.getClass());
 
     @Autowired
     private ThirdApiClient thirdApiClient;
@@ -60,6 +63,7 @@ public class WeChatService {
 
     @Cacheable(key="T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).WECHAT.toString(), #orgId)")
     public WeChatServerConfig getOrgIdHasWeChatSettings(String orgId){
+        logger.info("get wechat settings for orgid:" + orgId);
         WeChatServerConfig config = thirdApiClient.get("wechat/server/config/{id}", WeChatServerConfig.class, orgId);
         if(StringUtils.hasText(config.getAppId()))
             return  config;

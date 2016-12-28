@@ -66,8 +66,6 @@ public class MarketingController {
     private UserDomain userDomain;
 
 
-
-
     //获取Key所对应的抽奖记录
     @RequestMapping(value = "draw/{key}", method = RequestMethod.GET)
     public MktDrawRecord getMktDrawRecordByProductKey(@PathVariable String key) {
@@ -188,7 +186,7 @@ public class MarketingController {
         }
 
         WeChatServerConfig config = weChatService.getOrgIdHasWeChatSettings(marketingObject.getOrgId());
-        if(config == null)
+        if (config == null)
             throw new NotFoundException("wechat settings not found with org: " + marketingObject.getOrgId());
 
 
@@ -411,10 +409,25 @@ public class MarketingController {
                     mktDrawPrizeObject.setPaidDateTime(DateTime.now());
                     break;
                 case LookupCodes.MktPrizeType.WEBCHAT:
-                    if (LookupCodes.MktDrawPrizeStatus.PAID.equals(mktDrawPrize.getStatusCode())) {
-                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-                        mktDrawPrizeObject.setPaidDateTime(DateTime.now());
-                    }
+                    MarketingObject marketingObject = marketingDomain.getMarketingById(currentPrize.getMarketingId());
+                    //send red pack
+                    WeChatServerConfig config = weChatService.getOrgIdHasWeChatSettings(marketingObject.getOrgId());
+                    if (config == null)
+                        throw new NotFoundException("wechat settings not found with org: " + marketingObject.getOrgId());
+
+                    WeChatRedPackRequest request = new WeChatRedPackRequest();
+                    request.setActionName(marketingObject.getName());
+                    request.setOpenId(mktDrawPrize.getPrizeAccount());
+                    request.setPrice(mktDrawPrize.getAmount());
+                    request.setWishing(marketingObject.getWishes());
+                    request.setRemark(marketingObject.getComments());
+                    request.setId(mktDrawPrize.getDrawRecordId());
+                    request.setMchName("云溯科技");
+                    request.setOrgId(config.getOrgId());
+                    weChatService.sendRedPack(request);
+
+                    mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                    mktDrawPrizeObject.setPaidDateTime(DateTime.now());
                     break;
                 default:
                     break;
@@ -561,7 +574,8 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "drawPrize/{id}/random", method = RequestMethod.POST)
-    public MktDrawRule getRandomPrizeAmount(@PathVariable(value = "id") String marketingId, @RequestBody @Valid MktDraw mktDraw) {
+    public MktDrawRule getRandomPrizeAmount(@PathVariable(value = "id") String marketingId,
+                                            @RequestBody @Valid MktDraw mktDraw) {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
@@ -630,8 +644,7 @@ public class MarketingController {
             }
             setAccount(prize);
             prize.setDrawRecordId(saveRecord.getId());
-            marketingDomain.createMktDrawPrize(prize);
-
+            MktDrawPrizeObject prizeObject = marketingDomain.createMktDrawPrize(prize);
             return mktDrawRule;
 
         } else {
@@ -702,22 +715,22 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "redpack/{scenario_id}", method = RequestMethod.POST)
-    public MktRedPackResult sendWeChatRedPack(@PathVariable("scenario_id") Number scenarioId, @RequestParam("openid")String openId){
+    public MktRedPackResult sendWeChatRedPack(@PathVariable("scenario_id") Number scenarioId, @RequestParam("openid") String openId) {
         String key = productDomain.getKeyFromRadis(scenarioId, "");
         logger.info("current key is: " + key + ", with scenarioId: " + scenarioId);
         productDomain.clearKeyToRadis(scenarioId);  //clear the key
         MktRedPackResult result = new MktRedPackResult();
         result.setExisted(true);
-        if(StringUtils.hasText(key)){
+        if (StringUtils.hasText(key)) {
             Product product = productService.getProductByKey(key);
             MktDrawRecordObject existRecord = marketingDomain.getMktDrawRecordByProductKey(key);
 
-            if(existRecord == null) {
+            if (existRecord == null) {
                 result.setExisted(false);
                 ProductKeyBatchObject keyBatchObject = productDomain.getProductKeyBatch(product.getKeyBatchId());
                 UserScanRecordObject recordObject = userScanDomain.getLatestScanRecordByProductKey(key);
                 WeChatServerConfig config = weChatService.getOrgIdHasWeChatSettings(keyBatchObject.getOrgId());
-                if(config == null)
+                if (config == null)
                     throw new NotFoundException("wechat settings not found with org: " + keyBatchObject.getOrgId());
 
                 WeChatUser weChatUser = weChatService.getWeChatUser(openId, config.getOrgId());
@@ -774,7 +787,7 @@ public class MarketingController {
                     prize.setDrawRuleId(mktDrawRule.getId());
                     prize.setAmount(mktDrawRule.getAmount());
                     prize.setDrawRecordId(saveRecord.getId());
-                    marketingDomain.createMktDrawPrize(prize);
+                    MktDrawPrizeObject prizeObject = marketingDomain.createMktDrawPrize(prize);
 
                     //send red pack
                     WeChatRedPackRequest request = new WeChatRedPackRequest();
@@ -787,6 +800,11 @@ public class MarketingController {
                     request.setMchName("云溯科技");
                     request.setOrgId(config.getOrgId());
                     weChatService.sendRedPack(request);
+
+                    //set paid status
+                    prizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                    prizeObject.setPaidDateTime(DateTime.now());
+                    marketingDomain.updateMktDrawPrize(prizeObject);
 
                 } else {
                     record.setIsPrized(false);
