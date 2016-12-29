@@ -123,7 +123,7 @@ public class WeChatController {
     }
 
     @RequestMapping(value = "redpack", method = RequestMethod.POST)
-    public boolean sendRedPack(@RequestBody WeChatRedPackRequest redPackRequest, HttpServletRequest request) {
+    public String sendRedPack(@RequestBody WeChatRedPackRequest redPackRequest, HttpServletRequest request) {
         String ip = IpUtils.getIpFromRequest(request);
 
         if (!StringUtils.hasText(redPackRequest.getOrgId()))
@@ -137,7 +137,7 @@ public class WeChatController {
             logger.error("send wechat red pack to: "+ redPackRequest.getOpenId()+ " error: " + e.getMessage());
         }
 
-        return false;
+        return null;
     }
 
     @RequestMapping(value = "notify", method = RequestMethod.GET)

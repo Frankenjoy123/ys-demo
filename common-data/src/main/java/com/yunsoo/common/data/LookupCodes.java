@@ -336,6 +336,7 @@ public class LookupCodes {
 
         public static final String MOBILE_FEE = "mobile fee";
         public static final String MOBILE_FLOW = "mobile flow";
+        public static final String WECHAT = "wechat";
     }
 
     public static class MobileType {

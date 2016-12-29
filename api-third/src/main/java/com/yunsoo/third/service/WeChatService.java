@@ -332,7 +332,7 @@ public class WeChatService {
         return weChatClient.post(url, request, WeChatQRCodeResponse.class, tokenEntity.getAccessToken());
     }
 
-    public boolean sendRedPack(String orgId, String openId, String mchName, String orderId,
+    public String sendRedPack(String orgId, String openId, String mchName, String orderId,
                                BigDecimal price, String ip, String remark, String wishing, String actionName) throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
 
         ThirdWeChatConfigEntity configEntity = weChatConfigRepository.getByOrgId(orgId);
@@ -361,9 +361,9 @@ public class WeChatService {
             data.addSign(configEntity.getPrivateKey());
             String result = weChatMchClient.postForObject(url, data.toXml(), String.class);
             //  result = new String(result.getBytes("ISO-8859-1"), "UTF-8");
-            WeChatXmlBaseType requestResult = XmlUtils.convertXmlToObject(result, WeChatXmlBaseType.class);
+            WeChatRedPackResult requestResult = XmlUtils.convertXmlToObject(result, WeChatXmlBaseType.class, WeChatRedPackResult.class);
             if ("SUCCESS".equals(requestResult.getReturnCode()) && "SUCCESS".equals(requestResult.getResultCode()))
-                return true;
+                return requestResult.getWeChatOrderId();
             else {
                 if (!"SUCCESS".equals(requestResult.getReturnCode()))
                     logger.error("send wechat redpack error: " + requestResult.getReturnMsg());
@@ -374,7 +374,7 @@ public class WeChatService {
             logger.error(e);
         }
 
-        return false;
+        return null;
     }
 
     private RestTemplate initWeChatMchClient(ThirdWeChatConfigEntity configEntity) throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, KeyManagementException {

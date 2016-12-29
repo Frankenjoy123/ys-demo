@@ -2,7 +2,9 @@ package com.yunsoo.api.rabbit.domain;
 
 import com.yunsoo.api.rabbit.third.dto.JuheMobileLocation;
 import com.yunsoo.api.rabbit.third.dto.JuheOrder;
+import com.yunsoo.api.rabbit.third.dto.WeChatRedPackRequest;
 import com.yunsoo.api.rabbit.third.service.JuheService;
+import com.yunsoo.api.rabbit.third.service.WeChatService;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.*;
 import com.yunsoo.common.web.client.RestClient;
@@ -34,6 +36,9 @@ public class MarketingDomain {
 
     @Autowired
     private JuheService juheService;
+
+    @Autowired
+    private WeChatService weChatService;
 
     public MarketingObject getMarketingById(String id) {
         if (id == null) {
@@ -72,7 +77,6 @@ public class MarketingDomain {
         return dataApiClient.get("marketing/seller/wechat/marketing/{openid}", new ParameterizedTypeReference<List<MarketingObject>>() {
         }, openid);
     }
-
 
 
     // query marketing draw record by product key and ysid
@@ -591,7 +595,7 @@ public class MarketingDomain {
         //return  true;
 
         if (StringUtils.hasText(prize.getMobile())) {
-            JuheOrder order = juheService.saveMobileFee(prize.getMobile(), prize.getDrawRecordId(),prize.getAmount().intValue() );
+            JuheOrder order = juheService.saveMobileFee(prize.getMobile(), prize.getDrawRecordId(), prize.getAmount().intValue());
             if (order != null) {
                 MktPrizeCostObject costObject = new MktPrizeCostObject();
                 costObject.setName(order.getCardName());
@@ -638,7 +642,7 @@ public class MarketingDomain {
             if ("中国电信".equals(mobileType))
                 dataFlowId = consumerRightObj.getCtccFlowId();
 
-            JuheOrder order =  juheService.saveMobileData(prize.getMobile(),prize.getDrawRecordId(), dataFlowId);
+            JuheOrder order = juheService.saveMobileData(prize.getMobile(), prize.getDrawRecordId(), dataFlowId);
 
             if (order != null) {
                 MktPrizeCostObject costObject = new MktPrizeCostObject();
@@ -653,6 +657,33 @@ public class MarketingDomain {
                 return true;
             }
         }
+        return false;
+    }
+
+    public boolean sendWeChatRedPack(MarketingObject marketingObject, String openId, Double amount, String recordId, String orgId) {
+        WeChatRedPackRequest request = new WeChatRedPackRequest();
+        request.setActionName(marketingObject.getName());
+        request.setOpenId(openId);
+        request.setPrice(amount);
+        request.setWishing(marketingObject.getWishes());
+        request.setRemark(marketingObject.getComments());
+        request.setId(recordId);
+        request.setMchName("云溯科技");
+        request.setOrgId(orgId);
+
+        String orderId = weChatService.sendRedPack(request);
+        if (orderId != null) {
+            MktPrizeCostObject costObject = new MktPrizeCostObject();
+            costObject.setName(amount + "元微信红包");
+            costObject.setCost(new BigDecimal(amount));
+            costObject.setDrawRecordId(recordId);
+            costObject.setOrderId(orderId);
+            costObject.setType(LookupCodes.MktPrizeCostType.WECHAT);
+            dataApiClient.post("marketing/cost", costObject, MktPrizeCostObject.class);
+
+            return true;
+        }
+
         return false;
     }
 
