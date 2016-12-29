@@ -7,8 +7,10 @@ import com.yunsoo.api.dto.ProductKeyCredit;
 import com.yunsoo.api.file.service.FileService;
 import com.yunsoo.api.key.dto.KeyBatch;
 import com.yunsoo.api.key.dto.KeyBatchCreationRequest;
+import com.yunsoo.api.key.dto.KeySerialNo;
 import com.yunsoo.api.key.dto.Keys;
 import com.yunsoo.api.key.service.KeyBatchService;
+import com.yunsoo.api.key.service.KeySerialNoService;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
@@ -59,6 +61,9 @@ public class ProductKeyDomain {
     private KeyBatchService keyBatchService;
 
     @Autowired
+    private KeySerialNoService keySerialNoService;
+
+    @Autowired
     private ProductKeyOrderDomain productKeyOrderDomain;
 
     @Autowired
@@ -70,7 +75,7 @@ public class ProductKeyDomain {
 
 
     //ProductKeyBatch
-    public String getKeyBatchPartitionId(String orgId){
+    public String getKeyBatchPartitionId(String orgId) {
         List<String> partitionIds = dataApiClient.get("productkeybatch/partition?org_id={orgId}", new ParameterizedTypeReference<List<String>>() {
         }, orgId);
 
@@ -93,7 +98,7 @@ public class ProductKeyDomain {
     }
 
 
-    public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, String productBaseId, Boolean isPackage, String createAccount, String deviceId, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
+    public Page<ProductKeyBatch> getProductKeyBatchesByFilterPaged(String orgId, List<String> orgIdIn, String productBaseId, Boolean isPackage, String createAccount, String deviceId, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, Pageable pageable) {
         String[] statusCodes = new String[]{
                 LookupCodes.ProductKeyBatchStatus.CREATING,
                 LookupCodes.ProductKeyBatchStatus.AVAILABLE
@@ -110,7 +115,7 @@ public class ProductKeyDomain {
                     .append("create_datetime_end", createdDateTimeEnd)
                     .append(pageable);
         else
-            query = query.append("org_id", orgId)
+            query = query.append("org_id", orgId).append("org_ids", orgIdIn)
                     .append("product_base_id", productBaseId)
                     .append("status_code_in", statusCodes)
                     .append(pageable);
@@ -187,26 +192,42 @@ public class ProductKeyDomain {
     }
 
 
-    public byte[] getProductKeysByBatchId(String id) {
+    public byte[] getProductKeysByBatchId(String id, String orgId, String batchNo) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Keys productKeys = keyBatchService.getKeysByKeyBatchId(id);
         if (productKeys == null) {
             return null;
         }
+        KeySerialNo currentKeySerialNo = null;
+        List<KeySerialNo> serialNoList = keySerialNoService.getByFilter(orgId);
+        if (serialNoList.size() > 0)
+            currentKeySerialNo = serialNoList.get(0);
+
         try {
             List<String> productKeyTypeCodes = productKeys.getKeyTypeCodes();
             for (List<String> ks : productKeys.getKeys()) {
                 for (int j = 0; j < ks.size(); j++) {
+                    String value = productKeyBaseUrl + ks.get(j);
                     if (LookupCodes.ProductKeyType.EXTERNAL.equals(productKeyTypeCodes.get(j))) {
-                        ks.set(j, productKeyBaseUrl + "external/" + ks.get(j));
-                    } else {
-                        ks.set(j, productKeyBaseUrl + ks.get(j));
+                        value = productKeyBaseUrl + "external/" + ks.get(j);
                     }
+                    if (currentKeySerialNo != null) {
+                        value += ", " + currentKeySerialNo.getPrefix()  + "." + addZeroPrefix(String.valueOf(currentKeySerialNo.getOffset() + j + 1), currentKeySerialNo.getSerialLength())  + (currentKeySerialNo.getSuffix() == null ? "" :  ("." + currentKeySerialNo.getSuffix()))
+                                + ", " + batchNo;
+                    }
+
+                    ks.set(j, value);
                 }
                 outputStream.write(
                         StringUtils.collectionToDelimitedString(ks, ",")
                                 .getBytes(Charset.forName("UTF-8")));
                 outputStream.write(CR_LF);
+
+                if (currentKeySerialNo != null) {  //update the offset number
+                    currentKeySerialNo.setOffset(currentKeySerialNo.getOffset() + ks.size());
+                    keySerialNoService.update(currentKeySerialNo);
+                }
+
             }
         } catch (IOException e) {
             throw new InternalServerErrorException("product keys format issue");
@@ -284,6 +305,18 @@ public class ProductKeyDomain {
         batch.setCreatedAccountId(keyBatch.getCreatedAccountId());
         batch.setCreatedDateTime(keyBatch.getCreatedDateTime());
         return batch;
+    }
+
+    private String addZeroPrefix(String content, int length) {
+        if (content.length() >= length)
+            return content;
+        else {
+            String prefixZero = "";
+            for (int i = 0; i < length - content.length(); i++)
+                prefixZero += "0";
+
+            return prefixZero + content;
+        }
     }
 
 }

@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +49,7 @@ public class ProductKeyBatchController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     public List<ProductKeyBatchObject> getByFilterPaged(
             @RequestParam(value = "org_id") String orgId,
+            @RequestParam(value = "org_ids", required = false) List<String> orgIdIn,
             @RequestParam(value = "product_base_id", required = false) String productBaseId,
             @RequestParam(value = "create_account", required = false) String createAccount,
             @RequestParam(value = "device_id", required = false) String deviceId,
@@ -56,7 +58,7 @@ public class ProductKeyBatchController {
             @RequestParam(value = "create_datetime_end", required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
             @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
-            @RequestParam(value = "is_package", required = false) Boolean isPackage,
+            @RequestParam(value = "is_package", required = false) Boolean isPackage,   //包装码
             @PageableDefault(size = 1000)
             Pageable pageable,
             HttpServletResponse response) {
@@ -79,7 +81,11 @@ public class ProductKeyBatchController {
                 entityPage = productKeyBatchRepository.findByFilter(orgId, productBaseId, createAccount, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
             }
         } else if (productBaseId == null) {
-            entityPage = productKeyBatchRepository.findByOrgIdAndStatusCodeIn(orgId, statusCodeIn, pageable);
+            if(orgIdIn == null){
+                orgIdIn = new ArrayList<>();
+                orgIdIn.add(orgId);
+            }
+            entityPage = productKeyBatchRepository.findByOrgIdInAndStatusCodeIn(orgIdIn, statusCodeIn, pageable);
 
         } else {
             String pId = productBaseId.toLowerCase().equals("null") ? null : productBaseId;
