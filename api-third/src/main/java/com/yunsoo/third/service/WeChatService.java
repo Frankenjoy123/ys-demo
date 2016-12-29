@@ -423,7 +423,7 @@ public class WeChatService {
         return null;
     }
 
-    public WeChatServerConfig createWeChatConfig(WeChatServerConfig config) {
+    public WeChatServerConfig saveWeChatConfig(WeChatServerConfig config) {
         ThirdWeChatConfigEntity entity = new ThirdWeChatConfigEntity();
         entity.setAppId(config.getAppId());
         entity.setAppSecret(config.getAppSecret());
@@ -441,6 +441,9 @@ public class WeChatService {
         if (entity != null) {
             config.setAppId(entity.getAppId());
             config.setAppSecret(entity.getAppSecret());
+            config.setPrivateKey(entity.getPrivateKey());
+            config.setMchId(entity.getMchId());
+            config.setOrgId(orgId);
         }
         config.setOrgId(orgId);
         return config;

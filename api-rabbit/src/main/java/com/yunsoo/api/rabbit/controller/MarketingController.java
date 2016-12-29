@@ -424,10 +424,12 @@ public class MarketingController {
                     request.setId(currentPrize.getDrawRecordId());
                     request.setMchName("云溯科技");
                     request.setOrgId(config.getOrgId());
-                    weChatService.sendRedPack(request);
-
-                    mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-                    mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+                    if(weChatService.sendRedPack(request)) {
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                        mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+                    }
+                    else
+                        throw new RestErrorResultException(new ErrorResult(5004, "send wechat red pack failed"));
                     break;
                 default:
                     break;
@@ -800,12 +802,14 @@ public class MarketingController {
                     request.setMchName("云溯科技");
                     request.setOrgId(config.getOrgId());
                     logger.info("the red pack amount is: " + mktDrawRule.getAmount() + ", key is: " + key);
-                    weChatService.sendRedPack(request);
-
-                    //set paid status
-                    prizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-                    prizeObject.setPaidDateTime(DateTime.now());
-                    marketingDomain.updateMktDrawPrize(prizeObject);
+                    if(weChatService.sendRedPack(request)) {
+                        //set paid status
+                        prizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                        prizeObject.setPaidDateTime(DateTime.now());
+                        marketingDomain.updateMktDrawPrize(prizeObject);
+                    }
+                    else
+                        result.setFailed(true);
 
                 } else {
                     record.setIsPrized(false);

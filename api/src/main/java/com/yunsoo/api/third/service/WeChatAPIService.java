@@ -130,5 +130,34 @@ public class WeChatAPIService {
         return Constants.Ids.YUNSU_ORGID;
     }
 
+    public WeChatServerConfig getServerConfig(String orgId){
+        WeChatServerConfig config = thirdApiClient.get("wechat/server/config/{id}", WeChatServerConfig.class, orgId);
+        if(StringUtils.hasText(config.getAppId())){
+            config.setPrivateKey(encode(config.getPrivateKey()));
+            config.setAppSecret(encode(config.getAppSecret()));
+            return  config;
+
+        }
+        return null;
+    }
+
+    public void saveWeChatServerConfig(WeChatServerConfig config){
+        WeChatServerConfig currentConfig = getServerConfig(config.getOrgId());
+        if(currentConfig == null){
+            thirdApiClient.post("wechat/server/config", config, WeChatServerConfig.class);
+        }
+        else
+            thirdApiClient.put("wechat/server/config", config);
+    }
+
+    private String encode(String value) {
+
+        if (value != null) {
+            int length = value.length();
+            return value.substring(0, 3) + "******" + value.substring(length - 3, length);
+        } else
+            return null;
+
+    }
 
 }
