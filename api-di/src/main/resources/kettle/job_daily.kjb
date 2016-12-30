@@ -11,6 +11,11 @@
   <modified_user>-</modified_user>
   <modified_date>2016&#x2f;10&#x2f;21 11&#x3a;16&#x3a;26.537</modified_date>
     <parameters>
+        <parameter>
+            <name>use_date</name>
+            <default_value/>
+            <description/>
+        </parameter>
     </parameters>
   <connection>
     <name>dev di</name>
@@ -83,7 +88,7 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>208</xloc>
+      <xloc>128</xloc>
       <yloc>192</yloc>
       </entry>
     <entry>
@@ -162,17 +167,19 @@
       <xloc>352</xloc>
       <yloc>240</yloc>
       </entry>
+    <entry>
+      <name>JavaScript</name>
+      <description/>
+      <type>EVAL</type>
+      <script>useDate &#x3d; parent_job.getVariable&#x28;&#x22;use_date&#x22;&#x29;.equals&#x28;&#x22;&#x22;&#x29;&#x3b;&#xd;&#xa;newDateStr &#x3d; parent_job.getVariable&#x28;&#x22;use_date&#x22;&#x29;&#x3b;&#xd;&#xa;if &#x28;useDate&#x29; &#x7b; &#x2f;&#x2f;We get to use native java classes as this is using Rhino mocks&#x3f;&#x3f;&#x3f;&#xd;&#xa;date &#x3d; new java.util.Date&#x28;&#x29;&#x3b;&#xd;&#xa;dateFormat &#x3d; new java.text.SimpleDateFormat&#x28;&#x22;yyyy-MM-dd&#x22;&#x29;&#x3b;&#xd;&#xa;newDateStr &#x3d; dateFormat.format&#x28;date&#x29;&#x3b;&#xd;&#xa;&#x7d;&#xd;&#xa;parent_job.setVariable&#x28;&#x22;required_date&#x22;, newDateStr&#x29;&#x3b;&#xd;&#xa;true&#x3b;</script>
+      <parallel>N</parallel>
+      <draw>Y</draw>
+      <nr>0</nr>
+      <xloc>240</xloc>
+      <yloc>192</yloc>
+      </entry>
   </entries>
   <hops>
-    <hop>
-      <from>START</from>
-      <to>&#x7edf;&#x8ba1;&#x626b;&#x7801;&#x6570;&#x636e;&#x7b49;</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>Y</unconditional>
-    </hop>
     <hop>
       <from>&#x8bfb;&#x53d6;&#x5305;&#x88c5;&#x5173;&#x7cfb;</from>
       <to>Success</to>
@@ -193,12 +200,30 @@
     </hop>
     <hop>
       <from>START</from>
-      <to>&#x8bfb;&#x53d6;&#x5305;&#x88c5;&#x5173;&#x7cfb;</to>
+      <to>JavaScript</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
+    </hop>
+    <hop>
+      <from>JavaScript</from>
+      <to>&#x7edf;&#x8ba1;&#x626b;&#x7801;&#x6570;&#x636e;&#x7b49;</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>JavaScript</from>
+      <to>&#x8bfb;&#x53d6;&#x5305;&#x88c5;&#x5173;&#x7cfb;</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
     </hop>
   </hops>
   <notepads>
