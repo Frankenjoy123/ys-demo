@@ -15,6 +15,7 @@ import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
 import com.yunsoo.common.support.YSFile;
+import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.InternalServerErrorException;
@@ -32,9 +33,14 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Created by:   Lijian
@@ -69,6 +75,8 @@ public class ProductKeyDomain {
     @Autowired
     private ProductKeyTransactionDomain productKeyTransactionDomain;
 
+    @Autowired
+    private OrganizationConfigDomain orgConfigDomain;
 
     @Value("${yunsoo.product_key_base_url}")
     private String productKeyBaseUrl;
@@ -212,7 +220,7 @@ public class ProductKeyDomain {
                         value = productKeyBaseUrl + "external/" + ks.get(j);
                     }
                     if (currentKeySerialNo != null) {
-                        value += ", " + currentKeySerialNo.getPrefix()  + "." + addZeroPrefix(String.valueOf(currentKeySerialNo.getOffset() + j + 1), currentKeySerialNo.getSerialLength())  + (currentKeySerialNo.getSuffix() == null ? "" :  ("." + currentKeySerialNo.getSuffix()))
+                        value += ", " + currentKeySerialNo.getPrefix() + "." + addZeroPrefix(String.valueOf(currentKeySerialNo.getOffset() + j + 1), currentKeySerialNo.getSerialLength()) + (currentKeySerialNo.getSuffix() == null ? "" : ("." + currentKeySerialNo.getSuffix()))
                                 + ", " + batchNo;
                     }
 
@@ -233,6 +241,30 @@ public class ProductKeyDomain {
             throw new InternalServerErrorException("product keys format issue");
         }
         return outputStream.toByteArray();
+    }
+
+    public void getProductKeysZipByBatchId(String id, ZipOutputStream out) {
+        ProductKeyBatch batch = getProductKeyBatchById(id);
+        if (batch == null) {
+            throw new NotFoundException("product key batch not found " + StringFormatter.formatMap("id", id));
+        }
+        AuthUtils.checkPermission(batch.getOrgId(), "product_key_batch", "read");
+
+        Map<String, Object> configMap = orgConfigDomain.getConfig(batch.getOrgId(), false, null);
+        String downloadFileFormat = configMap.get("enterprise.product_key.format").toString();
+
+        String fileName = batch.getOrgId() + "_" + batch.getBatchNo() + "." + downloadFileFormat;
+        byte[] data = getProductKeysByBatchId(id, batch.getOrgId(), batch.getBatchNo());
+
+        try {
+            out.putNextEntry(new ZipEntry(fileName));
+            out.write(data);
+            out.flush();
+            out.closeEntry();
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error("add file error when download zip file: " + fileName);
+        }
     }
 
     public YSFile getProductKeyFile(String batchId, String orgId) {

@@ -40,11 +40,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Created by:   Lijian
@@ -113,6 +116,26 @@ public class ProductKeyBatchController {
                 .body(new InputStreamResource(new ByteArrayInputStream(data)));
     }
 
+    @RequestMapping(value = "keys", method = RequestMethod.GET)
+    public void getKeysByIdList(@RequestParam(value = "ids") List<String> idList, HttpServletResponse response) throws IOException {
+        String zipName = "keys_" + DateTime.now().getMillis() + ".zip";
+        response.setContentType("APPLICATION/OCTET-STREAM");
+        response.setHeader("Content-Disposition", "attachment; filename=" + zipName);
+        ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
+
+        idList.forEach(id -> {
+            productKeyDomain.getProductKeysZipByBatchId(id, out);
+            try {
+                response.flushBuffer();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        out.close();
+    }
+
+
     @RequestMapping(value = "{id}/file", method = RequestMethod.GET)
     public ResponseEntity<?> getYSFileByProductKeyBatchId(@PathVariable(value = "id") String id) {
         ProductKeyBatch batch = productKeyDomain.getProductKeyBatchById(id);
@@ -153,7 +176,6 @@ public class ProductKeyBatchController {
 
         return PageUtils.response(response, productKeyBatchPage, pageable != null);
     }
-
 
 
     @RequestMapping(value = "sum/quantity", method = RequestMethod.GET)
