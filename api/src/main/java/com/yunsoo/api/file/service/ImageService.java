@@ -44,32 +44,34 @@ public class ImageService {
         log.info(String.format("image read [width: %s, height: %s]", imageProcessor.getWidth(), imageProcessor.getHeight()));
 
         imageProcessor = corpImage(imageProcessor, options);
-        if(!StringUtils.hasText(imagePath))
-           imagePath = generateImagePath();
+        if (!StringUtils.hasText(imagePath))
+            imagePath = generateImagePath();
 
         save(imageProcessor, imagePath, contentType, compress);
 
         ImageResponse imageResponse = new ImageResponse();
         String[] paths = imagePath.split("/");
-        imageResponse.setName(paths[paths.length-1]);
+        imageResponse.setName(paths[paths.length - 1]);
         imageResponse.setUrl("/" + imagePath);
+        imageResponse.setExt(convertImageContentTypeToExt(contentType));
         return imageResponse;
     }
 
     public ImageResponse saveImage(byte[] imageDataBytes, String contentType, String imagePath) throws IOException {
-        if(!StringUtils.hasText(imagePath))
+        if (!StringUtils.hasText(imagePath))
             imagePath = generateImagePath();
 
         fileService.putFile(imagePath, new ResourceInputStream(new ByteArrayInputStream(imageDataBytes), imageDataBytes.length, contentType));
 
         ImageResponse imageResponse = new ImageResponse();
         String[] paths = imagePath.split("/");
-        imageResponse.setName(paths[paths.length-1]);
+        imageResponse.setName(paths[paths.length - 1]);
         imageResponse.setUrl("/" + imagePath);
+        imageResponse.setExt(convertImageContentTypeToExt(contentType));
         return imageResponse;
     }
 
-    public ResponseEntity getImage(String imagePath){
+    public ResponseEntity getImage(String imagePath) {
         ResourceInputStream resourceInputStream = fileService.getFile(imagePath);
         if (resourceInputStream == null) {
             throw new NotFoundException("image not found");
@@ -139,6 +141,27 @@ public class ImageService {
 
         fileService.putFile(imageName, new ResourceInputStream(new ByteArrayInputStream(resultData), resultData.length, contentType));
         log.info(String.format("image saved [imageName: %s, contentType: %s, size: %d]", imageName, contentType, resultData.length));
+    }
+
+    private String convertImageContentTypeToExt(String contentType) {
+        if (StringUtils.isEmpty(contentType)) {
+            return null;
+        }
+        switch (contentType.toLowerCase()) {
+            case "image/jpeg":
+                return ".jpg";
+            case "image/png":
+                return ".png";
+            case "image/gif":
+                return ".gif";
+            case "image/tiff":
+                return ".tiff";
+            case "image/bmp":
+                return ".bmp";
+            default:
+                log.error(String.format("contentType '%s' of image not recognized", contentType));
+                return null;
+        }
     }
 
 }
