@@ -64,10 +64,12 @@ public class ProductBaseController {
 
         if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
             createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
-
+        boolean hasIds = false;
+        if(ids != null)
+            hasIds = true;
         Page<ProductBaseEntity> entityPage;
-        if (orgId != null) {
-            entityPage = productBaseRepository.findByFilter(orgId, proName, createAccount, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
+        if (orgId != null || ids != null ) {
+            entityPage = productBaseRepository.findByFilter(orgId, proName, createAccount, ids, hasIds, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
         } else {
             entityPage = productBaseRepository.findByDeletedFalse(pageable);
         }

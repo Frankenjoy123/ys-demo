@@ -26,7 +26,7 @@ public interface ProductKeyBatchRepository extends FindOneAndSaveRepository<Prod
                                              @Param("createdDateTimeStart") DateTime createdDateTimeStart,
                                              @Param("createdDateTimeEnd") DateTime createdDateTimeEnd, Pageable pageable);
 
-    Page<ProductKeyBatchEntity> findByOrgIdAndStatusCodeIn(String orgId, List<String> statusCodes, Pageable pageable);
+    Page<ProductKeyBatchEntity> findByOrgIdInAndStatusCodeIn(List<String> orgId, List<String> statusCodes, Pageable pageable);
 
     Page<ProductKeyBatchEntity> findByOrgIdAndProductBaseIdAndStatusCodeIn(String orgId, String productBaseId, List<String> statusCodes, Pageable pageable);
 

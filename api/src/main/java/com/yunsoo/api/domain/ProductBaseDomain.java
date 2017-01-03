@@ -78,16 +78,22 @@ public class ProductBaseDomain {
     }
 
     public Page<ProductBaseObject> getProductBaseByOrgId(String orgId, Pageable pageable, String proName, String createAccount, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd) {
-        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId)
+        return getProductBaseByOrgId(orgId, pageable, proName, createAccount, createdDateTimeStart, createdDateTimeEnd);
+    }
+
+    public Page<ProductBaseObject> getProductBaseByOrgId(String orgId, Pageable pageable, String proName, String createAccount, org.joda.time.LocalDate createdDateTimeStart, org.joda.time.LocalDate createdDateTimeEnd, List<String> productBaseIds) {
+       QueryStringBuilder query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("pro_name", proName)
                 .append("create_account", createAccount)
                 .append("create_datetime_start", createdDateTimeStart)
                 .append("create_datetime_end", createdDateTimeEnd)
-                .append(pageable)
-                .build();
+                .append("ids", productBaseIds)
+                .append(pageable);
 
-        return dataApiClient.getPaged("productbase" + query, new ParameterizedTypeReference<List<ProductBaseObject>>() {
+        if(productBaseIds == null)
+            query.append("org_id", orgId);
+
+        return dataApiClient.getPaged("productbase" + query.build(), new ParameterizedTypeReference<List<ProductBaseObject>>() {
         });
     }
 

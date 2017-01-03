@@ -161,59 +161,6 @@ public class MarketingController {
         return new MktDrawRule(newMktDrawRuleObject);
     }
 
-    //send WeChat red packets
-    @RequestMapping(value = "draw/{key}/prize/{id}", method = RequestMethod.GET)
-    public Boolean sendWeChatRedPackets(@PathVariable(value = "key") String key, @PathVariable(value = "id") String ysid) {
-        if ((key == null) || (ysid == null)) {
-            throw new BadRequestException("product key nor prize id can not be null");
-        }
-
-        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKeyAndUser(key, ysid);
-        ;
-        if (mktDrawPrizeObject == null) {
-            throw new BadRequestException("prize record can not be found.");
-        }
-        if (mktDrawPrizeObject.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.PAID)) {
-            throw new RestErrorResultException(new ErrorResult(5002, "prize had been sent"));
-        }
-        if (mktDrawPrizeObject.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.FAILED)) {
-            throw new RestErrorResultException(new ErrorResult(5004, "prize had been sent invoke error"));
-        }
-
-        MarketingObject marketingObject = marketingDomain.getMarketingById(mktDrawPrizeObject.getMarketingId());
-        if (marketingObject == null) {
-            throw new BadRequestException("marketing can not be found.");
-        }
-
-        WeChatServerConfig config = weChatService.getOrgIdHasWeChatSettings(marketingObject.getOrgId());
-        if (config == null)
-            throw new NotFoundException("wechat settings not found with org: " + marketingObject.getOrgId());
-
-
-        WeChatRedPackRequest redPackRequest = new WeChatRedPackRequest();
-        redPackRequest.setId(mktDrawPrizeObject.getDrawRecordId());
-        redPackRequest.setMchName(marketingObject.getName());
-        redPackRequest.setPrice(mktDrawPrizeObject.getAmount());
-        redPackRequest.setOpenId(mktDrawPrizeObject.getPrizeAccount());
-        redPackRequest.setWishing(marketingObject.getWishes());
-        redPackRequest.setRemark(marketingObject.getComments());
-        redPackRequest.setActionName(marketingObject.getName());
-        redPackRequest.setOrgId(config.getOrgId());
-        Boolean prizeResult = weChatService.sendRedPack(redPackRequest);
-        if (prizeResult) {
-            mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-            mktDrawPrizeObject.setPaidDateTime(DateTime.now());
-            marketingDomain.updateWechatPrize(mktDrawPrizeObject);
-            return true;
-        } else {
-            mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
-            marketingDomain.updateWechatPrize(mktDrawPrizeObject);
-            return false;
-        }
-
-    }
-
-
     //获取Key所对应的兑奖情况
     @RequestMapping(value = "drawPrize/{key}", method = RequestMethod.GET)
     public MktDrawPrize getMktDrawPrizeByProductKey(@PathVariable String key) {
@@ -415,19 +362,13 @@ public class MarketingController {
                     if (config == null)
                         throw new NotFoundException("wechat settings not found with org: " + marketingObject.getOrgId());
 
-                    WeChatRedPackRequest request = new WeChatRedPackRequest();
-                    request.setActionName(marketingObject.getName());
-                    request.setOpenId(currentPrize.getPrizeAccount());
-                    request.setPrice(currentPrize.getAmount());
-                    request.setWishing(marketingObject.getWishes());
-                    request.setRemark(marketingObject.getComments());
-                    request.setId(currentPrize.getDrawRecordId());
-                    request.setMchName("云溯科技");
-                    request.setOrgId(config.getOrgId());
-                    weChatService.sendRedPack(request);
-
-                    mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-                    mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+                    if(marketingDomain.sendWeChatRedPack(marketingObject,currentPrize.getPrizeAccount(),currentPrize.getAmount(),
+                            currentPrize.getDrawRecordId(), config.getOrgId())) {
+                        mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                        mktDrawPrizeObject.setPaidDateTime(DateTime.now());
+                    }
+                    else
+                        throw new RestErrorResultException(new ErrorResult(5004, "send wechat red pack failed"));
                     break;
                 default:
                     break;
@@ -790,22 +731,14 @@ public class MarketingController {
                     MktDrawPrizeObject prizeObject = marketingDomain.createMktDrawPrize(prize);
 
                     //send red pack
-                    WeChatRedPackRequest request = new WeChatRedPackRequest();
-                    request.setActionName(marketingObject.getName());
-                    request.setOpenId(openId);
-                    request.setPrice(mktDrawRule.getAmount());
-                    request.setWishing(marketingObject.getWishes());
-                    request.setRemark(marketingObject.getComments());
-                    request.setId(saveRecord.getId());
-                    request.setMchName("云溯科技");
-                    request.setOrgId(config.getOrgId());
-                    logger.info("the red pack amount is: " + mktDrawRule.getAmount() + ", key is: " + key);
-                    weChatService.sendRedPack(request);
-
-                    //set paid status
-                    prizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-                    prizeObject.setPaidDateTime(DateTime.now());
-                    marketingDomain.updateMktDrawPrize(prizeObject);
+                    if(marketingDomain.sendWeChatRedPack(marketingObject,openId,mktDrawRule.getAmount(), saveRecord.getId(), config.getOrgId() )) {
+                        //set paid status
+                        prizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                        prizeObject.setPaidDateTime(DateTime.now());
+                        marketingDomain.updateMktDrawPrize(prizeObject);
+                    }
+                    else
+                        result.setFailed(true);
 
                 } else {
                     record.setIsPrized(false);

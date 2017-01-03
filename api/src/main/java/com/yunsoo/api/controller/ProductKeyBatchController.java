@@ -40,11 +40,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Created by:   Lijian
@@ -99,7 +102,7 @@ public class ProductKeyBatchController {
             throw new BadRequestException("the download number exceed the max download");
         String downloadFileFormat = configMap.get("enterprise.product_key.format").toString();
 
-        byte[] data = productKeyDomain.getProductKeysByBatchId(id);
+        byte[] data = productKeyDomain.getProductKeysByBatchId(id, batch.getOrgId(), batch.getBatchNo());
 
         ProductKeyBatchObject productKeyBatchObject = new ProductKeyBatchObject();
         productKeyBatchObject.setDownloadNo(batch.getDownloadNo() + 1);
@@ -112,6 +115,26 @@ public class ProductKeyBatchController {
                 .header("Content-Disposition", "attachment; filename=\"product_key_batch_" + id + "." + downloadFileFormat + "\"")
                 .body(new InputStreamResource(new ByteArrayInputStream(data)));
     }
+
+    @RequestMapping(value = "keys", method = RequestMethod.GET)
+    public void getKeysByIdList(@RequestParam(value = "ids") List<String> idList, HttpServletResponse response) throws IOException {
+        String zipName = "keys_" + DateTime.now().getMillis() + ".zip";
+        response.setContentType("APPLICATION/OCTET-STREAM");
+        response.setHeader("Content-Disposition", "attachment; filename=" + zipName);
+        ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
+
+        idList.forEach(id -> {
+            productKeyDomain.getProductKeysZipByBatchId(id, out);
+            try {
+                response.flushBuffer();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        out.close();
+    }
+
 
     @RequestMapping(value = "{id}/file", method = RequestMethod.GET)
     public ResponseEntity<?> getYSFileByProductKeyBatchId(@PathVariable(value = "id") String id) {
@@ -135,7 +158,8 @@ public class ProductKeyBatchController {
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @PostAuthorize("hasPermission('current', 'org', 'product_key_batch:read')")
-    public List<ProductKeyBatch> getByFilterPaged(@RequestParam(value = "product_base_id", required = false) String productBaseId,
+    public List<ProductKeyBatch> getByFilterPaged(@RequestParam(value = "org_ids", required = false) List<String> orgIdIn,
+                                                  @RequestParam(value = "product_base_id", required = false) String productBaseId,
                                                   @RequestParam(value = "create_account", required = false) String createAccount,
                                                   @RequestParam(value = "device_id", required = false) String deviceId,
                                                   @RequestParam(value = "create_datetime_start", required = false)
@@ -148,10 +172,11 @@ public class ProductKeyBatchController {
                                                   Pageable pageable,
                                                   HttpServletResponse response) {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
-        Page<ProductKeyBatch> productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, productBaseId, isPackage, createAccount, deviceId, createdDateTimeStart, createdDateTimeEnd, pageable);
+        Page<ProductKeyBatch> productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, orgIdIn, productBaseId, isPackage, createAccount, deviceId, createdDateTimeStart, createdDateTimeEnd, pageable);
 
         return PageUtils.response(response, productKeyBatchPage, pageable != null);
     }
+
 
     @RequestMapping(value = "sum/quantity", method = RequestMethod.GET)
     @PreAuthorize("hasPermission(#orgId, 'org', 'product_key_batch:read')")
@@ -226,7 +251,7 @@ public class ProductKeyBatchController {
     public List<ProductBatchCollection> getProductBatchCollection() {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
         Page<ProductBaseObject> pageProductBase = productBaseDomain.getProductBaseByOrgId(orgId, null, null, null, null, null);
-        Page<ProductKeyBatch> pageBatch = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, null, false, null, null, null, null, null);
+        Page<ProductKeyBatch> pageBatch = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, null, null, false, null, null, null, null, null);
 
 
         return pageProductBase.getContent().stream().map(p -> {

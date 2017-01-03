@@ -16,6 +16,54 @@ public class WeChatServerConfig {
     @NotEmpty
     private String orgId;
 
+    @JsonProperty("app_secret")
+    @NotEmpty
+    private String appSecret;
+
+    @JsonProperty("private_key")
+    @NotEmpty
+    private String privateKey;
+
+    @JsonProperty("mch_id")
+    @NotEmpty
+    private String mchId;
+
+    @JsonProperty("ssl_key")
+    @NotEmpty
+    private byte[] sslKey;
+
+    public byte[] getSslKey() {
+        return sslKey;
+    }
+
+    public void setSslKey(byte[] sslKey) {
+        this.sslKey = sslKey;
+    }
+
+    public String getAppSecret() {
+        return appSecret;
+    }
+
+    public void setAppSecret(String appSecret) {
+        this.appSecret = appSecret;
+    }
+
+    public String getPrivateKey() {
+        return privateKey;
+    }
+
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
+    }
+
+    public String getMchId() {
+        return mchId;
+    }
+
+    public void setMchId(String mchId) {
+        this.mchId = mchId;
+    }
+
     public String getAppId() {
         return appId;
     }

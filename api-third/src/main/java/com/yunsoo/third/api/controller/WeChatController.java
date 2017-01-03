@@ -1,6 +1,5 @@
 package com.yunsoo.third.api.controller;
 
-import com.yunsoo.common.web.client.ResourceInputStream;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.third.Constant;
@@ -13,18 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
 import java.util.Map;
 
 /**
@@ -132,7 +123,7 @@ public class WeChatController {
     }
 
     @RequestMapping(value = "redpack", method = RequestMethod.POST)
-    public boolean sendRedPack(@RequestBody WeChatRedPackRequest redPackRequest, HttpServletRequest request) {
+    public String sendRedPack(@RequestBody WeChatRedPackRequest redPackRequest, HttpServletRequest request) {
         String ip = IpUtils.getIpFromRequest(request);
 
         if (!StringUtils.hasText(redPackRequest.getOrgId()))
@@ -146,7 +137,7 @@ public class WeChatController {
             logger.error("send wechat red pack to: "+ redPackRequest.getOpenId()+ " error: " + e.getMessage());
         }
 
-        return false;
+        return null;
     }
 
     @RequestMapping(value = "notify", method = RequestMethod.GET)
@@ -200,7 +191,20 @@ public class WeChatController {
         if (config == null)
             throw new BadRequestException("wechat config could not be null");
 
-        return weChatService.createWeChatConfig(config);
+        return weChatService.saveWeChatConfig(config);
+    }
+
+    @RequestMapping(value = "server/config/{id}", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public WeChatServerConfig updateWeChatServerConfig(@PathVariable("id")String orgId, @RequestBody @Valid WeChatServerConfig config) {
+        if (config == null)
+            throw new BadRequestException("wechat config could not be null");
+        WeChatServerConfig existingConfig = weChatService.getWeChatServerConfigByOrgId(orgId);
+        if(existingConfig.getAppId() == null)
+            throw new NotFoundException("wechat config with orgId: " + orgId + " not found");
+
+        config.setOrgId(orgId);
+        return weChatService.saveWeChatConfig(config);
     }
 
     @RequestMapping(value = "server/config/{id}", method = RequestMethod.GET)

@@ -87,6 +87,7 @@ public class ProductBaseController {
     public List<ProductBase> getByFilter(@RequestParam(value = "org_id", required = false) String orgId,
                                          @RequestParam(value = "pro_name", required = false) String proName,
                                          @RequestParam(value = "create_account", required = false) String createAccount,
+                                         @RequestParam(value = "pro_ids", required = false) List<String> productBaseIds,
                                          @RequestParam(value = "create_datetime_start", required = false)
                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
                                          @RequestParam(value = "create_datetime_end", required = false)
@@ -95,7 +96,7 @@ public class ProductBaseController {
                                          Pageable pageable,
                                          HttpServletResponse response) {
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable, proName, createAccount, createdDateTimeStart, createdDateTimeEnd);
+        Page<ProductBaseObject> productBasePage = productBaseDomain.getProductBaseByOrgId(orgId, pageable, proName, createAccount, createdDateTimeStart, createdDateTimeEnd, productBaseIds);
 
         Map<String, ProductCategoryObject> productCategoryObjectMap = productCategoryDomain.getProductCategoryMap();
         List<Lookup> lookupList = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);

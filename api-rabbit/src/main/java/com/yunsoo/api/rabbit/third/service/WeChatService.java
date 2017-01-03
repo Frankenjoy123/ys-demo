@@ -47,8 +47,8 @@ public class WeChatService {
         });
     }
 
-    public boolean sendRedPack(WeChatRedPackRequest redPackRequest) {
-        return thirdApiClient.post("wechat/redpack", redPackRequest, boolean.class);
+    public String sendRedPack(WeChatRedPackRequest redPackRequest) {
+        return thirdApiClient.post("wechat/redpack", redPackRequest, String.class);
     }
 
     public String createQRCode(String key, String orgId){

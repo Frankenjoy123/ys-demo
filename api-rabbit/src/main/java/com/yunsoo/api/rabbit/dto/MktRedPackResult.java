@@ -18,6 +18,17 @@ public class MktRedPackResult {
     @JsonProperty("existed")
     private boolean existed;
 
+    @JsonProperty("failed")
+    private boolean failed;
+
+    public boolean isFailed() {
+        return failed;
+    }
+
+    public void setFailed(boolean failed) {
+        this.failed = failed;
+    }
+
     public BigDecimal getAmount() {
         return amount;
     }

@@ -13,11 +13,11 @@ import java.sql.Blob;
 public class ThirdWeChatConfigEntity {
 
     @Id
-    @Column(name = "app_id")
-    private String appId;
-
     @Column(name = "org_id")
     private String orgId;
+
+    @Column(name = "app_id")
+    private String appId;
 
     @Column(name = "app_secret")
     private String appSecret;
