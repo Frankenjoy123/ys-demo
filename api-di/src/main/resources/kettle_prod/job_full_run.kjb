@@ -1,31 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <job>
-  <name>&#x6309;&#x65e5;&#x6267;&#x884c;&#x5206;&#x6790;</name>
+  <name>job_full_run</name>
     <description/>
     <extended_description/>
     <job_version/>
     <job_status>0</job_status>
   <directory>&#x2f;</directory>
   <created_user>-</created_user>
-  <created_date>2016&#x2f;10&#x2f;21 11&#x3a;16&#x3a;26.537</created_date>
+  <created_date>2016&#x2f;12&#x2f;23 13&#x3a;31&#x3a;01.475</created_date>
   <modified_user>-</modified_user>
-  <modified_date>2016&#x2f;10&#x2f;21 11&#x3a;16&#x3a;26.537</modified_date>
+  <modified_date>2016&#x2f;12&#x2f;23 13&#x3a;31&#x3a;01.475</modified_date>
     <parameters>
-        <parameter>
-            <name>use_date</name>
-            <default_value/>
-            <description/>
-        </parameter>
     </parameters>
   <connection>
-    <name>dev di</name>
-    <server>dev-yunsoo-di.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn</server>
+    <name>prod di</name>
+    <server>prod-yunsoo-di.czevfdgeevhl.rds.cn-north-1.amazonaws.com.cn</server>
     <type>MYSQL</type>
     <access>Native</access>
     <database>di</database>
     <port>3306</port>
-    <username>root</username>
-    <password>Encrypted 2be98afc86ac69689a217fc208fc4ff83</password>
+    <username>admin</username>
+    <password>Encrypted 2be98afc85897c3d28f1cad228cdfa7c0</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -51,7 +46,7 @@
     <slaveservers>
          <slaveserver><name>SS</name><hostname>127.0.01</hostname><port>8081</port><webAppName/><username>cluster</username><password>Encrypted 2be98afc86aa7f2e4cb1aa265cd86aac8</password><proxy_hostname/><proxy_port/><non_proxy_hosts/><master>N</master><sslMode>N</sslMode></slaveserver>
     </slaveservers>
-<job-log-table><connection>dev di</connection>
+<job-log-table><connection>prod di</connection>
 <schema>di</schema>
 <table>job_log</table>
 <size_limit_lines/>
@@ -88,8 +83,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>128</xloc>
-      <yloc>192</yloc>
+      <xloc>96</xloc>
+      <yloc>112</yloc>
       </entry>
     <entry>
       <name>Success</name>
@@ -98,16 +93,16 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>816</xloc>
-      <yloc>192</yloc>
+      <xloc>464</xloc>
+      <yloc>112</yloc>
       </entry>
     <entry>
-      <name>&#x7edf;&#x8ba1;&#x626b;&#x7801;&#x6570;&#x636e;&#x7b49;</name>
+      <name>&#x5168;&#x8868;&#x5237;&#x65b0;&#x626b;&#x7801;&#x6570;&#x636e;&#x548c;&#x4e2d;&#x5956;&#x6570;&#x636e;</name>
       <description/>
       <type>TRANS</type>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>&#x24;&#x7b;Internal.Job.Filename.Directory&#x7d;&#x2f;daily_run.ktr</filename>
+      <filename>&#x24;&#x7b;Internal.Job.Filename.Directory&#x7d;&#x2f;full_run.ktr</filename>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
@@ -131,76 +126,14 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>352</xloc>
-      <yloc>128</yloc>
-      </entry>
-    <entry>
-      <name>&#x8bfb;&#x53d6;&#x5305;&#x88c5;&#x5173;&#x7cfb;</name>
-      <description/>
-      <type>TRANS</type>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>&#x24;&#x7b;Internal.Job.Filename.Directory&#x7d;&#x2f;tr_s3_sync_package.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <parameters>        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>352</xloc>
-      <yloc>240</yloc>
-      </entry>
-    <entry>
-      <name>JavaScript</name>
-      <description/>
-      <type>EVAL</type>
-      <script>useDate &#x3d; parent_job.getVariable&#x28;&#x22;use_date&#x22;&#x29;.equals&#x28;&#x22;&#x22;&#x29;&#x3b;&#xd;&#xa;newDateStr &#x3d; parent_job.getVariable&#x28;&#x22;use_date&#x22;&#x29;&#x3b;&#xd;&#xa;if &#x28;useDate&#x29; &#x7b; &#x2f;&#x2f;We get to use native java classes as this is using Rhino mocks&#x3f;&#x3f;&#x3f;&#xd;&#xa;date &#x3d; new java.util.Date&#x28;&#x29;&#x3b;&#xd;&#xa;dateFormat &#x3d; new java.text.SimpleDateFormat&#x28;&#x22;yyyy-MM-dd&#x22;&#x29;&#x3b;&#xd;&#xa;newDateStr &#x3d; dateFormat.format&#x28;date&#x29;&#x3b;&#xd;&#xa;&#x7d;&#xd;&#xa;parent_job.setVariable&#x28;&#x22;required_date&#x22;, newDateStr&#x29;&#x3b;&#xd;&#xa;true&#x3b;</script>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>240</xloc>
-      <yloc>192</yloc>
+      <xloc>256</xloc>
+      <yloc>112</yloc>
       </entry>
   </entries>
   <hops>
     <hop>
-      <from>&#x8bfb;&#x53d6;&#x5305;&#x88c5;&#x5173;&#x7cfb;</from>
-      <to>Success</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>&#x7edf;&#x8ba1;&#x626b;&#x7801;&#x6570;&#x636e;&#x7b49;</from>
-      <to>Success</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
       <from>START</from>
-      <to>JavaScript</to>
+      <to>&#x5168;&#x8868;&#x5237;&#x65b0;&#x626b;&#x7801;&#x6570;&#x636e;&#x548c;&#x4e2d;&#x5956;&#x6570;&#x636e;</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -208,17 +141,8 @@
       <unconditional>Y</unconditional>
     </hop>
     <hop>
-      <from>JavaScript</from>
-      <to>&#x7edf;&#x8ba1;&#x626b;&#x7801;&#x6570;&#x636e;&#x7b49;</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>JavaScript</from>
-      <to>&#x8bfb;&#x53d6;&#x5305;&#x88c5;&#x5173;&#x7cfb;</to>
+      <from>&#x5168;&#x8868;&#x5237;&#x65b0;&#x626b;&#x7801;&#x6570;&#x636e;&#x548c;&#x4e2d;&#x5956;&#x6570;&#x636e;</from>
+      <to>Success</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -227,27 +151,6 @@
     </hop>
   </hops>
   <notepads>
-    <notepad>
-      <note>&#x6309;&#x65e5;&#x6267;&#x884c;</note>
-      <xloc>96</xloc>
-      <yloc>128</yloc>
-      <width>58</width>
-      <heigth>26</heigth>
-      <fontname/>
-      <fontsize>-1</fontsize>
-      <fontbold>N</fontbold>
-      <fontitalic>N</fontitalic>
-      <fontcolorred>0</fontcolorred>
-      <fontcolorgreen>0</fontcolorgreen>
-      <fontcolorblue>0</fontcolorblue>
-      <backgroundcolorred>255</backgroundcolorred>
-      <backgroundcolorgreen>205</backgroundcolorgreen>
-      <backgroundcolorblue>112</backgroundcolorblue>
-      <bordercolorred>100</bordercolorred>
-      <bordercolorgreen>100</bordercolorgreen>
-      <bordercolorblue>100</bordercolorblue>
-      <drawshadow>Y</drawshadow>
-    </notepad>
   </notepads>
 
 </job>

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <job>
-  <name>&#x6309;&#x65e5;&#x6267;&#x884c;&#x5206;&#x6790;</name>
+  <name>job_daily</name>
     <description/>
     <extended_description/>
     <job_version/>
     <job_status>0</job_status>
   <directory>&#x2f;</directory>
   <created_user>-</created_user>
-  <created_date>2016&#x2f;10&#x2f;21 11&#x3a;16&#x3a;26.537</created_date>
+  <created_date>2016&#x2f;12&#x2f;23 13&#x3a;32&#x3a;02.432</created_date>
   <modified_user>-</modified_user>
-  <modified_date>2016&#x2f;10&#x2f;21 11&#x3a;16&#x3a;26.537</modified_date>
+  <modified_date>2016&#x2f;12&#x2f;23 13&#x3a;32&#x3a;02.432</modified_date>
     <parameters>
         <parameter>
             <name>use_date</name>
@@ -18,14 +18,14 @@
         </parameter>
     </parameters>
   <connection>
-    <name>dev di</name>
-    <server>dev-yunsoo-di.cquafg9deiuc.rds.cn-north-1.amazonaws.com.cn</server>
+    <name>prod di</name>
+    <server>prod-yunsoo-di.czevfdgeevhl.rds.cn-north-1.amazonaws.com.cn</server>
     <type>MYSQL</type>
     <access>Native</access>
     <database>di</database>
     <port>3306</port>
-    <username>root</username>
-    <password>Encrypted 2be98afc86ac69689a217fc208fc4ff83</password>
+    <username>admin</username>
+    <password>Encrypted 2be98afc85897c3d28f1cad228cdfa7c0</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -51,7 +51,7 @@
     <slaveservers>
          <slaveserver><name>SS</name><hostname>127.0.01</hostname><port>8081</port><webAppName/><username>cluster</username><password>Encrypted 2be98afc86aa7f2e4cb1aa265cd86aac8</password><proxy_hostname/><proxy_port/><non_proxy_hosts/><master>N</master><sslMode>N</sslMode></slaveserver>
     </slaveservers>
-<job-log-table><connection>dev di</connection>
+<job-log-table><connection>prod di</connection>
 <schema>di</schema>
 <table>job_log</table>
 <size_limit_lines/>
@@ -88,8 +88,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>128</xloc>
-      <yloc>192</yloc>
+      <xloc>176</xloc>
+      <yloc>160</yloc>
       </entry>
     <entry>
       <name>Success</name>
@@ -98,8 +98,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>816</xloc>
-      <yloc>192</yloc>
+      <xloc>784</xloc>
+      <yloc>160</yloc>
       </entry>
     <entry>
       <name>&#x7edf;&#x8ba1;&#x626b;&#x7801;&#x6570;&#x636e;&#x7b49;</name>
@@ -131,8 +131,8 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>352</xloc>
-      <yloc>128</yloc>
+      <xloc>416</xloc>
+      <yloc>96</yloc>
       </entry>
     <entry>
       <name>&#x8bfb;&#x53d6;&#x5305;&#x88c5;&#x5173;&#x7cfb;</name>
@@ -164,8 +164,8 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>352</xloc>
-      <yloc>240</yloc>
+      <xloc>432</xloc>
+      <yloc>208</yloc>
       </entry>
     <entry>
       <name>JavaScript</name>
@@ -175,13 +175,13 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>240</xloc>
-      <yloc>192</yloc>
+      <xloc>288</xloc>
+      <yloc>160</yloc>
       </entry>
   </entries>
   <hops>
     <hop>
-      <from>&#x8bfb;&#x53d6;&#x5305;&#x88c5;&#x5173;&#x7cfb;</from>
+      <from>&#x7edf;&#x8ba1;&#x626b;&#x7801;&#x6570;&#x636e;&#x7b49;</from>
       <to>Success</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -190,7 +190,7 @@
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>&#x7edf;&#x8ba1;&#x626b;&#x7801;&#x6570;&#x636e;&#x7b49;</from>
+      <from>&#x8bfb;&#x53d6;&#x5305;&#x88c5;&#x5173;&#x7cfb;</from>
       <to>Success</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -227,27 +227,6 @@
     </hop>
   </hops>
   <notepads>
-    <notepad>
-      <note>&#x6309;&#x65e5;&#x6267;&#x884c;</note>
-      <xloc>96</xloc>
-      <yloc>128</yloc>
-      <width>58</width>
-      <heigth>26</heigth>
-      <fontname/>
-      <fontsize>-1</fontsize>
-      <fontbold>N</fontbold>
-      <fontitalic>N</fontitalic>
-      <fontcolorred>0</fontcolorred>
-      <fontcolorgreen>0</fontcolorgreen>
-      <fontcolorblue>0</fontcolorblue>
-      <backgroundcolorred>255</backgroundcolorred>
-      <backgroundcolorgreen>205</backgroundcolorgreen>
-      <backgroundcolorblue>112</backgroundcolorblue>
-      <bordercolorred>100</bordercolorred>
-      <bordercolorgreen>100</bordercolorgreen>
-      <bordercolorblue>100</bordercolorblue>
-      <drawshadow>Y</drawshadow>
-    </notepad>
   </notepads>
 
 </job>
