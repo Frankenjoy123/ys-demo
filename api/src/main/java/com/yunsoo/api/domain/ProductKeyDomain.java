@@ -259,7 +259,7 @@ public class ProductKeyDomain {
         return outputStream.toByteArray();
     }
 
-    public void getProductKeysZipByBatchId(String id, ZipOutputStream out) {
+    public int getProductKeysZipByBatchId(String id, ZipOutputStream out) {
         ProductKeyBatch batch = getProductKeyBatchById(id);
         if (batch == null) {
             throw new NotFoundException("product key batch not found " + StringFormatter.formatMap("id", id));
@@ -277,10 +277,13 @@ public class ProductKeyDomain {
             out.write(data);
             out.flush();
             out.closeEntry();
+            return data.length;
         } catch (IOException e) {
             e.printStackTrace();
             log.error("add file error when download zip file: " + fileName);
         }
+
+        return 0;
     }
 
     public YSFile getProductKeyFile(String batchId, String orgId) {

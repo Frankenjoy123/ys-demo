@@ -126,16 +126,17 @@ public class ProductKeyBatchController {
         response.setContentType("APPLICATION/OCTET-STREAM");
         response.setHeader("Content-Disposition", "attachment; filename=" + zipName);
         ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
-
-        idList.forEach(id -> {
-            productKeyDomain.getProductKeysZipByBatchId(id, out);
+        long length = 0;
+        for(int i=0; i< idList.size(); i++){
+            length += productKeyDomain.getProductKeysZipByBatchId(idList.get(i), out);
             try {
+                response.setHeader("X-YS-File", (i+1) + "/10");
+                response.setHeader("Content-Length", String.valueOf(length));
                 response.flushBuffer();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        });
-
+        }
         out.close();
     }
 
@@ -376,32 +377,5 @@ public class ProductKeyBatchController {
         return productKeyBatchInfoList;
     }
 
-
-    @RequestMapping(value = "/download/test", method = RequestMethod.GET)
-    public void  test(HttpServletResponse response) throws IOException, InterruptedException {
-        String zipName = "keys_" + DateTime.now().getMillis() + ".zip";
-        response.setContentType("APPLICATION/OCTET-STREAM");
-        response.setHeader("Content-Disposition", "attachment; filename=" + zipName);
-        response.setHeader("Content-Length", "10");
-        ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
-
-        for(int i=0; i<10; i++){
-            String fileName = i + ".txt";
-            byte[] data = new byte[]{'a', 'b','c', 'd', 'e'};
-            try {
-                out.putNextEntry(new ZipEntry(fileName));
-                out.write(data);
-                out.flush();
-                out.closeEntry();
-                Thread.sleep( 60* 1000);
-                response.setHeader("Content-Length", "10");
-                response.flushBuffer();
-            } catch (IOException e) {
-                e.printStackTrace();
-                log.error("add file error when download zip file: " + fileName);
-            }
-        }
-
-    }
 
 }
