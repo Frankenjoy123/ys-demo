@@ -7,10 +7,13 @@ import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.file.service.FileService;
+import com.yunsoo.api.key.dto.KeyBatch;
 import com.yunsoo.api.key.dto.KeyBatchCreationRequest;
+import com.yunsoo.api.key.service.KeyBatchService;
 import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.MarketingObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
@@ -43,6 +46,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -174,6 +178,25 @@ public class ProductKeyBatchController {
         String orgId = AuthUtils.getCurrentAccount().getOrgId();
         Page<ProductKeyBatch> productKeyBatchPage = productKeyDomain.getProductKeyBatchesByFilterPaged(orgId, orgIdIn, productBaseId, isPackage, createAccount, deviceId, createdDateTimeStart, createdDateTimeEnd, pageable);
 
+        return PageUtils.response(response, productKeyBatchPage, pageable != null);
+    }
+
+    @RequestMapping(value = "search", method = RequestMethod.GET)
+    @PostAuthorize("hasPermission('current', 'org', 'product_key_batch:read')")
+    public List<ProductKeyBatch> getByFilterNewPaged(@RequestParam(value = "org_ids") List<String> orgIdIn,
+                                                     @RequestParam(value = "downloaded", required = false) Boolean downloaded,
+                                                     @RequestParam(value = "product_base_id", required = false) String productBaseId,
+                                                     @RequestParam(value = "create_account", required = false) String createAccount,
+                                                     @RequestParam(value = "create_datetime_start", required = false)
+                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeStart,
+                                                     @RequestParam(value = "create_datetime_end", required = false)
+                                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeEnd,
+                                                     @PageableDefault(page = 0, size = 1000)
+                                                     @SortDefault(value = "createdDateTime", direction = Sort.Direction.DESC)
+                                                     Pageable pageable,
+                                                     HttpServletResponse response) {
+        String orgId = AuthUtils.getCurrentAccount().getOrgId();
+        Page<ProductKeyBatch> productKeyBatchPage = productKeyDomain.search(orgIdIn, downloaded, productBaseId, createAccount, createdDateTimeStart, createdDateTimeEnd, pageable);
         return PageUtils.response(response, productKeyBatchPage, pageable != null);
     }
 
@@ -351,6 +374,34 @@ public class ProductKeyBatchController {
             }
         }
         return productKeyBatchInfoList;
+    }
+
+
+    @RequestMapping(value = "/download/test", method = RequestMethod.GET)
+    public void  test(HttpServletResponse response) throws IOException, InterruptedException {
+        String zipName = "keys_" + DateTime.now().getMillis() + ".zip";
+        response.setContentType("APPLICATION/OCTET-STREAM");
+        response.setHeader("Content-Disposition", "attachment; filename=" + zipName);
+        response.setHeader("Content-Length", "10");
+        ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
+
+        for(int i=0; i<10; i++){
+            String fileName = i + ".txt";
+            byte[] data = new byte[]{'a', 'b','c', 'd', 'e'};
+            try {
+                out.putNextEntry(new ZipEntry(fileName));
+                out.write(data);
+                out.flush();
+                out.closeEntry();
+                Thread.sleep( 60* 1000);
+                response.setHeader("Content-Length", "10");
+                response.flushBuffer();
+            } catch (IOException e) {
+                e.printStackTrace();
+                log.error("add file error when download zip file: " + fileName);
+            }
+        }
+
     }
 
 }

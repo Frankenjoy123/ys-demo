@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,7 +56,9 @@ public class KeyBatchController {
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public List<KeyBatch> getByFilterPaged(@RequestParam(value = "org_id") String orgId,
+    public List<KeyBatch> getByFilterPaged(@RequestParam(value = "org_id", required = false) String orgId,
+                                           @RequestParam(value = "org_ids", required = false) List<String> orgIdIn,
+                                           @RequestParam(value = "downloaded", required = false) Boolean downloaded,
                                            @RequestParam(value = "product_base_id", required = false) String productBaseId,
                                            @RequestParam(value = "status_code_in", required = false) List<String> statusCodeIn,
                                            @RequestParam(value = "created_account_id", required = false) String createdAccountId,
@@ -63,7 +66,11 @@ public class KeyBatchController {
                                            @RequestParam(value = "created_datetime_le", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) DateTime createdDateTimeLE,
                                            Pageable pageable,
                                            HttpServletResponse response) {
-        Page<KeyBatch> page = keyBatchService.getByFilter(orgId, productBaseId, statusCodeIn, createdAccountId, createdDateTimeGE, createdDateTimeLE, pageable);
+        if(orgIdIn == null){
+            orgIdIn = new ArrayList<>();
+            orgIdIn.add(orgId);
+        }
+        Page<KeyBatch> page = keyBatchService.getByFilter(orgIdIn, productBaseId, statusCodeIn, createdAccountId, downloaded == null?false: downloaded, createdDateTimeGE, createdDateTimeLE, pageable);
         return PageUtils.response(response, page, page != null);
     }
 

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,12 +33,13 @@ public class KeyBatchService {
     @Autowired
     private KeyApiClient keyApiClient;
 
-    public Page<KeyBatch> getByFilter(String orgId, String productBaseId, List<String> statusCodeIn, String createdAccountId, DateTime createdDateTimeGE, DateTime createdDateTimeLE, Pageable pageable) {
-        if (StringUtils.isEmpty(orgId)) {
+    public Page<KeyBatch> getByFilter(List<String> orgIds, Boolean downloaded, String productBaseId, List<String> statusCodeIn, String createdAccountId, DateTime createdDateTimeGE, DateTime createdDateTimeLE, Pageable pageable) {
+        if (orgIds.size() == 0) {
             return Page.empty();
         }
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId)
+                .append("org_ids", orgIds)
+                .append("downloaded", downloaded)
                 .append("product_base_id", productBaseId)
                 .append("status_code_in", statusCodeIn)
                 .append("created_account_id", createdAccountId)
@@ -50,7 +52,7 @@ public class KeyBatchService {
     }
 
     public List<String> getPartitionIdsByOrgId(String orgId) {
-        return getByFilter(orgId, null, null, null, null, null, null)
+        return getByFilter(Arrays.asList(orgId), null, null, null, null, null, null, null)
                 .getContent()
                 .stream()
                 .map(KeyBatch::getPartitionId)

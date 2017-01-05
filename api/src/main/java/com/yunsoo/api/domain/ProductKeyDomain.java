@@ -1,5 +1,7 @@
 package com.yunsoo.api.domain;
 
+import com.yunsoo.api.auth.dto.Organization;
+import com.yunsoo.api.auth.service.AuthOrganizationService;
 import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.api.dto.Lookup;
 import com.yunsoo.api.dto.ProductKeyBatch;
@@ -37,6 +39,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -78,8 +81,12 @@ public class ProductKeyDomain {
     @Autowired
     private OrganizationConfigDomain orgConfigDomain;
 
+    @Autowired
+    private AuthOrganizationService authOrganizationService;
+
     @Value("${yunsoo.product_key_base_url}")
     private String productKeyBaseUrl;
+
 
 
     //ProductKeyBatch
@@ -133,6 +140,15 @@ public class ProductKeyDomain {
         List<Lookup> productKeyTypes = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);
         List<Lookup> productKeyBatchStatuses = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus);
         return objectsPage.map(i -> toProductKeyBatch(i, productKeyTypes, productKeyBatchStatuses));
+    }
+
+    public Page<ProductKeyBatch> search(List<String> orgIdIn, Boolean downloaded, String productBaseId, String createdAccountId, DateTime start, DateTime end, Pageable pageable){
+        List<String> statusCodeIn = Arrays.asList(LookupCodes.ProductKeyBatchStatus.CREATING, LookupCodes.ProductKeyBatchStatus.AVAILABLE);
+        Page<KeyBatch> productKeyBatchPage = keyBatchService.getByFilter(orgIdIn, downloaded, productBaseId,statusCodeIn , createdAccountId, start, end, pageable);
+        List<Lookup> productKeyTypes = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyType);
+        List<Lookup> productKeyBatchStatuses = lookupDomain.getLookupListByType(LookupCodes.LookupType.ProductKeyBatchStatus);
+        return productKeyBatchPage.map(i -> toProductKeyBatch(i, productKeyTypes, productKeyBatchStatuses));
+
     }
 
 
@@ -252,8 +268,8 @@ public class ProductKeyDomain {
 
         Map<String, Object> configMap = orgConfigDomain.getConfig(batch.getOrgId(), false, null);
         String downloadFileFormat = configMap.get("enterprise.product_key.format").toString();
-
-        String fileName = batch.getOrgId() + "_" + batch.getBatchNo() + "." + downloadFileFormat;
+        Organization org = authOrganizationService.getById(batch.getOrgId());
+        String fileName = org.getName() + "_" + batch.getBatchNo() + "." + downloadFileFormat;
         byte[] data = getProductKeysByBatchId(id, batch.getOrgId(), batch.getBatchNo());
 
         try {

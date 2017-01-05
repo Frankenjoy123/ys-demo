@@ -19,10 +19,11 @@ public interface KeyBatchService {
 
     KeyBatch getById(String batchId);
 
-    Page<KeyBatch> getByFilter(String orgId,
+    Page<KeyBatch> getByFilter(List<String> orgIds,
                                String productBaseId,
                                List<String> statusCodeIn,
                                String createdAccountId,
+                               Boolean downloaded,
                                DateTime createdDateTimeGE,
                                DateTime createdDateTimeLE,
                                Pageable pageable);
