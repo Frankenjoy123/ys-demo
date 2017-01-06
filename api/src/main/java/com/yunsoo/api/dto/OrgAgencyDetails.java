@@ -25,6 +25,9 @@ public class OrgAgencyDetails {
     @JsonProperty("parent_name")
     private String parentName;
 
+    @JsonProperty("org_name")
+    private String orgName;
+
     public String getOauthName() {
         return oauthName;
     }
@@ -73,4 +76,11 @@ public class OrgAgencyDetails {
         this.parentName = parentName;
     }
 
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
 }

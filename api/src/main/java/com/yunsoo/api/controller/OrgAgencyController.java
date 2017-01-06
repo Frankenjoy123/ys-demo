@@ -1,5 +1,9 @@
 package com.yunsoo.api.controller;
 
+import com.yunsoo.api.auth.dto.Account;
+import com.yunsoo.api.auth.dto.Organization;
+import com.yunsoo.api.auth.service.AuthAccountService;
+import com.yunsoo.api.auth.service.AuthOrganizationService;
 import com.yunsoo.api.domain.OrgAgencyDomain;
 import com.yunsoo.api.domain.OrganizationDomain;
 import com.yunsoo.api.dto.Location;
@@ -47,6 +51,12 @@ public class OrgAgencyController {
     @Autowired
     private OrgAgencyDomain orgAgencyDomain;
 
+    @Autowired
+    private AuthAccountService authAccountService;
+
+    @Autowired
+    private AuthOrganizationService authOrganizationService;
+
     private static String SOURCE = "source";
     private static String SOURCE_TYPE = "source_type_code";
 
@@ -70,16 +80,19 @@ public class OrgAgencyController {
         String sourceId = id;
         Map<String, String> accountDetails = AuthUtils.getCurrentAccount().getDetails();
 
+        Organization organization = authOrganizationService.getById(orgId);
+        if(organization == null)
+            throw new BadRequestException("current org not existing");
+
         if(id.equals("current"))
             sourceId = null;
         if (accountDetails != null && accountDetails.size() > 0)
             sourceId = accountDetails.get(SOURCE);
 
-
-
         OrgAgencyDetails details = new OrgAgencyDetails();
+        details.setOrgName(organization.getName());
         List<OAuthAccount> accountList = orgAgencyDomain.getOAuthAccount(sourceId == null ? null : Arrays.asList(sourceId), accountId);
-        if (accountList.size() > 0) {
+        if (accountList.size() > 0) {  //agency用户信息
             OAuthAccount account = accountList.get(0);
             details.setChildrenCount(orgAgencyDomain.count(account.getSource(), orgId));
             details.setAuthorizedChildrenCount(orgAgencyDomain.authorizedCount(orgId, account.getSource()));
@@ -90,10 +103,12 @@ public class OrgAgencyController {
                 details.setParentName(orgAgencyDomain.getParentOrgAgencyName(account.getSource()));
             }
         }
-        else {
+        else {  //公司用户登陆获取信息
+            Account currentAccount = authAccountService.getById(accountId);
             details.setChildrenCount(orgAgencyDomain.count(null, orgId));
             details.setAuthorizedChildrenCount(orgAgencyDomain.authorizedCount(orgId, null));
-
+            details.setOauthName(currentAccount.getLastName()+ currentAccount.getFirstName());
+            details.setOauthGravatarUrl("/organization/" + orgId + "/logo/image-128x128");
         }
 
         return details;
