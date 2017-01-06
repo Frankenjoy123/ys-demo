@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -47,7 +49,11 @@ public class WeChatAPIController {
     @RequestMapping(value = "config", method = RequestMethod.GET)
     public Map getWeChatConfig(@RequestParam("url")String url){
 
-        return weChatAPIService.getConfig(weChatAPIService.getOrgIdHasWeChatSettings(AuthUtils.fixOrgId(null)), url);
+        try {
+            return weChatAPIService.getConfig(weChatAPIService.getOrgIdHasWeChatSettings(AuthUtils.fixOrgId(null)), url);
+        } catch (UnsupportedEncodingException e) {
+            return new HashMap<>();
+        }
     }
 
     @RequestMapping(value = "pay/{marketing_id}", method = RequestMethod.POST)

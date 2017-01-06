@@ -17,6 +17,9 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -40,41 +43,48 @@ public class WeChatService {
     private OrgBrandDomain orgBrandDomain;
 
     public Map<String, Object> getConfig(String orgId, String url) {
-        String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId).append("url", url)
-                .build();
-        return thirdApiClient.get("wechat/jssdk/config" + query, new ParameterizedTypeReference<Map<String, Object>>() {
-        });
+        String query = null;
+        try {
+            query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
+                    .append("org_id", orgId).append("url", URLEncoder.encode(url, "UTF-8"))
+                    .build();
+
+            return thirdApiClient.get("wechat/jssdk/config" + query, new ParameterizedTypeReference<Map<String, Object>>() {
+            });
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return new HashMap<>();
+        }
     }
 
     public String sendRedPack(WeChatRedPackRequest redPackRequest) {
         return thirdApiClient.post("wechat/redpack", redPackRequest, String.class);
     }
 
-    public String createQRCode(String key, String orgId){
-        Integer scenarioId = Integer.parseInt(RandomUtils.generateString(8, RandomUtils.NUMERIC_CHARS ));
+    public String createQRCode(String key, String orgId) {
+        Integer scenarioId = Integer.parseInt(RandomUtils.generateString(8, RandomUtils.NUMERIC_CHARS));
         productDomain.getKeyFromRadis(scenarioId, key);
         return thirdApiClient.post("wechat/qrcode/{id}?org_id={orgId}", null, String.class, scenarioId, orgId);
     }
 
-    public WeChatUser getWeChatUser(String openId, String orgId){
+    public WeChatUser getWeChatUser(String openId, String orgId) {
         return thirdApiClient.get("wechat/user/{id}?org_id={orgId}", WeChatUser.class, openId, orgId);
     }
 
-    @Cacheable(key="T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).WECHAT.toString(), #orgId)")
-    public WeChatServerConfig getOrgIdHasWeChatSettings(String orgId){
+    @Cacheable(key = "T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).WECHAT.toString(), #orgId)")
+    public WeChatServerConfig getOrgIdHasWeChatSettings(String orgId) {
         logger.info("get wechat settings for orgid:" + orgId);
         WeChatServerConfig config = thirdApiClient.get("wechat/server/config/{id}", WeChatServerConfig.class, orgId);
-        if(StringUtils.hasText(config.getAppId()))
-            return  config;
+        if (StringUtils.hasText(config.getAppId()))
+            return config;
 
         OrgBrandObject object = orgBrandDomain.getOrgBrandById(orgId);
         config = thirdApiClient.get("wechat/server/config/{id}", WeChatServerConfig.class, object.getCarrierId());
-        if(StringUtils.hasText(config.getAppId()))
+        if (StringUtils.hasText(config.getAppId()))
             return config;
 
         config = thirdApiClient.get("wechat/server/config/{id}", WeChatServerConfig.class, Constants.Ids.YUNSU_ORG_ID);
-        if(StringUtils.hasText(config.getAppId()))
+        if (StringUtils.hasText(config.getAppId()))
             return config;
 
         return null;

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Map;
 
 /**
@@ -83,10 +84,10 @@ public class WeChatController {
     @RequestMapping(value = "jssdk/config", method = RequestMethod.GET)
     public WeChatConfig getWeChatConfig(@RequestParam("url") String url,
                                         @RequestParam(value = "nonce_str", required = false) String nonceString,
-                                        @RequestParam(value = "org_id", required = false) String orgId) {
+                                        @RequestParam(value = "org_id", required = false) String orgId) throws UnsupportedEncodingException {
         if (!StringUtils.hasText(orgId))
             orgId = Constant.YUNSU_ORGID;
-
+        url = URLDecoder.decode(url, "UTF-8");
         return weChatService.getWechatConfig(orgId, url, nonceString);
     }
 

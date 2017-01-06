@@ -9,6 +9,7 @@ import com.yunsoo.api.third.dto.*;
 import com.yunsoo.common.data.object.MarketingObject;
 import com.yunsoo.common.data.object.OrgBrandObject;
 import com.yunsoo.common.web.util.QueryStringBuilder;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.Map;
 
 /**
@@ -82,9 +85,9 @@ public class WeChatAPIService {
         return thirdApiClient.get("wechat/openid_list" + query, WeChatOpenIdList.class);
     }
 
-    public Map<String, Object> getConfig(String orgId, String url) {
+    public Map<String, Object> getConfig(String orgId, String url) throws UnsupportedEncodingException {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("org_id", orgId).append("url", url)
+                .append("org_id", orgId).append("url", URLEncoder.encode(url, "UTF-8"))
                 .build();
         return thirdApiClient.get("wechat/jssdk/config" + query, new ParameterizedTypeReference<Map<String, Object>>() {
         });
