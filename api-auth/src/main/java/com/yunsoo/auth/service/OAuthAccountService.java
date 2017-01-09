@@ -56,4 +56,8 @@ public class OAuthAccountService {
         return accounts.stream().map(OAuthAccount::new).collect(Collectors.toList());
     }
 
+    public OAuthAccount getOAuthAccount(String openId, String openType, String sourceType){
+        OAuthAccountEntity currentAccount = repository.findTop1ByOAuthTypeCodeAndOAuthOpenIdAndSourceTypeCodeAndDisabled(openType, openId, sourceType, false);
+        return new OAuthAccount(currentAccount);
+    }
 }

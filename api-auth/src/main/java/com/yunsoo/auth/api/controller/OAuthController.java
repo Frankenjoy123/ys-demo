@@ -54,6 +54,25 @@ public class OAuthController {
     @Autowired
     private WeChatService weChatService;
 
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public OAuthAccountLoginResponse login(@RequestBody OAuthAccountLoginRequest request) {
+        if(request.getOauthOpenType() == null)
+            request.setOauthOpenType(WECHAT);
+        OAuthAccount account = oAuthAccountService.getOAuthAccount(request.getOauthOpenid(), request.getOauthOpenType(), WECHAT);
+        if(account == null)
+            throw new UnauthorizedException("wechat user not bind");
+
+        Token accessToken = getAccessToken(account.getId(), account.getToken());
+
+        OAuthAccountLoginResponse response = new OAuthAccountLoginResponse();
+        response.setToken(account.getToken());
+        response.setAccessToken(accessToken);
+        response.setOauthAccountId(account.getId());
+        return response;
+    }
+
+
+
     @RequestMapping(value = "/bind", method = RequestMethod.POST)
     public OAuthAccountLoginResponse bind(@RequestBody OAuthAccountLoginRequest request) {
         if (request.getOauthOpenType() == null)
