@@ -99,14 +99,12 @@ public class ProductService {
         }
     }
 
-    public int batchSetProductBaseIdByKey(List<Product> products) {
+    public int batchPatchUpdateProductByKey(List<Product> products) {
         return (int) products.stream().map(p -> {
             if (p == null || p.getKey() == null || p.getProductBaseId() == null) {
                 return false;
             } else {
                 try {
-                    Product p1 = new Product();
-                    p1.setProductBaseId(p.getProductBaseId());
                     String k = p.getKey();
                     if (k.contains("/")) {
                         String[] externalKey = k.split("/", 2);
@@ -117,7 +115,7 @@ public class ProductService {
                             return false;
                         }
                     }
-                    keyApiClient.patch("product/{key}", p1, p.getKey());
+                    keyApiClient.patch("product/{key}", p, p.getKey());
                     return true;
                 } catch (Exception e) {
                     return false;
