@@ -84,9 +84,9 @@ public class ProductController {
         productService.patchUpdate(product);
     }
 
-    @RequestMapping(value = "batchSetProductBaseIdByKey", method = RequestMethod.POST)
-    public int batchSetProductBaseIdByKey(@RequestBody List<Product> products) {
-        return productService.batchSetProductBaseIdByKey(products);
+    @RequestMapping(value = "batchUpdateProductByKey", method = RequestMethod.POST)
+    public int batchUpdateProductByKey(@RequestBody List<Product> products) {
+        return productService.batchPatchUpdateProductByKey(products);
     }
 
     private Product findProduct(String key) {
