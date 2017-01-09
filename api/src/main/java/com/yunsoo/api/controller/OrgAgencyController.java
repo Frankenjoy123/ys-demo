@@ -101,6 +101,8 @@ public class OrgAgencyController {
             if (StringUtils.hasText(account.getSource())) {
                 details.setAgencyId(account.getSource());
                 details.setParentName(orgAgencyDomain.getParentOrgAgencyName(account.getSource()));
+                if(!StringUtils.hasText(details.getParentName()))
+                    details.setParentName(organization.getName());
             }
         }
         else {  //公司用户登陆获取信息

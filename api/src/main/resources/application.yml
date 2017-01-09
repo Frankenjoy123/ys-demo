@@ -70,7 +70,7 @@ yunsoo:
     di_api:
       base_url: http://dev-api.yunsu.co:4380/
     third_api:
-      base_url: http://localhost:4480/
+      base_url: http://dev-api.yunsu.co:4480/
   cache:
     type: local
   alipay:
