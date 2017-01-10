@@ -58,7 +58,7 @@ public class OAuthController {
     public OAuthAccountLoginResponse login(@RequestBody OAuthAccountLoginRequest request) {
         if(request.getOauthOpenType() == null)
             request.setOauthOpenType(WECHAT);
-        OAuthAccount account = oAuthAccountService.getOAuthAccount(request.getOauthOpenid(), request.getOauthOpenType(), WECHAT);
+        OAuthAccount account = oAuthAccountService.getOAuthAccount(request.getOauthOpenid(), request.getOauthOpenType(), request.getAccountType());
         if(account == null)
             throw new UnauthorizedException("wechat user not bind");
 

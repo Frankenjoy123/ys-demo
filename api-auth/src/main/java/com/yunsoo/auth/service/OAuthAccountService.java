@@ -58,6 +58,8 @@ public class OAuthAccountService {
 
     public OAuthAccount getOAuthAccount(String openId, String openType, String sourceType){
         OAuthAccountEntity currentAccount = repository.findTop1ByOAuthTypeCodeAndOAuthOpenIdAndSourceTypeCodeAndDisabled(openType, openId, sourceType, false);
+        if(currentAccount == null)
+            return null;
         return new OAuthAccount(currentAccount);
     }
 }

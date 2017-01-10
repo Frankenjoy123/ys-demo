@@ -19,6 +19,17 @@ public class OAuthAccountLoginRequest {
     @JsonProperty("oauth_token")
     private String oauthToken;
 
+    @JsonProperty("account_type")
+    private String accountType;
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
+
     public String getOauthToken() {
         return oauthToken;
     }
