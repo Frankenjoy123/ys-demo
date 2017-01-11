@@ -1,5 +1,6 @@
 package com.yunsoo.data.api.controller;
 
+import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.UserObject;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.ConflictException;
@@ -95,7 +96,7 @@ public class UserController {
         if (createdDateTimeEnd != null && !StringUtils.isEmpty(createdDateTimeEnd.toString()))
             createdDateTimeEndTo = createdDateTimeEnd.toDateTimeAtStartOfDay(DateTimeZone.forOffsetHours(8)).plusDays(1);
 
-        Page<UserEntity> entityPage = userRepository.findByFilter(sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStartTo, createdDateTimeEndTo,pageable);
+        Page<UserEntity> entityPage = userRepository.findByFilter(sex, phone, name, province, city, ageStart, ageEnd, createdDateTimeStartTo, createdDateTimeEndTo, pageable);
 
         if (pageable != null) {
             response.setHeader("Content-Range", PageableUtils.formatPages(entityPage.getNumber(), entityPage.getTotalPages(), (int) entityPage.getTotalElements()));
@@ -118,6 +119,9 @@ public class UserController {
         }
 
         entity.setId(null);
+        if (entity.getStatusCode() == null) {
+            entity.setStatusCode(LookupCodes.UserStatus.ENABLED);
+        }
         if (entity.getPoint() == null) {
             entity.setPoint(0);
         }
@@ -142,7 +146,7 @@ public class UserController {
             entity.setDeviceId(userObject.getDeviceId());
         }
         if (userObject.getName() != null) {
-            entity.setName( userObject.getName());
+            entity.setName(userObject.getName());
         }
         if (userObject.getStatusCode() != null) {
             entity.setStatusCode(userObject.getStatusCode());
@@ -182,6 +186,36 @@ public class UserController {
         }
 
         userRepository.save(entity);
+    }
+
+    @RequestMapping(value = "oauth", method = RequestMethod.POST)
+    public UserObject getOrCreateUserByOauthOpenId(@RequestBody UserObject userObject) {
+        if (StringUtils.isEmpty(userObject.getOauthOpenid()) || StringUtils.isEmpty(userObject.getOauthTypeCode())) {
+            throw new BadRequestException();
+        }
+        List<UserEntity> entities = userRepository.findByOauthOpenidAndOauthTypeCode(userObject.getOauthOpenid(), userObject.getOauthTypeCode(), null).getContent();
+        if (entities.size() > 0) {
+            UserEntity entity = entities.get(0);
+            if (!StringUtils.isEmpty(userObject.getName())) {
+                entity.setName(userObject.getName());
+                if (userObject.getSex() != null) {
+                    entity.setSex(userObject.getSex());
+                }
+                if (userObject.getProvince() != null) {
+                    entity.setProvince(userObject.getProvince());
+                }
+                if (userObject.getCity() != null) {
+                    entity.setCity(userObject.getCity());
+                }
+                if (userObject.getGravatarUrl() != null) {
+                    entity.setGravatarUrl(userObject.getGravatarUrl());
+                }
+                entity = userRepository.save(entity);
+            }
+            return toUserObject(entity);
+        } else {
+            return create(userObject);
+        }
     }
 
     private UserEntity findUserById(String id) {
