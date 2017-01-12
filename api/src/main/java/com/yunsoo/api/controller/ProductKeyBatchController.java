@@ -7,13 +7,10 @@ import com.yunsoo.api.domain.ProductBaseDomain;
 import com.yunsoo.api.domain.ProductKeyDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.file.service.FileService;
-import com.yunsoo.api.key.dto.KeyBatch;
 import com.yunsoo.api.key.dto.KeyBatchCreationRequest;
-import com.yunsoo.api.key.service.KeyBatchService;
 import com.yunsoo.api.security.AuthDetails;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
-import com.yunsoo.common.data.LookupCodes;
 import com.yunsoo.common.data.object.MarketingObject;
 import com.yunsoo.common.data.object.ProductBaseObject;
 import com.yunsoo.common.data.object.ProductKeyBatchObject;
@@ -25,6 +22,7 @@ import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tools.zip.ZipOutputStream;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -46,12 +44,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+
 
 /**
  * Created by:   Lijian
@@ -126,12 +122,11 @@ public class ProductKeyBatchController {
         response.setContentType("APPLICATION/OCTET-STREAM");
         response.setHeader("Content-Disposition", "attachment; filename=" + zipName);
         ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
-        long length = 0;
+
+
         for(int i=0; i< idList.size(); i++){
-            length += productKeyDomain.getProductKeysZipByBatchId(idList.get(i), out);
+            productKeyDomain.getProductKeysZipByBatchId(idList.get(i), out);
             try {
-                response.setHeader("X-YS-File", (i+1) + "/10");
-                response.setHeader("Content-Length", String.valueOf(length));
                 response.flushBuffer();
             } catch (IOException e) {
                 e.printStackTrace();
