@@ -228,6 +228,7 @@ public class ProductKeyDomain {
 
         try {
             List<String> productKeyTypeCodes = productKeys.getKeyTypeCodes();
+            int preSize = 0;
             for (List<String> ks : productKeys.getKeys()) {
                 for (int j = 0; j < ks.size(); j++) {
                     String value = productKeyBaseUrl + ks.get(j);
@@ -235,22 +236,22 @@ public class ProductKeyDomain {
                         value = productKeyBaseUrl + "external/" + ks.get(j);
                     }
                     if (currentKeySerialNo != null) {
-                        value += ", " + currentKeySerialNo.getPrefix() + "." + StringFormatter.addZeroPrefix(String.valueOf(currentKeySerialNo.getOffset() + j + 1), currentKeySerialNo.getSerialLength()) + (currentKeySerialNo.getSuffix() == null ? "" : ("." + currentKeySerialNo.getSuffix()))
+                        value += ", " + currentKeySerialNo.getPrefix() + "." + StringFormatter.addZeroPrefix(String.valueOf(currentKeySerialNo.getOffset() + preSize + j), currentKeySerialNo.getSerialLength()) + (currentKeySerialNo.getSuffix() == null ? "" : ("." + currentKeySerialNo.getSuffix()))
                                 + ", " + batchNo;
                     }
 
                     ks.set(j, value);
                 }
+                preSize += ks.size();
                 outputStream.write(
                         StringUtils.collectionToDelimitedString(ks, ",")
                                 .getBytes(Charset.forName("UTF-8")));
                 outputStream.write(CR_LF);
+            }
 
-                if (currentKeySerialNo != null) {  //update the offset number
-                    currentKeySerialNo.setOffset(currentKeySerialNo.getOffset() + ks.size());
-                    keySerialNoService.patch(currentKeySerialNo);
-                }
-
+            if (currentKeySerialNo != null) {  //update the offset number
+                currentKeySerialNo.setOffset(currentKeySerialNo.getOffset() + preSize);
+                keySerialNoService.patch(currentKeySerialNo);
             }
         } catch (IOException e) {
             throw new InternalServerErrorException("product keys format issue");
