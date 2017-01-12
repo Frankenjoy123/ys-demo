@@ -12,14 +12,18 @@ import java.util.List;
  */
 public interface OAuthAccountRepository extends CrudRepository<OAuthAccountEntity, String> {
 
-    @Query("from OAuthAccountEntity where (:hasSource = true and source in (:source)) and (:sourceType is null or :sourceType = sourceTypeCode) " +
-            "and (:accountId is null or :accountId=accountId) and (:disabled is null or :disabled=disabled)")
-    List<OAuthAccountEntity> query(@Param("hasSource")Boolean hasSource, @Param("source")List<String> source, @Param("sourceType")String sourceTypeCode,
-                                   @Param("accountId")String accountId, @Param("disabled")Boolean disabled);
+    @Query("from OAuthAccountEntity where (:hasSource = false or source in (:source)) " +
+            "and (:sourceType is null or :sourceType = sourceTypeCode) " +
+            "and (:accountId is null or :accountId = accountId) " +
+            "and (:disabled is null or :disabled = disabled)")
+    List<OAuthAccountEntity> query(@Param("hasSource") Boolean hasSource, @Param("source") List<String> source, @Param("sourceType") String sourceTypeCode,
+                                   @Param("accountId") String accountId, @Param("disabled") Boolean disabled);
 
     int countBySourceInAndSourceTypeCodeAndDisabled(List<String> source, String sourceTypeCode, Boolean disabled);
 
-    List<OAuthAccountEntity> findByOAuthTypeCodeAndOAuthOpenIdAndSourceAndSourceTypeCodeAndDisabled(String type, String id,String sourceId, String sourceType, Boolean disabled);
+    List<OAuthAccountEntity> findByOAuthTypeCodeAndOAuthOpenIdAndSourceAndSourceTypeCodeAndDisabled(String type, String id, String sourceId, String sourceType, Boolean disabled);
 
     OAuthAccountEntity getByAccountIdAndDisabled(String id, Boolean disabled);
+
+    OAuthAccountEntity findTop1ByOAuthTypeCodeAndOAuthOpenIdAndSourceTypeCodeAndDisabled(String type, String openId, String sourceType, Boolean disabled);
 }

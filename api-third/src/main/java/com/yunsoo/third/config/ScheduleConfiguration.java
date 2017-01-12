@@ -1,5 +1,6 @@
 package com.yunsoo.third.config;
 
+import com.yunsoo.third.Constant;
 import com.yunsoo.third.service.WeChatService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +32,7 @@ public class ScheduleConfiguration {
     public void weChatTokenRefresh(){
         if(weChatAutoRefreshToken) {
             log.info("start to refresh wechat token");
-            weChatService.saveWeChatAccessTicketFromWeChat(null, null);
+            weChatService.saveWeChatAccessTicketFromWeChat(Constant.YUNSU_ORGID);
         }
     }
 

@@ -99,4 +99,29 @@ public class ProductService {
         }
     }
 
+    public int batchPatchUpdateProductByKey(List<Product> products) {
+        return (int) products.stream().map(p -> {
+            if (p == null || p.getKey() == null || p.getProductBaseId() == null) {
+                return false;
+            } else {
+                try {
+                    String k = p.getKey();
+                    if (k.contains("/")) {
+                        String[] externalKey = k.split("/", 2);
+                        Key key = keyService.getExternalKey(externalKey[0], externalKey[1]);
+                        if (key != null) {
+                            k = key.getPrimaryKey();
+                        } else {
+                            return false;
+                        }
+                    }
+                    keyApiClient.patch("product/{key}", p, p.getKey());
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+        }).filter(r -> r).count();
+    }
+
 }

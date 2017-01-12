@@ -10,6 +10,7 @@ import com.yunsoo.api.rabbit.dto.WebScanResponse;
 import com.yunsoo.api.rabbit.key.dto.Product;
 import com.yunsoo.api.rabbit.key.service.ProductService;
 import com.yunsoo.api.rabbit.third.dto.WeChatAccessToken;
+import com.yunsoo.api.rabbit.third.dto.WeChatServerConfig;
 import com.yunsoo.api.rabbit.third.service.WeChatService;
 import com.yunsoo.api.rabbit.util.IpUtils;
 import com.yunsoo.api.rabbit.util.YSIDGenerator;
@@ -394,8 +395,11 @@ public class WebScanController {
     }
 
     private Map<String, Object> getWeChatConfig(String orgId, String url){
-        //todo: add the mapping of orgId and appId
-        return weChatService.getConfig(null, url);
+        WeChatServerConfig config = weChatService.getOrgIdHasWeChatSettings(orgId);
+        if(config == null)
+            throw new NotFoundException("wechat settings not found with org: " + orgId);
+
+        return weChatService.getConfig(config.getOrgId(), url);
     }
 
 }

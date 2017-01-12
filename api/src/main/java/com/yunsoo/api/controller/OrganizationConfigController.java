@@ -2,8 +2,8 @@ package com.yunsoo.api.controller;
 
 import com.yunsoo.api.domain.DomainDirectoryDomain;
 import com.yunsoo.api.domain.OrganizationConfigDomain;
-import com.yunsoo.api.domain.WeChatAPIDomain;
-import com.yunsoo.api.dto.WeChatOpenIdList;
+import com.yunsoo.api.third.service.WeChatAPIService;
+import com.yunsoo.api.third.dto.WeChatOpenIdList;
 import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.common.data.object.DomainDirectoryObject;
 import com.yunsoo.common.web.exception.BadRequestException;
@@ -29,7 +29,7 @@ public class OrganizationConfigController {
     private DomainDirectoryDomain domainDirectoryDomain;
 
     @Autowired
-    private WeChatAPIDomain weChatAPIDomain;
+    private WeChatAPIService weChatAPIDomain;
 
 
     @RequestMapping(value = "public/config", method = RequestMethod.GET)

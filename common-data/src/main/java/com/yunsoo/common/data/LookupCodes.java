@@ -144,6 +144,13 @@ public class LookupCodes {
         public static final String DISABLED = "disabled";
     }
 
+    public static class UserOAuthType {
+        private UserOAuthType() {
+        }
+
+        public static final String WECHAT = "wechat";
+    }
+
     public static class OrgAgencyStatus {
         private OrgAgencyStatus() {
         }
@@ -214,6 +221,7 @@ public class LookupCodes {
         public static final String REDPACKETS = "REDPACKETS";
         public static final String ENVELOPE = "ENVELOPE";
         public static final String SHAKE = "SHAKE";
+        public static final String FANS = "FANS";  //关注微信公众号抽红包
         public static final String DRAW01 = "DRAW01"; // tao sheng yuan marketing template
         public static final String DRAW02 = "DRAW02"; // ai si man marketing template
         public static final String DRAW03 = "DRAW03"; // yang pao pao marketing template
@@ -328,6 +336,7 @@ public class LookupCodes {
 
         public static final String MOBILE_FEE = "mobile fee";
         public static final String MOBILE_FLOW = "mobile flow";
+        public static final String WECHAT = "wechat";
     }
 
     public static class MobileType {

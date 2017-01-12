@@ -55,10 +55,31 @@ public class KeyBatchEntity {
     @Column(name = "created_account_id")
     private String createdAccountId;
 
+    @Column(name = "download_no")
+    private Integer downloadNo;
+
+    @Column(name = "marketing_id")
+    private String marketingId;
+
     @Column(name = "created_datetime")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime createdDateTime;
 
+    public Integer getDownloadNo() {
+        return downloadNo;
+    }
+
+    public void setDownloadNo(Integer downloadNo) {
+        this.downloadNo = downloadNo;
+    }
+
+    public String getMarketingId() {
+        return marketingId;
+    }
+
+    public void setMarketingId(String marketingId) {
+        this.marketingId = marketingId;
+    }
 
     public String getId() {
         return id;

@@ -6,9 +6,9 @@ import com.yunsoo.api.rabbit.domain.UserDomain;
 import com.yunsoo.api.rabbit.domain.UserScanDomain;
 import com.yunsoo.api.rabbit.dto.*;
 import com.yunsoo.api.rabbit.key.dto.Product;
-import com.yunsoo.api.rabbit.key.service.KeyService;
 import com.yunsoo.api.rabbit.key.service.ProductService;
 import com.yunsoo.api.rabbit.third.dto.WeChatRedPackRequest;
+import com.yunsoo.api.rabbit.third.dto.WeChatServerConfig;
 import com.yunsoo.api.rabbit.third.dto.WeChatUser;
 import com.yunsoo.api.rabbit.third.service.JuheService;
 import com.yunsoo.api.rabbit.third.service.WeChatService;
@@ -19,6 +19,7 @@ import com.yunsoo.common.util.ObjectIdGenerator;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
 import com.yunsoo.common.web.exception.RestErrorResultException;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,6 +41,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/marketing")
 public class MarketingController {
+
+    private org.apache.commons.logging.Log logger = LogFactory.getLog(this.getClass());
 
     @Autowired
     private MarketingDomain marketingDomain;
@@ -60,8 +64,6 @@ public class MarketingController {
 
     @Autowired
     private UserDomain userDomain;
-
-
 
 
     //获取Key所对应的抽奖记录
@@ -158,54 +160,6 @@ public class MarketingController {
         MktDrawRuleObject newMktDrawRuleObject = marketingDomain.createMktDrawRuleList(mktDrawRuleObjectList);
         return new MktDrawRule(newMktDrawRuleObject);
     }
-
-    //send WeChat red packets
-    @RequestMapping(value = "draw/{key}/prize/{id}", method = RequestMethod.GET)
-    public Boolean sendWeChatRedPackets(@PathVariable(value = "key") String key, @PathVariable(value = "id") String ysid) {
-        if ((key == null) || (ysid == null)) {
-            throw new BadRequestException("product key nor prize id can not be null");
-        }
-
-        MktDrawPrizeObject mktDrawPrizeObject = marketingDomain.getMktDrawPrizeByProductKeyAndUser(key, ysid);
-        ;
-        if (mktDrawPrizeObject == null) {
-            throw new BadRequestException("prize record can not be found.");
-        }
-        if (mktDrawPrizeObject.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.PAID)) {
-            throw new RestErrorResultException(new ErrorResult(5002, "prize had been sent"));
-        }
-        if (mktDrawPrizeObject.getStatusCode().equals(LookupCodes.MktDrawPrizeStatus.FAILED)) {
-            throw new RestErrorResultException(new ErrorResult(5004, "prize had been sent invoke error"));
-        }
-
-        MarketingObject marketingObject = marketingDomain.getMarketingById(mktDrawPrizeObject.getMarketingId());
-        if (marketingObject == null) {
-            throw new BadRequestException("marketing can not be found.");
-        }
-
-        WeChatRedPackRequest redPackRequest = new WeChatRedPackRequest();
-        redPackRequest.setId(mktDrawPrizeObject.getDrawRecordId());
-        redPackRequest.setMchName(marketingObject.getName());
-        redPackRequest.setPrice(mktDrawPrizeObject.getAmount());
-        redPackRequest.setOpenId(mktDrawPrizeObject.getPrizeAccount());
-        redPackRequest.setWishing(marketingObject.getWishes());
-        redPackRequest.setRemark(marketingObject.getComments());
-        redPackRequest.setActionName(marketingObject.getName());
-
-        Boolean prizeResult = weChatService.sendRedPack(redPackRequest);
-        if (prizeResult) {
-            mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
-            mktDrawPrizeObject.setPaidDateTime(DateTime.now());
-            marketingDomain.updateWechatPrize(mktDrawPrizeObject);
-            return true;
-        } else {
-            mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.FAILED);
-            marketingDomain.updateWechatPrize(mktDrawPrizeObject);
-            return false;
-        }
-
-    }
-
 
     //获取Key所对应的兑奖情况
     @RequestMapping(value = "drawPrize/{key}", method = RequestMethod.GET)
@@ -402,10 +356,19 @@ public class MarketingController {
                     mktDrawPrizeObject.setPaidDateTime(DateTime.now());
                     break;
                 case LookupCodes.MktPrizeType.WEBCHAT:
-                    if (LookupCodes.MktDrawPrizeStatus.PAID.equals(mktDrawPrize.getStatusCode())) {
+                    MarketingObject marketingObject = marketingDomain.getMarketingById(currentPrize.getMarketingId());
+                    //send red pack
+                    WeChatServerConfig config = weChatService.getOrgIdHasWeChatSettings(marketingObject.getOrgId());
+                    if (config == null)
+                        throw new NotFoundException("wechat settings not found with org: " + marketingObject.getOrgId());
+
+                    if(marketingDomain.sendWeChatRedPack(marketingObject,currentPrize.getPrizeAccount(),currentPrize.getAmount(),
+                            currentPrize.getDrawRecordId(), config.getOrgId())) {
                         mktDrawPrizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
                         mktDrawPrizeObject.setPaidDateTime(DateTime.now());
                     }
+                    else
+                        throw new RestErrorResultException(new ErrorResult(5004, "send wechat red pack failed"));
                     break;
                 default:
                     break;
@@ -552,7 +515,8 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "drawPrize/{id}/random", method = RequestMethod.POST)
-    public MktDrawRule getRandomPrizeAmount(@PathVariable(value = "id") String marketingId, @RequestBody @Valid MktDraw mktDraw) {
+    public MktDrawRule getRandomPrizeAmount(@PathVariable(value = "id") String marketingId,
+                                            @RequestBody @Valid MktDraw mktDraw) {
         if (marketingId == null)
             throw new BadRequestException("marketing id can not be null");
 
@@ -621,8 +585,7 @@ public class MarketingController {
             }
             setAccount(prize);
             prize.setDrawRecordId(saveRecord.getId());
-            marketingDomain.createMktDrawPrize(prize);
-
+            MktDrawPrizeObject prizeObject = marketingDomain.createMktDrawPrize(prize);
             return mktDrawRule;
 
         } else {
@@ -693,90 +656,100 @@ public class MarketingController {
     }
 
     @RequestMapping(value = "redpack/{scenario_id}", method = RequestMethod.POST)
-    public boolean sendWeChatRedPack(@PathVariable("scenario_id") Number scenarioId, @RequestParam("openid")String openId){
-        String key = productDomain.saveKeyToRadis(scenarioId, "");
-        if(StringUtils.hasText(key)){
+    public MktRedPackResult sendWeChatRedPack(@PathVariable("scenario_id") Number scenarioId, @RequestParam("openid") String openId) {
+        String key = productDomain.getKeyFromRadis(scenarioId, "");
+        logger.info("current key is: " + key + ", with scenarioId: " + scenarioId);
+        productDomain.clearKeyToRadis(scenarioId);  //clear the key
+        MktRedPackResult result = new MktRedPackResult();
+        result.setExisted(true);
+        if (StringUtils.hasText(key)) {
             Product product = productService.getProductByKey(key);
+            MktDrawRecordObject existRecord = marketingDomain.getMktDrawRecordByProductKey(key);
 
-            marketingDomain.getMktDrawRecordByProductKey(key);
+            if (existRecord == null) {
+                result.setExisted(false);
+                ProductKeyBatchObject keyBatchObject = productDomain.getProductKeyBatch(product.getKeyBatchId());
+                UserScanRecordObject recordObject = userScanDomain.getLatestScanRecordByProductKey(key);
+                WeChatServerConfig config = weChatService.getOrgIdHasWeChatSettings(keyBatchObject.getOrgId());
+                if (config == null)
+                    throw new NotFoundException("wechat settings not found with org: " + keyBatchObject.getOrgId());
 
-            ProductKeyBatchObject keyBatchObject = productDomain.getProductKeyBatch(product.getKeyBatchId());
-            UserScanRecordObject recordObject = userScanDomain.getLatestScanRecordByProductKey(key);
-            WeChatUser weChatUser = weChatService.getWeChatUser(openId);
-            MarketingObject marketingObject = marketingDomain.getMarketingById(keyBatchObject.getMarketingId());
+                WeChatUser weChatUser = weChatService.getWeChatUser(openId, config.getOrgId());
+                MarketingObject marketingObject = marketingDomain.getMarketingById(keyBatchObject.getMarketingId());
 
-            UserObject existUser = userDomain.getUserByOpenIdAndType(openId, "wechat");
-            if(existUser == null) {
-                UserObject userObject = new UserObject();
-                userObject.setOauthOpenid(openId);
-                userObject.setOauthTypeCode("wechat");
-                userObject.setCity(weChatUser.getCity());
-                userObject.setProvince(weChatUser.getProvince());
-                userObject.setGravatarUrl(weChatUser.getImageUrl());
-                userObject.setSex(weChatUser.getSex().equals("1") ? false : true);
-                userObject.setName(weChatUser.getNickName());
-                existUser = userDomain.createUser(userObject);
-            }
-            MktDrawPrizeObject prize = new MktDrawPrizeObject();
-            prize.setPrizeAccountName(existUser.getName());
-            prize.setMarketingId(marketingObject.getId());
-            prize.setProductKey(key);
-            prize.setScanRecordId(recordObject.getId());
-
-            //save prize
-            MktDrawRecordObject record = new MktDrawRecordObject();
-            record.setOauthOpenid(openId);
-            record.setProductBaseId(product.getProductBaseId());
-            record.setProductKey(key);
-            record.setMarketingId(marketingObject.getId());
-            record.setUserId(existUser.getId());
-
-            // apply to no scan record id
-            if (recordObject == null) {
-                String tempScanRecordId = ObjectIdGenerator.getNew();
-                record.setScanRecordId(tempScanRecordId);
-                prize.setScanRecordId(tempScanRecordId);
-            }
-            else
-                record.setScanRecordId(recordObject.getId());
-
-            MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingObject.getId(), record.getScanRecordId(), key);
-
-            if (mktDrawRuleObject != null) {
-                record.setIsPrized(true);
-                prize.setPrizeTypeCode(LookupCodes.MktPrizeType.WEBCHAT);
-                prize.setPrizeAccount(openId);
-                prize.setAccountType(LookupCodes.MktPrizeType.WEBCHAT);
-
-                MktDrawRule mktDrawRule = new MktDrawRule(mktDrawRuleObject);
+                UserObject existUser = userDomain.getUserByOpenIdAndType(openId, "webchat");
+                if (existUser == null) {
+                    UserObject userObject = new UserObject();
+                    userObject.setOauthOpenid(openId);
+                    userObject.setOauthTypeCode("webchat");
+                    userObject.setCity(weChatUser.getCity());
+                    userObject.setProvince(weChatUser.getProvince());
+                    userObject.setGravatarUrl(weChatUser.getImageUrl());
+                    userObject.setSex(weChatUser.getSex().equals("1") ? false : true);
+                    userObject.setName(weChatUser.getNickName());
+                    existUser = userDomain.createUser(userObject);
+                }
+                MktDrawPrizeObject prize = new MktDrawPrizeObject();
+                prize.setPrizeAccountName(existUser.getName());
+                prize.setMarketingId(marketingObject.getId());
+                prize.setProductKey(key);
 
                 //save prize
-                MktDrawRecordObject saveRecord = marketingDomain.createMktDrawRecord(record);
-                prize.setDrawRuleId(mktDrawRule.getId());
-                prize.setAmount(mktDrawRule.getAmount());
-                prize.setDrawRecordId(saveRecord.getId());
-                marketingDomain.createMktDrawPrize(prize);
+                MktDrawRecordObject record = new MktDrawRecordObject();
+                record.setOauthOpenid(openId);
+                record.setProductBaseId(product.getProductBaseId());
+                record.setProductKey(key);
+                record.setMarketingId(marketingObject.getId());
+                record.setUserId(existUser.getId());
 
-                //send red pack
-                WeChatRedPackRequest request = new WeChatRedPackRequest();
-                request.setActionName(marketingObject.getName());
-                request.setOpenId(openId);
-                request.setPrice(mktDrawRule.getAmount());
-                request.setWishing(marketingObject.getWishes());
-                request.setRemark(marketingObject.getComments());
-                request.setId(saveRecord.getId());
-                request.setMchName("云溯科技");
-                weChatService.sendRedPack(request);
+                // apply to no scan record id
+                if (recordObject == null) {
+                    String tempScanRecordId = ObjectIdGenerator.getNew();
+                    record.setScanRecordId(tempScanRecordId);
+                    prize.setScanRecordId(tempScanRecordId);
+                } else
+                    record.setScanRecordId(recordObject.getId());
 
-                return true;
+                MktDrawRuleObject mktDrawRuleObject = marketingDomain.getMktRandomPrize(marketingObject.getId(), record.getScanRecordId(), key);
 
-            } else {
-                record.setIsPrized(false);
-                marketingDomain.createMktDrawRecord(record);
+                if (mktDrawRuleObject != null) {
+                    result.setIsPrized(true);
+                    result.setAmount(new BigDecimal(mktDrawRuleObject.getAmount()));
+
+                    record.setIsPrized(true);
+                    prize.setPrizeTypeCode(LookupCodes.MktPrizeType.WEBCHAT);
+                    prize.setPrizeAccount(openId);
+                    prize.setAccountType(LookupCodes.MktPrizeType.WEBCHAT);
+
+                    MktDrawRule mktDrawRule = new MktDrawRule(mktDrawRuleObject);
+
+                    //save prize
+                    MktDrawRecordObject saveRecord = marketingDomain.createMktDrawRecord(record);
+                    prize.setDrawRuleId(mktDrawRule.getId());
+                    prize.setAmount(mktDrawRule.getAmount());
+                    prize.setDrawRecordId(saveRecord.getId());
+                    MktDrawPrizeObject prizeObject = marketingDomain.createMktDrawPrize(prize);
+
+                    //send red pack
+                    if(marketingDomain.sendWeChatRedPack(marketingObject,openId,mktDrawRule.getAmount(), saveRecord.getId(), config.getOrgId() )) {
+                        //set paid status
+                        prizeObject.setStatusCode(LookupCodes.MktDrawPrizeStatus.PAID);
+                        prizeObject.setPaidDateTime(DateTime.now());
+                        marketingDomain.updateMktDrawPrize(prizeObject);
+                    }
+                    else
+                        result.setFailed(true);
+
+                } else {
+                    record.setIsPrized(false);
+                    marketingDomain.createMktDrawRecord(record);
+                }
             }
+            logger.info("wechat red pack result: " + result.toString());
+            return result;
         }
 
-        return false;
+        return null;
     }
 
 

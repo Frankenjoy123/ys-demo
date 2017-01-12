@@ -1,14 +1,25 @@
-package com.yunsoo.api.domain;
+package com.yunsoo.api.third.service;
 
+import com.yunsoo.api.Constants;
+import com.yunsoo.api.cache.annotation.ObjectCacheConfig;
 import com.yunsoo.api.client.ThirdApiClient;
-import com.yunsoo.api.dto.*;
+import com.yunsoo.api.domain.MarketingDomain;
+import com.yunsoo.api.domain.OrganizationBrandDomain;
+import com.yunsoo.api.third.dto.*;
 import com.yunsoo.common.data.object.MarketingObject;
+import com.yunsoo.common.data.object.OrgBrandObject;
 import com.yunsoo.common.web.util.QueryStringBuilder;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.util.Map;
 
 /**
@@ -16,8 +27,9 @@ import java.util.Map;
  * Created on:   6/29/2016
  * Descriptions:
  */
-@Component
-public class WeChatAPIDomain {
+@Service
+@ObjectCacheConfig
+public class WeChatAPIService {
 
     @Autowired
     private ThirdApiClient thirdApiClient;
@@ -25,15 +37,19 @@ public class WeChatAPIDomain {
     @Autowired
     private MarketingDomain marketingDomain;
 
+    @Autowired
+    private OrganizationBrandDomain organizationBrandDomain;
 
-    public WeChatAccessToken getUserAccessTokenByAppId(String appId) {
+
+    public WeChatAccessToken getUserAccessTokenByOrgId(String orgId) {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("app_id", appId)
+                .append("org_id", orgId)
                 .build();
 
         return thirdApiClient.get("wechat/token" + query, WeChatAccessToken.class);
     }
 
+    //只应用于yunsu公众号
     public WeChatWebAccessToken getWebToken(String code){
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
                 .append("code", code)
@@ -69,15 +85,15 @@ public class WeChatAPIDomain {
         return thirdApiClient.get("wechat/openid_list" + query, WeChatOpenIdList.class);
     }
 
-    public Map<String, Object> getConfig(String appId, String url) {
+    public Map<String, Object> getConfig(String orgId, String url) throws UnsupportedEncodingException {
         String query = new QueryStringBuilder(QueryStringBuilder.Prefix.QUESTION_MARK)
-                .append("app_id", appId).append("url", url)
+                .append("org_id", orgId).append("url", URLEncoder.encode(url, "UTF-8"))
                 .build();
         return thirdApiClient.get("wechat/jssdk/config" + query, new ParameterizedTypeReference<Map<String, Object>>() {
         });
     }
 
-    public Map<String, Object> getPayConfig(String appId, String openId, String marketingId,
+    public Map<String, Object> getPayConfig(String orgId, String openId, String marketingId,
                                             String nonceString, long timestamp, String notifyUrl) {
 
         MarketingObject marketingObject = marketingDomain.getMarketingById(marketingId);
@@ -95,10 +111,56 @@ public class WeChatAPIDomain {
                 .append("pre_pay_id", preOrderId)
                 .append("nonce_str", nonceString)
                 .append("timestamp", timestamp)
+                .append("org_id", orgId)
                 .build();
         return thirdApiClient.get("wechat/jssdk/pay_config" + query, new ParameterizedTypeReference<Map<String, Object>>() {
         });
     }
 
+    @Cacheable(key="T(com.yunsoo.api.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).WECHAT.toString(), #orgId)")
+    public String getOrgIdHasWeChatSettings(String orgId){
+        if(Constants.Ids.YUNSU_ORGID.equals(orgId))
+            return orgId;
+        WeChatServerConfig config = thirdApiClient.get("wechat/server/config/{id}", WeChatServerConfig.class, orgId);
+        if(StringUtils.hasText(config.getAppId()))
+            return  orgId;
+
+        OrgBrandObject object = organizationBrandDomain.getOrgBrandObjectById(orgId);
+        config = thirdApiClient.get("wechat/server/config/{id}", WeChatServerConfig.class, object.getCarrierId());
+        if(StringUtils.hasText(config.getAppId()))
+            return config.getOrgId();
+
+        return Constants.Ids.YUNSU_ORGID;
+    }
+
+    public WeChatServerConfig getServerConfig(String orgId){
+        WeChatServerConfig config = thirdApiClient.get("wechat/server/config/{id}", WeChatServerConfig.class, orgId);
+        if(StringUtils.hasText(config.getAppId())){
+            config.setPrivateKey(encode(config.getPrivateKey()));
+            config.setAppSecret(encode(config.getAppSecret()));
+            return  config;
+
+        }
+        return null;
+    }
+
+    public void saveWeChatServerConfig(WeChatServerConfig config){
+        WeChatServerConfig currentConfig = getServerConfig(config.getOrgId());
+        if(currentConfig == null){
+            thirdApiClient.post("wechat/server/config", config, WeChatServerConfig.class);
+        }
+        else
+            thirdApiClient.put("wechat/server/config", config);
+    }
+
+    private String encode(String value) {
+
+        if (value != null) {
+            int length = value.length();
+            return value.substring(0, 3) + "******" + value.substring(length - 3, length);
+        } else
+            return null;
+
+    }
 
 }

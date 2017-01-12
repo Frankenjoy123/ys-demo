@@ -82,10 +82,14 @@ public class DynamodbProductServiceImpl implements ProductService {
             throw new NotFoundException("product not found"); //product not found
         }
 
+        String productBaseId = product.getProductBaseId();
         String statusCode = product.getStatusCode();
         DateTime manufacturingDateTime = product.getManufacturingDateTime();
         String details = product.getDetails();
 
+        if (productBaseId != null) {
+            productModel.setProductBaseId(productBaseId);
+        }
         if (statusCode != null && Constants.ProductStatus.ALL.contains(statusCode)) {
             productModel.setProductStatusCode(statusCode);
         }

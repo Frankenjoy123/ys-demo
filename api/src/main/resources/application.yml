@@ -60,7 +60,7 @@ yunsoo:
     auth_api:
       base_url: http://dev.yunsu.co/api/auth/
     data_api:
-      base_url: http://dev-api.yunsu.co:3080/
+      base_url: http://localhost:3080/
     processor:
       base_url: http://dev-api.yunsu.co:4080/
     file_api:

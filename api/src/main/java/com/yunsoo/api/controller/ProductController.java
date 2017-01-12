@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * Created by:   Lijian
@@ -81,6 +82,11 @@ public class ProductController {
         product.setKey(key);
         product.setDetails(details);
         productService.patchUpdate(product);
+    }
+
+    @RequestMapping(value = "batchUpdateProductByKey", method = RequestMethod.POST)
+    public int batchUpdateProductByKey(@RequestBody List<Product> products) {
+        return productService.batchPatchUpdateProductByKey(products);
     }
 
     private Product findProduct(String key) {

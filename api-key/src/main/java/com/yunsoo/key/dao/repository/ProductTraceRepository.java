@@ -15,10 +15,10 @@ import java.util.List;
  */
 public interface ProductTraceRepository extends CrudRepository<ProductTraceEntity, String> {
 
-    @Query("select sum(productCount) from ProductTraceEntity where sourceId=:sourceId " +
-            "and sourceType=:sourceType and action=:action " +
+    @Query("select sum(productCount) from ProductTraceEntity where createdSourceId=:sourceId " +
+            "and createdSourceType=:sourceType and action=:action " +
             "and createdDateTime between :start and :end ")
-    int sumProduct(@Param("sourceId") String sourceId, @Param("sourceType") String sourceType,
+    Integer sumProduct(@Param("sourceId") String sourceId, @Param("sourceType") String sourceType,
                    @Param("action") String action, @Param("start") DateTime start, @Param("end") DateTime end);
 
     List<ProductTraceEntity> findTop500ByStatusCode(String status);

@@ -11,6 +11,8 @@ public class ImageResponse {
 
     private String url;
 
+    private String ext;
+
 
     public String getName() {
         return name;
@@ -28,5 +30,11 @@ public class ImageResponse {
         this.url = url;
     }
 
+    public String getExt() {
+        return ext;
+    }
 
+    public void setExt(String ext) {
+        this.ext = ext;
+    }
 }

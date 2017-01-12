@@ -22,8 +22,10 @@ public class OAuthAccountService {
 
     public List<OAuthAccount> search(List<String> sourceList, String sourceType, String accountId){
         boolean hasSource = true;
-        if(sourceList == null)
+        if(sourceList == null || sourceList.size() == 0) {
             hasSource = false;
+            sourceList = null;
+        }
 
         List<OAuthAccountEntity> entities = repository.query(hasSource, sourceList, sourceType, accountId, false);
         return entities.stream().map(OAuthAccount::new).collect(Collectors.toList());
@@ -54,4 +56,10 @@ public class OAuthAccountService {
         return accounts.stream().map(OAuthAccount::new).collect(Collectors.toList());
     }
 
+    public OAuthAccount getOAuthAccount(String openId, String openType, String sourceType){
+        OAuthAccountEntity currentAccount = repository.findTop1ByOAuthTypeCodeAndOAuthOpenIdAndSourceTypeCodeAndDisabled(openType, openId, sourceType, false);
+        if(currentAccount == null)
+            return null;
+        return new OAuthAccount(currentAccount);
+    }
 }

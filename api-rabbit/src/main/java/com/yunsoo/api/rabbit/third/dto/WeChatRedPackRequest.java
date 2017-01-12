@@ -42,6 +42,18 @@ public class WeChatRedPackRequest {
     @NotEmpty
     private String actionName;   //活动名字
 
+    @JsonProperty("org_id")
+    @NotEmpty
+    private String orgId;   //活动名字
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
     public String getActionName() {
         return actionName;
     }

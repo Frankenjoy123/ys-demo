@@ -73,16 +73,17 @@ public class KeyBatchServiceImpl implements KeyBatchService {
     }
 
     @Override
-    public Page<KeyBatch> getByFilter(String orgId, String productBaseId, List<String> statusCodeIn, String createdAccountId, DateTime createdDateTimeGE, DateTime createdDateTimeLE, Pageable pageable) {
-        if (StringUtils.isEmpty(orgId)) {
+    public Page<KeyBatch> getByFilter(List<String> orgIds, String productBaseId, List<String> statusCodeIn, String createdAccountId, Boolean downloaded, DateTime createdDateTimeGE, DateTime createdDateTimeLE, Pageable pageable) {
+        if (orgIds.size()==0) {
             return Page.empty();
         }
         return PageUtils.convert(keyBatchRepository.query(
-                orgId,
+                orgIds,
                 productBaseId,
                 statusCodeIn == null || statusCodeIn.size() == 0 ? null : statusCodeIn,
                 statusCodeIn == null || statusCodeIn.size() == 0,
                 createdAccountId,
+                downloaded,
                 createdDateTimeGE,
                 createdDateTimeLE,
                 pageable)).map(this::toKeyBatch);

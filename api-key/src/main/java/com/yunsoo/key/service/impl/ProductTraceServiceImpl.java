@@ -163,7 +163,10 @@ public class ProductTraceServiceImpl implements ProductTraceService {
 
     @Override
     public int getTotalProductCount(String sourceId, String sourceType, String action, DateTime start, DateTime end) {
-        return repository.sumProduct(sourceId, sourceType, action, start, end);
+        Integer sum = repository.sumProduct(sourceId, sourceType, action, start, end);
+        if(sum == null)
+            return  0;
+        return sum;
     }
 
     private List<ProductTrace> convertToTraceList(ProductTraceModel traceModel) {

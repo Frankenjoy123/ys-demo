@@ -142,6 +142,7 @@ public class OAuthAccount {
     public OAuthAccount(){}
 
     public OAuthAccount(OAuthAccountEntity entity){
-        BeanUtils.copyProperties(entity, this);
+        if(entity != null)
+            BeanUtils.copyProperties(entity, this);
     }
 }
