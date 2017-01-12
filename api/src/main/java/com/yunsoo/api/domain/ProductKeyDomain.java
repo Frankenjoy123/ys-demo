@@ -277,6 +277,12 @@ public class ProductKeyDomain {
             out.write(data);
             out.flush();
             out.closeEntry();
+
+            ProductKeyBatchObject productKeyBatchObject = new ProductKeyBatchObject();
+            productKeyBatchObject.setDownloadNo(batch.getDownloadNo() + 1);
+            productKeyBatchObject.setId(batch.getId());
+            patchUpdateProductKeyBatch(productKeyBatchObject);
+
             return data.length;
         } catch (IOException e) {
             e.printStackTrace();
@@ -331,7 +337,7 @@ public class ProductKeyDomain {
         batch.setCreatedAccountId(object.getCreatedAccountId());
         batch.setCreatedDateTime(object.getCreatedDateTime());
         batch.setMarketingId(object.getMarketingId());
-        batch.setDownloadNo(object.getDownloadNo());
+        batch.setDownloadNo(object.getDownloadNo() == null ? 0: object.getDownloadNo());
         return batch;
     }
 

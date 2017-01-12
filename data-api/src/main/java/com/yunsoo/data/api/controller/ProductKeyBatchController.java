@@ -155,7 +155,7 @@ public class ProductKeyBatchController {
         if (batchObj.getMarketingId() != null) {
             entity.setMarketingId(batchObj.getMarketingId());
         }
-        if (batchObj.getDownloadNo() != 0) {
+        if (batchObj.getDownloadNo() != null && batchObj.getDownloadNo() > 0) {
             entity.setDownloadNo(batchObj.getDownloadNo());
         }
 
