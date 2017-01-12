@@ -122,7 +122,7 @@ public class ProductKeyBatchController {
         response.setContentType("APPLICATION/OCTET-STREAM");
         response.setHeader("Content-Disposition", "attachment; filename=" + zipName);
         ZipOutputStream out = new ZipOutputStream(response.getOutputStream());
-
+        out.setEncoding("GBK");
 
         for(int i=0; i< idList.size(); i++){
             productKeyDomain.getProductKeysZipByBatchId(idList.get(i), out);
