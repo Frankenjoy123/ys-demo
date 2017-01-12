@@ -34,6 +34,6 @@ public class KeySerialNoService {
     }
 
     public void update(KeySerialNo serialNo){
-        keyApiClient.patch("keySerialNo?org_id={org}", serialNo, serialNo.getOrgId());
+        keyApiClient.put("keySerialNo?org_id={org}", serialNo, serialNo.getOrgId());
     }
 }
