@@ -43,4 +43,16 @@ public final class StringFormatter {
         }
         return sb.append("]").toString();
     }
+
+    public static String addZeroPrefix(String content, int length) {
+        if (content.length() >= length)
+            return content;
+        else {
+            String prefixZero = "";
+            for (int i = 0; i < length - content.length(); i++)
+                prefixZero += "0";
+
+            return prefixZero + content;
+        }
+    }
 }

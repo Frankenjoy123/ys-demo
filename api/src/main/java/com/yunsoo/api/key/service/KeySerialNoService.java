@@ -1,7 +1,6 @@
 package com.yunsoo.api.key.service;
 
 import com.yunsoo.api.client.KeyApiClient;
-import com.yunsoo.api.key.dto.KeyBatch;
 import com.yunsoo.api.key.dto.KeySerialNo;
 import com.yunsoo.common.web.util.QueryStringBuilder;
 import org.apache.commons.logging.Log;
@@ -28,6 +27,10 @@ public class KeySerialNoService {
                 .build();
         return keyApiClient.get("keySerialNo" + query, new ParameterizedTypeReference<List<KeySerialNo>>() {
         });
+    }
+
+    public void patch(KeySerialNo serialNo){
+        keyApiClient.patch("keySerialNo?org_id={org}", serialNo, serialNo.getOrgId());
     }
 
     public void update(KeySerialNo serialNo){

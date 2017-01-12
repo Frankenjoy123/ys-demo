@@ -9,8 +9,11 @@ import com.yunsoo.api.auth.service.AuthOrganizationService;
 import com.yunsoo.api.auth.service.AuthPermissionService;
 import com.yunsoo.api.client.DataApiClient;
 import com.yunsoo.api.dto.OrganizationBrand;
+import com.yunsoo.api.key.dto.KeySerialNo;
+import com.yunsoo.api.key.service.KeySerialNoService;
 import com.yunsoo.common.data.object.OrgBrandObject;
 import com.yunsoo.common.util.ObjectIdGenerator;
+import com.yunsoo.common.util.StringFormatter;
 import com.yunsoo.common.web.client.Page;
 import com.yunsoo.common.web.exception.BadRequestException;
 import com.yunsoo.common.web.exception.NotFoundException;
@@ -50,6 +53,12 @@ public class OrganizationBrandDomain {
 
     @Autowired
     private AuthOrganizationService authOrganizationService;
+
+    @Autowired
+    private KeySerialNoService serialNoService;
+
+    @Autowired
+    private OrganizationConfigDomain organizationConfigDomain;
 
 
     public OrgBrandObject getOrgBrandObjectById(String orgId) {
@@ -165,7 +174,23 @@ public class OrganizationBrandDomain {
 
         Account account = authAccountService.create(accountCreationRequest);
         authPermissionService.allocateAdminPermissionOnCurrentOrgToAccount(account.getId());
+
+        createBrandWithSerialNo(organizationBrand.getCarrierId(), orgId);
+
         return returnObj;
+    }
+
+    public void createBrandWithSerialNo(String carrierId, String orgId){
+        Map config = organizationConfigDomain.getConfig(carrierId, true, null);
+        if(config.containsKey("enterprise.product_key.download") && config.get("enterprise.product_key.download").equals(false)){
+            Long numberOfBrands = countOrgBrandByCarrierId(carrierId);
+            KeySerialNo serialNo = new KeySerialNo();
+            serialNo.setOffset(0);
+            serialNo.setOrgId(orgId);
+            serialNo.setPrefix(StringFormatter.addZeroPrefix(String.valueOf(numberOfBrands), 3));
+            serialNo.setSerialLength(6);
+            serialNoService.update(serialNo);
+        }
     }
 
     public OrganizationBrand createOrganizationBrand(String orgId, String name, String description, OrgBrandObject orgBrandObject) {

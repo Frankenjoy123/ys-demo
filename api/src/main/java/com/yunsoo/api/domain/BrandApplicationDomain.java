@@ -232,6 +232,8 @@ public class BrandApplicationDomain {
         obj.setStatusCode(LookupCodes.BrandApplicationStatus.APPROVED);
         updateBrandApplication(obj);
 
+        organizationBrandDomain.createBrandWithSerialNo(obj.getCarrierId(), orgId);
+
         return obj;
     }
 

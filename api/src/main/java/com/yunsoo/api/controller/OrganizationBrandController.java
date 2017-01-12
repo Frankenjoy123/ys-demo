@@ -4,6 +4,7 @@ import com.yunsoo.api.domain.AttachmentDomain;
 import com.yunsoo.api.domain.OrganizationBrandDomain;
 import com.yunsoo.api.dto.Attachment;
 import com.yunsoo.api.dto.OrganizationBrand;
+import com.yunsoo.api.util.AuthUtils;
 import com.yunsoo.api.util.PageUtils;
 import com.yunsoo.common.data.object.AttachmentObject;
 import com.yunsoo.common.web.client.Page;
@@ -80,6 +81,8 @@ public class OrganizationBrandController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @PreAuthorize("hasPermission('current', 'org', 'organization_brand:create')")
     public OrganizationBrand createOrganizationBrand(@RequestBody @Valid OrganizationBrand organizationBrand) {
+        String orgId = AuthUtils.fixOrgId(null);
+        organizationBrand.setCarrierId(orgId);
         return organizationBrandDomain.createOrganizationBrand(organizationBrand);
     }
 

@@ -235,7 +235,7 @@ public class ProductKeyDomain {
                         value = productKeyBaseUrl + "external/" + ks.get(j);
                     }
                     if (currentKeySerialNo != null) {
-                        value += ", " + currentKeySerialNo.getPrefix() + "." + addZeroPrefix(String.valueOf(currentKeySerialNo.getOffset() + j + 1), currentKeySerialNo.getSerialLength()) + (currentKeySerialNo.getSuffix() == null ? "" : ("." + currentKeySerialNo.getSuffix()))
+                        value += ", " + currentKeySerialNo.getPrefix() + "." + StringFormatter.addZeroPrefix(String.valueOf(currentKeySerialNo.getOffset() + j + 1), currentKeySerialNo.getSerialLength()) + (currentKeySerialNo.getSuffix() == null ? "" : ("." + currentKeySerialNo.getSuffix()))
                                 + ", " + batchNo;
                     }
 
@@ -248,7 +248,7 @@ public class ProductKeyDomain {
 
                 if (currentKeySerialNo != null) {  //update the offset number
                     currentKeySerialNo.setOffset(currentKeySerialNo.getOffset() + ks.size());
-                    keySerialNoService.update(currentKeySerialNo);
+                    keySerialNoService.patch(currentKeySerialNo);
                 }
 
             }
@@ -361,18 +361,6 @@ public class ProductKeyDomain {
         batch.setCreatedAccountId(keyBatch.getCreatedAccountId());
         batch.setCreatedDateTime(keyBatch.getCreatedDateTime());
         return batch;
-    }
-
-    private String addZeroPrefix(String content, int length) {
-        if (content.length() >= length)
-            return content;
-        else {
-            String prefixZero = "";
-            for (int i = 0; i < length - content.length(); i++)
-                prefixZero += "0";
-
-            return prefixZero + content;
-        }
     }
 
 }
