@@ -148,7 +148,7 @@ public class LookupCodes {
         private UserOAuthType() {
         }
 
-        public static final String WECHAT = "webchat";
+        public static final String WECHAT = "wechat";
     }
 
     public static class OrgAgencyStatus {
