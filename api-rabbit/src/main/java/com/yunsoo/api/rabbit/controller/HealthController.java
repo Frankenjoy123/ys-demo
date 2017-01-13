@@ -1,9 +1,6 @@
 package com.yunsoo.api.rabbit.controller;
 
-import com.yunsoo.api.rabbit.client.AuthApiClient;
-import com.yunsoo.api.rabbit.client.DataApiClient;
-import com.yunsoo.api.rabbit.client.FileApiClient;
-import com.yunsoo.api.rabbit.client.KeyApiClient;
+import com.yunsoo.api.rabbit.client.*;
 import com.yunsoo.common.web.health.AbstractHealthController;
 import com.yunsoo.common.web.health.Health;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +30,8 @@ public class HealthController extends AbstractHealthController {
     @Autowired
     private KeyApiClient keyApiClient;
 
+    @Autowired
+    private ThirdApiClient thirdApiClient;
 
     @Override
     public void expandHealth(Health health, List<String> path, boolean debug) {
@@ -41,7 +40,8 @@ public class HealthController extends AbstractHealthController {
                 .checkClient(authApiClient, path, debug)
                 .checkClient(dataApiClient, path, debug)
                 .checkClient(fileApiClient, path, debug)
-                .checkClient(keyApiClient, path, debug);
+                .checkClient(keyApiClient, path, debug)
+                .checkClient(thirdApiClient, path, debug);
     }
 
 }
