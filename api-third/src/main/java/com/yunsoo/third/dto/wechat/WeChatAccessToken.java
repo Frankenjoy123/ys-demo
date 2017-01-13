@@ -8,10 +8,12 @@ import com.yunsoo.common.databind.DateTimeJsonSerializer;
 import com.yunsoo.third.dao.entity.ThirdWeChatAccessTokenEntity;
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+
 /**
  * Created by yan on 10/19/2016.
  */
-public class WeChatAccessToken {
+public class WeChatAccessToken implements Serializable {
 
     @JsonProperty("access_token")
     private String accessToken;

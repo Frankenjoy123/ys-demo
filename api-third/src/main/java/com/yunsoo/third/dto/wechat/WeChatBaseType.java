@@ -2,10 +2,12 @@ package com.yunsoo.third.dto.wechat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+
 /**
  * Created by yan on 11/18/2016.
  */
-public class WeChatBaseType {
+public class WeChatBaseType implements Serializable {
 
     @JsonProperty("errcode")
     private int errorCode;

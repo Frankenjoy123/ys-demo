@@ -2,10 +2,12 @@ package com.yunsoo.third.dto.wechat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+
 /**
  * Created by yan on 11/8/2016.
  */
-public class WeChatConfig {
+public class WeChatConfig implements Serializable {
 
     @JsonProperty("app_id")
     public String appId;

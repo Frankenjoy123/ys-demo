@@ -2,10 +2,12 @@ package com.yunsoo.third.dto.wechat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
+
 /**
  * Created by yan on 12/16/2016.
  */
-public class WeChatNotifyResult {
+public class WeChatNotifyResult implements Serializable {
     @JsonProperty("order_id")
     private String orderId;
 

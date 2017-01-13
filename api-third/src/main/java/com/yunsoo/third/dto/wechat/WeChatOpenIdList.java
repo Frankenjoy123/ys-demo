@@ -2,12 +2,13 @@ package com.yunsoo.third.dto.wechat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by yan on 7/20/2016.
  */
-public class WeChatOpenIdList {
+public class WeChatOpenIdList implements Serializable {
 
     @JsonProperty("total")
     private int total;

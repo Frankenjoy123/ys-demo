@@ -1,14 +1,14 @@
 package com.yunsoo.third.dto.wechat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yunsoo.common.web.client.ResourceInputStream;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.springframework.web.multipart.MultipartFile;
+
+import java.io.Serializable;
 
 /**
  * Created by yan on 12/27/2016.
  */
-public class WeChatServerConfig {
+public class WeChatServerConfig implements Serializable {
 
     @JsonProperty("app_id")
     @NotEmpty

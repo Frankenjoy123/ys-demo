@@ -66,5 +66,4 @@ yunsoo:
   environment: dev
   wechat:
     refresh_token: true
-    key_file: /opt/bin/wechat_keys/apiclient_cert.p12
 
