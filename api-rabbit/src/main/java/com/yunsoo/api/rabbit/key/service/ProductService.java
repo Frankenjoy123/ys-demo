@@ -7,7 +7,6 @@ import com.yunsoo.common.web.exception.NotFoundException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -25,7 +24,6 @@ public class ProductService {
     @Autowired
     private KeyApiClient keyApiClient;
 
-    @Cacheable(key="T(com.yunsoo.api.rabbit.cache.ObjectKeyGenerator).generate(T(com.yunsoo.common.data.CacheType).PRODUCTKEY.toString(), #key)")
     public Product getProductByKey(String key) {
         if (StringUtils.isEmpty(key)) {
             return null;
