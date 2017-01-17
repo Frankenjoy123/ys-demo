@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -68,6 +69,7 @@ public class DeviceService {
         entity.setName(device.getName());
         entity.setOs(device.getOs());
         entity.setComments(device.getComments());
+        entity.setCreatedAccountId(accountId);
         entity.setModifiedAccountId(accountId);
         entity.setModifiedDatetime(DateTime.now());
 
@@ -75,6 +77,7 @@ public class DeviceService {
         return toDevice(entity);
     }
 
+    @Transactional
     public void unregister(String deviceId) {
         if (StringUtils.isEmpty(deviceId)) {
             return;
