@@ -63,7 +63,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
     public List<String[]> commentDailyCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
         String sql = "select DATE_FORMAT(c.created_datetime,'%Y-%m-%d') as comment_date,count(1), count(distinct u.id)  " +
                 "from  product_comments c " +
-                "inner join  di_event ev on c.scan_record_id=ev.event_id " +
+                "inner join  di_event ev on c.scan_record_id=ev.event_id and ev.name='scan' " +
                 "LEFT JOIN  lu_province_city pc ON ev.location_id=pc.id " +
                 "inner join  di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) " +
                 "where ev.org_id = :orgId ";
@@ -140,7 +140,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
     @Override
     public List<String[]> commentLocationCount(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
         String sql = "select case when pc.province is null or pc.province ='' then '未公开省份'  else  pc.province END as provinceA, case when pc.city is null or pc.city = '' then '未公开城市' else pc.city END as cityA, count(1), count(distinct u.id) " +
-                "from  product_comments c INNER join  di_event ev on c.scan_record_id=ev.event_id "+
+                "from  product_comments c INNER join  di_event ev on c.scan_record_id=ev.event_id and ev.name='scan'  "+
                 "LEFT JOIN  lu_province_city pc ON ev.location_id=pc.id "+
                 "inner join  di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) "+
                 "where ev.org_id = :orgId ";
@@ -231,7 +231,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
     }
 
     private int[] drawQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Boolean wxUser ,  int level) {
-        String sql = "select count(1), count(distinct u.id) from  mkt_draw_record dr left join  di_event ev on dr.scan_record_id=ev.event_id  " +
+        String sql = "select count(1), count(distinct u.id) from  mkt_draw_record dr left join  di_event ev on dr.scan_record_id=ev.event_id and ev.name='scan'  " +
                 "inner join  di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.org_id =:orgId  ";
 
         HashMap<String, Object> parameters = new HashMap<>();
@@ -280,7 +280,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
     }
 
     private int[] prizedQuery( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd, Boolean wxUser) {
-        String sql = "select count(1), count(distinct u.id) from  mkt_draw_record dr left join  di_event ev on dr.scan_record_id=ev.event_id INNER JOIN  mkt_draw_prize dp ON dr.id=dp.draw_record_id " +
+        String sql = "select count(1), count(distinct u.id) from  mkt_draw_record dr left join  di_event ev on dr.scan_record_id=ev.event_id and ev.name='scan' INNER JOIN  mkt_draw_prize dp ON dr.id=dp.draw_record_id " +
                 "inner join  di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) where ev.org_id =:orgId  and dr.isPrized = 1 and dp.status_code in ('submit','paid') ";
 
         HashMap<String, Object> parameters = new HashMap<>();
@@ -370,7 +370,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
 
     private List<String[]> queryDailyEventCount(String eventName, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
         String sql = "select DATE_FORMAT(ue.created_datetime,'%Y-%m-%d'),count(1), count(distinct u.id) " +
-                "from  user_event ue left join  di_event ev on ue.scan_record_id=ev.event_id "+
+                "from  user_event ue left join  di_event ev on ue.scan_record_id=ev.event_id and ev.name='scan' "+
                 "LEFT JOIN  lu_province_city pc ON ev.location_id=pc.id "+
                 "inner join  di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) "+
                 "where ev.org_id = :orgId and ue.type_code= :eventName ";
@@ -460,7 +460,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
     private int[] queryEventCount(String eventName, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
 
         String sql = "select count(1), count(distinct u.id) " +
-                "from  user_event ue left join  di_event ev on ue.scan_record_id=ev.event_id "+
+                "from  user_event ue left join  di_event ev on ue.scan_record_id=ev.event_id and ev.name='scan' "+
                 "LEFT JOIN  lu_province_city pc ON ev.location_id=pc.id "+
                 "inner join  di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) "+
                 "where ev.org_id = :orgId and ue.type_code= :eventName ";
@@ -503,7 +503,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
     private int[] queryCommentCount( String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
 
         String sql = "select count(1), count(distinct u.id) " +
-                "from  product_comments c left join  di_event ev on c.scan_record_id=ev.event_id "+
+                "from  product_comments c left join  di_event ev on c.scan_record_id=ev.event_id and ev.name='scan' "+
                 "LEFT JOIN  lu_province_city pc ON ev.location_id=pc.id "+
                 "inner join  di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) "+
                 "where ev.org_id = :orgId ";
@@ -596,7 +596,7 @@ public class CustomerEventRepositoryImpl implements CustomerEventRepository{
     private List<String[]> queryEventLocationCount(String action, String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStart, DateTime createdDateTimeEnd) {
 
         String sql = "select case when pc.province is null or pc.province ='' then '未公开省份'  else  pc.province END as provinceA, case when pc.city is null or pc.city = '' then '未公开城市' else pc.city END as cityA, count(1), count(distinct u.id) " +
-                "from  user_event ue left join  di_event ev on ue.scan_record_id=ev.event_id "+
+                "from  user_event ue left join  di_event ev on ue.scan_record_id=ev.event_id and ev.name='scan' "+
                 "LEFT JOIN  lu_province_city pc ON ev.location_id=pc.id "+
                 "inner join  di_user u on ev.org_id = u.org_id and (ev.user_id = u.user_id and ev.ys_id = u.ys_id) "+
                 "where ev.org_id = :orgId and ue.type_code= :eventName ";

@@ -1,8 +1,10 @@
 package com.yunsoo.di.dao.repository;
 
 import com.yunsoo.di.dao.entity.EMRUserEntity;
+import com.yunsoo.di.dao.entity.EMRUserProductEventStatistics;
 import org.joda.time.DateTime;
 import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 /**
@@ -99,4 +101,9 @@ public interface EMRUserRepository {
                                         boolean userTagsIgnored, Boolean wxUser, Pageable pageable);
 
     EMRUserEntity getUser( String orgId,  String userId,  String ysId);
+
+    List<EMRUserEntity> findEventUsersFilterByWX(String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStartTo, DateTime createdDateTimeEndTo, Pageable pageable);
+    int countUsersByFilterByWX (String orgId, String productBaseId, String province, String city, DateTime createdDateTimeStartTo, DateTime createdDateTimeEndTo);
+
+    List<EMRUserProductEventStatistics> queryUserEventStatistics(String orgId, String userId, String ysId, DateTime createdDateTimeStartTo, DateTime createdDateTimeEndTo);
 }

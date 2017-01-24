@@ -7,16 +7,16 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface EMREventRepository  {
+public interface EMREventRepository {
 
 
-    List<EMREventEntity> findByFilter(String orgId,  String userId,  String ysId,
-                                       DateTime eventDateTimeStart,
-                                       DateTime eventDateTimeEnd, Pageable pageable);
-
-    int countEventByFilter(String orgId,  String userId,  String ysId,
+    List<EMREventEntity> findByFilter(String orgId, String userId, String ysId,
                                       DateTime eventDateTimeStart,
-                                      DateTime eventDateTimeEnd);
+                                      DateTime eventDateTimeEnd, Pageable pageable);
+
+    int countEventByFilter(String orgId, String userId, String ysId,
+                           DateTime eventDateTimeStart,
+                           DateTime eventDateTimeEnd);
 
     EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId);
 

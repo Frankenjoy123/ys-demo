@@ -1,13 +1,12 @@
 package com.yunsoo.api.controller.analysis;
 
-import com.yunsoo.api.di.service.ScanAnalysisService;
 import com.yunsoo.api.di.service.UserEventAnalysisService;
 import com.yunsoo.api.dto.EMREventAnalysisReport;
 import com.yunsoo.api.dto.EMREventLocationReport;
-import com.yunsoo.api.dto.ScanAnalysisReport;
-import com.yunsoo.api.dto.ScanLocationAnalysisReport;
 import com.yunsoo.api.util.AuthUtils;
-import com.yunsoo.common.data.object.*;
+import com.yunsoo.common.data.object.EMREventCountObject;
+import com.yunsoo.common.data.object.EMREventLocationReportObject;
+import com.yunsoo.common.data.object.EMREventReportObject;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
@@ -18,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -30,7 +31,7 @@ public class EventAnalysisController {
     @Autowired
     private UserEventAnalysisService userEventAnalysisService;
 
-    //  用戶看板
+    //  客户成功看板，统计今天昨天的数据，及按日的数据汇总
     @RequestMapping(value = "/event_report", method = RequestMethod.GET)
     public EMREventAnalysisReport getScanAnalysisReport(@RequestParam(value = "org_id", required = false) String orgId,
                                                         @RequestParam(value = "product_base_id", required = false) String productBaseId,

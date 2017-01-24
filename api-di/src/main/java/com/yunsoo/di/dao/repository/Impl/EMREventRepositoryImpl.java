@@ -27,54 +27,66 @@ public class EMREventRepositoryImpl implements EMREventRepository {
     @Override
     public List<EMREventEntity> findByFilter(String orgId, String userId, String ysId, DateTime eventDateTimeStart, DateTime eventDateTimeEnd, Pageable pageable) {
 
-        StringBuilder builder1=new StringBuilder("select ev.org_id, ev.user_id, ev.ys_id, ev.name as event_name, ev.product_base_id, ev.product_key, ev.key_batch_id, " );
+        StringBuilder builder1 = new StringBuilder("select ev.org_id, ev.user_id, ev.ys_id, ev.name as event_name, ev.product_base_id, ev.product_key, ev.key_batch_id, ");
         builder1.append(" 0 as is_priced, ev.event_datetime,  pc.province, pc.city, ev.ip, p.name, '' as marketing_id ");
         builder1.append("from  di_event ev left join  lu_province_city pc on ev.location_id = pc.id ");
         builder1.append("LEFT JOIN  product_base p on p.id=ev.product_base_id ");
         builder1.append("where ev.org_id =:orgId  and ev.ys_id =:ysId  and ev.user_id = :userId ");
 
-        StringBuilder builder2=new StringBuilder("select ev.org_id, ev.user_id, ev.ys_id, 'draw' as event_name, ev.product_base_id, ev.product_key, ev.key_batch_id, ");
-        builder2.append("dr.isPrized as is_priced, dr.created_datetime as event_datetime, pc.province, pc.city, ev.ip, p.name, dr.marketing_id " );
+        StringBuilder builder2 = new StringBuilder("select ev.org_id, ev.user_id, ev.ys_id, 'draw' as event_name, ev.product_base_id, ev.product_key, ev.key_batch_id, ");
+        builder2.append("dr.isPrized as is_priced, dr.created_datetime as event_datetime, pc.province, pc.city, ev.ip, p.name, dr.marketing_id ");
         builder2.append("from  mkt_draw_record dr ");
-        builder2.append("left join  di_event ev on dr.scan_record_id=ev.event_id ");
+        builder2.append("left join  di_event ev on dr.scan_record_id=ev.event_id and ev.name='scan' ");
         builder2.append("left join  lu_province_city pc on ev.location_id = pc.id ");
         builder2.append("LEFT JOIN  product_base p on p.id=ev.product_base_id ");
         builder2.append("where ev.org_id =:orgId and ev.ys_id=:ysId and ev.user_id= :userId ");
+
+        StringBuilder builder3 = new StringBuilder("select ev.org_id, ev.user_id, ev.ys_id, ue.type_code as event_name, ev.product_base_id, ev.product_key, ev.key_batch_id, ");
+        builder3.append(" 0 as is_priced, ue.created_datetime as event_datetime, pc.province, pc.city, ev.ip, p.name, '' as marketing_id ");
+        builder3.append("from  user_event ue ");
+        builder3.append("left join  di_event ev on ue.scan_record_id=ev.event_id and ev.name='scan' ");
+        builder3.append("left join  lu_province_city pc on ev.location_id = pc.id ");
+        builder3.append("LEFT JOIN  product_base p on p.id=ev.product_base_id ");
+        builder3.append("where ue.type_code not in ('ad_url','download_url','duplicate_award') and ev.org_id =:orgId and ev.ys_id=:ysId and ev.user_id= :userId ");
 
         HashMap<String, Object> parameters = new HashMap<>();
 
         if (eventDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(eventDateTimeStart.toString())) {
             builder1.append("and ev.event_datetime >=:eventDateTimeStart ");
             builder2.append("and dr.created_datetime >=:eventDateTimeStart ");
+            builder3.append("and ue.created_datetime >=:eventDateTimeStart ");
             parameters.put("eventDateTimeStart", eventDateTimeStart.toString("yyyy-MM-dd"));
         }
 
         if (eventDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(eventDateTimeEnd.toString())) {
             builder1.append("and ev.event_datetime <=:eventDateTimeEnd ");
             builder2.append("and dr.created_datetime <=:eventDateTimeEnd ");
+            builder3.append("and ue.created_datetime <=:eventDateTimeEnd ");
             parameters.put("eventDateTimeEnd", eventDateTimeEnd.toString("yyyy-MM-dd"));
         }
 
-        StringBuilder sqlBuilder=new StringBuilder(builder1.toString());
+        StringBuilder sqlBuilder = new StringBuilder(builder1.toString());
         sqlBuilder.append(" union all ");
         sqlBuilder.append(builder2.toString());
+        sqlBuilder.append(" union all ");
+        sqlBuilder.append(builder3.toString());
         sqlBuilder.append(" order by event_datetime DESC ");
 
-        if (userId==null){
+        if (userId == null) {
             parameters.put("userId", "");
-        }else {
+        } else {
             parameters.put("userId", userId);
         }
 
-        if (orgId==null){
+        if (orgId == null) {
             parameters.put("orgId", "");
-        }else {
+        } else {
             parameters.put("orgId", orgId);
         }
 
-        if (ysId==null){
+        if (ysId == null) {
             parameters.put("ysId", "");
-        }else {
+        } else {
             parameters.put("ysId", ysId);
         }
 
@@ -93,9 +105,8 @@ public class EMREventRepositoryImpl implements EMREventRepository {
 
         List<EMREventEntity> list = new ArrayList<>();
 
-        for(Object[] obj : queryList)
-        {
-            EMREventEntity eventEntity=new EMREventEntity();
+        for (Object[] obj : queryList) {
+            EMREventEntity eventEntity = new EMREventEntity();
             eventEntity.setOrgId((String) obj[0]);
             eventEntity.setUserId((String) obj[1]);
             eventEntity.setYsId((String) obj[2]);
@@ -103,10 +114,10 @@ public class EMREventRepositoryImpl implements EMREventRepository {
             eventEntity.setProductBaseId((String) obj[4]);
             eventEntity.setProductKey((String) obj[5]);
             eventEntity.setKeyBatchId((String) obj[6]);
-            if (obj[7]!=null){
+            if (obj[7] != null) {
                 eventEntity.setIsPriced(((Number) obj[7]).intValue());
             }
-            Timestamp timestamp= (Timestamp) obj[8];
+            Timestamp timestamp = (Timestamp) obj[8];
             eventEntity.setEventDateTime(LocalDateTime.fromDateFields(timestamp).toDateTime());
             eventEntity.setProvince((String) obj[9]);
             eventEntity.setCity((String) obj[10]);
@@ -121,54 +132,64 @@ public class EMREventRepositoryImpl implements EMREventRepository {
 
     @Override
     public int countEventByFilter(String orgId, String userId, String ysId, DateTime eventDateTimeStart, DateTime eventDateTimeEnd) {
-        StringBuilder builder1=new StringBuilder("select count(1) " );
+        StringBuilder builder1 = new StringBuilder("select count(1) ");
         builder1.append("from  di_event ev left join  lu_province_city pc on ev.location_id = pc.id ");
         builder1.append("LEFT JOIN  product_base p on p.id=ev.product_base_id ");
         builder1.append("where ev.org_id =:orgId  and ev.ys_id =:ysId  and ev.user_id = :userId ");
 
-        StringBuilder builder2=new StringBuilder("select count(1) ");
+        StringBuilder builder2 = new StringBuilder("select count(1) ");
         builder2.append("from  mkt_draw_record dr ");
-        builder2.append("left join  di_event ev on dr.scan_record_id=ev.event_id ");
+        builder2.append("left join  di_event ev on dr.scan_record_id=ev.event_id and ev.name='scan' ");
         builder2.append("left join  lu_province_city pc on ev.location_id = pc.id ");
         builder2.append("LEFT JOIN  product_base p on p.id=ev.product_base_id ");
         builder2.append("where ev.org_id =:orgId and ev.ys_id=:ysId and ev.user_id= :userId ");
+
+        StringBuilder builder3 = new StringBuilder("select count(1) ");
+        builder3.append("from  user_event ue ");
+        builder3.append("left join  di_event ev on ue.scan_record_id=ev.event_id and ev.name='scan' ");
+        builder3.append("left join  lu_province_city pc on ev.location_id = pc.id ");
+        builder3.append("LEFT JOIN  product_base p on p.id=ev.product_base_id ");
+        builder3.append("where ue.type_code not in ('ad_url','download_url','duplicate_award') and ev.org_id =:orgId and ev.ys_id=:ysId and ev.user_id= :userId ");
 
         HashMap<String, Object> parameters = new HashMap<>();
 
         if (eventDateTimeStart != null && !org.springframework.util.StringUtils.isEmpty(eventDateTimeStart.toString())) {
             builder1.append("and ev.event_datetime >=:eventDateTimeStart ");
             builder2.append("and dr.created_datetime >=:eventDateTimeStart ");
+            builder3.append("and ue.created_datetime >=:eventDateTimeStart ");
             parameters.put("eventDateTimeStart", eventDateTimeStart.toString("yyyy-MM-dd"));
         }
 
         if (eventDateTimeEnd != null && !org.springframework.util.StringUtils.isEmpty(eventDateTimeEnd.toString())) {
             builder1.append("and ev.event_datetime <=:eventDateTimeEnd ");
             builder2.append("and dr.created_datetime <=:eventDateTimeEnd ");
+            builder3.append("and ue.created_datetime <=:eventDateTimeEnd ");
             parameters.put("eventDateTimeEnd", eventDateTimeEnd.toString("yyyy-MM-dd"));
         }
 
-        StringBuilder sqlBuilder=new StringBuilder("select (");
+        StringBuilder sqlBuilder = new StringBuilder("select (");
         sqlBuilder.append(builder1.toString());
         sqlBuilder.append(" ) + ( ");
 
         sqlBuilder.append(builder2.toString());
-        sqlBuilder.append(" );");
-
-        if (userId==null){
+        sqlBuilder.append(" ) + ( ");
+        sqlBuilder.append(builder3.toString());
+        sqlBuilder.append(" )");
+        if (userId == null) {
             parameters.put("userId", "");
-        }else {
+        } else {
             parameters.put("userId", userId);
         }
 
-        if (orgId==null){
+        if (orgId == null) {
             parameters.put("orgId", "");
-        }else {
+        } else {
             parameters.put("orgId", orgId);
         }
 
-        if (ysId==null){
+        if (ysId == null) {
             parameters.put("ysId", "");
-        }else {
+        } else {
             parameters.put("ysId", ysId);
         }
 
@@ -185,14 +206,14 @@ public class EMREventRepositoryImpl implements EMREventRepository {
     @Override
     public EMREventEntity recentlyConsumptionEvent(String orgId, String userId, String ysId) {
 
-        String sql="select ev.org_id, ev.user_id, ev.ys_id, ev.name as event_name, ev.product_base_id, ev.product_key, ev.key_batch_id,  0 as is_priced, ev.event_datetime,  pc.province, pc.city, ev.ip, p.name, '' as marketing_id  from di_event ev " +
+        String sql = "select ev.org_id, ev.user_id, ev.ys_id, ev.name as event_name, ev.product_base_id, ev.product_key, ev.key_batch_id,  0 as is_priced, ev.event_datetime,  pc.province, pc.city, ev.ip, p.name, '' as marketing_id  from di_event ev " +
                 "left join lu_province_city pc on ev.location_id=pc.id " +
-                "LEFT JOIN  product_base p on p.id=ev.product_base_id "+
+                "LEFT JOIN  product_base p on p.id=ev.product_base_id " +
                 "where ev.event_id = " +
                 "(select up.scan_record_id " +
                 "from di_user_product up " +
                 "where up.org_id =:orgId and up.user_id=:userId and up.ys_id=:ysId " +
-                "order by up.time_id desc limit 1) ";
+                "order by up.time_id desc limit 1) and ev.name='scan' ";
 
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("orgId", orgId);
@@ -209,9 +230,9 @@ public class EMREventRepositoryImpl implements EMREventRepository {
         if (queryList.isEmpty())
             return null;
 
-        Object[] obj=queryList.get(0);
+        Object[] obj = queryList.get(0);
 
-        EMREventEntity eventEntity=new EMREventEntity();
+        EMREventEntity eventEntity = new EMREventEntity();
         eventEntity.setOrgId((String) obj[0]);
         eventEntity.setUserId((String) obj[1]);
         eventEntity.setYsId((String) obj[2]);
@@ -219,7 +240,7 @@ public class EMREventRepositoryImpl implements EMREventRepository {
         eventEntity.setProductBaseId((String) obj[4]);
         eventEntity.setProductKey((String) obj[5]);
         eventEntity.setKeyBatchId((String) obj[6]);
-        Timestamp timestamp= (Timestamp) obj[8];
+        Timestamp timestamp = (Timestamp) obj[8];
         eventEntity.setEventDateTime(LocalDateTime.fromDateFields(timestamp).toDateTime());
         eventEntity.setProvince((String) obj[9]);
         eventEntity.setCity((String) obj[10]);
@@ -232,8 +253,8 @@ public class EMREventRepositoryImpl implements EMREventRepository {
     @Override
     public int periodConsumptionCount(String orgId, String userId, String ysId, DateTime eventDateTimeStart, DateTime eventDateTimeEnd) {
 
-        String sql="select count(1) from di_event ev " +
-                "where ev.event_datetime <:eventDateTimeEnd and ev.event_datetime >=:eventDateTimeStart and ev.event_id IN " +
+        String sql = "select count(1) from di_event ev " +
+                "where ev.event_datetime <:eventDateTimeEnd and ev.event_datetime >=:eventDateTimeStart and ev.name='scan' and ev.event_id IN " +
                 "(select up.scan_record_id " +
                 "from di_user_product up " +
                 "where up.org_id =:orgId and up.user_id=:userId and up.ys_id=:ysId ) ";
@@ -255,5 +276,4 @@ public class EMREventRepositoryImpl implements EMREventRepository {
 
 
     }
-
 }

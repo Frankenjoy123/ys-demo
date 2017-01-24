@@ -1,10 +1,7 @@
-package com.yunsoo.api.controller;
+package com.yunsoo.api.controller.analysis;
 
 import com.yunsoo.api.di.service.EMREventService;
 import com.yunsoo.api.di.service.EMRUserService;
-import com.yunsoo.api.domain.EMREventDomain;
-import com.yunsoo.api.domain.EMRUserDomain;
-import com.yunsoo.api.domain.EMRUserProductEventStasticsDomain;
 import com.yunsoo.api.domain.UserBlockDomain;
 import com.yunsoo.api.dto.*;
 import com.yunsoo.api.util.AuthUtils;
@@ -29,23 +26,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/emr/user")
 public class EMRUserController {
 
-    @Autowired
-    private EMRUserDomain emrUserDomain;
 
     @Autowired
     private EMRUserService emrUserService;
-
     @Autowired
     private UserBlockDomain userBlockDomain;
-
-    @Autowired
-    private EMREventDomain emrEventDomain;
-
     @Autowired
     private EMREventService emrEventService;
 
-    @Autowired
-    private EMRUserProductEventStasticsDomain emrUserProductEventStasticsDomain;
 
     @RequestMapping(value = "id", method = RequestMethod.GET)
     public EMRUser getUser(@RequestParam(value = "org_id", required = false) String orgId,
@@ -61,7 +49,7 @@ public class EMRUserController {
 
         EMRUser emrUser = new EMRUser(emrUserObject);
 
-        List<EMRUserProductEventStasticsObject> emrUserProductEventStasticsObjects = emrUserProductEventStasticsDomain.getEMRUserProductEventStasticsObjects(orgId, userId
+        List<EMRUserProductEventStasticsObject> emrUserProductEventStasticsObjects = emrUserService.getEMRUserProductEventStasticsObjects(orgId, userId
                 , ysId, createdDateTimeStart, createdDateTimeEnd);
 
         List<EMRUserProductEventStastics> emrUserProductEventStasticses = emrUserProductEventStasticsObjects.stream().map(this::toEMRUserProductEventStastics)
@@ -152,7 +140,7 @@ public class EMRUserController {
                                        HttpServletResponse response) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<EMRUserObject> entityPage = emrUserDomain.getEMRScanUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+        Page<EMRUserObject> entityPage = emrUserService.getEMRScanUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
 
         return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
@@ -177,11 +165,13 @@ public class EMRUserController {
                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
                                        @RequestParam(value = "create_datetime_end", required = false)
                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                       @RequestParam(value = "scan_source", required = false) String scanSource,
                                        Pageable pageable,
                                        HttpServletResponse response) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<EMRUserObject> entityPage = emrUserDomain.getEMRDrawUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+        boolean isWxUser = scanSource != null && scanSource.equals("wx");
+        Page<EMRUserObject> entityPage = emrUserService.getEMRDrawUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, isWxUser, pageable);
         return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
 
@@ -209,7 +199,7 @@ public class EMRUserController {
                                      HttpServletResponse response) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<EMRUserObject> entityPage = emrUserDomain.getEMRWXUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+        Page<EMRUserObject> entityPage = emrUserService.getEMRWXUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
 
         return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
@@ -234,11 +224,13 @@ public class EMRUserController {
                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
                                       @RequestParam(value = "create_datetime_end", required = false)
                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                      @RequestParam(value = "scan_source", required = false) String scanSource,
                                       Pageable pageable,
                                       HttpServletResponse response) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<EMRUserObject> entityPage = emrUserDomain.getEMRWinUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+        boolean isWxUser = scanSource != null && scanSource.equals("wx");
+        Page<EMRUserObject> entityPage = emrUserService.getEMRWinUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, isWxUser, pageable);
 
         return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
@@ -263,11 +255,13 @@ public class EMRUserController {
                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeStart,
                                          @RequestParam(value = "create_datetime_end", required = false)
                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd,
+                                         @RequestParam(value = "scan_source", required = false) String scanSource,
                                          Pageable pageable,
                                          HttpServletResponse response) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<EMRUserObject> entityPage = emrUserDomain.getEMRRewardUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+        boolean isWxUser = scanSource != null && scanSource.equals("wx");
+        Page<EMRUserObject> entityPage = emrUserService.getEMRRewardUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, isWxUser, pageable);
 
         return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
@@ -283,7 +277,7 @@ public class EMRUserController {
         }), pageable != null);
     }
 
-    @RequestMapping(value = "share", method = RequestMethod.GET)
+   /* @RequestMapping(value = "share", method = RequestMethod.GET)
     public List<EMRUser> queryShareUser(@RequestParam(value = "org_id", required = false) String orgId,
                                         @RequestParam(value = "product_base_id", required = false) String productBaseId,
                                         @RequestParam(value = "province", required = false) String province,
@@ -296,7 +290,7 @@ public class EMRUserController {
                                         HttpServletResponse response) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<EMRUserObject> entityPage = emrUserDomain.getEMRShareUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+        Page<EMRUserObject> entityPage = emrUserService.getEMRShareUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
 
         return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
@@ -325,7 +319,7 @@ public class EMRUserController {
                                            HttpServletResponse response) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<EMRUserObject> entityPage = emrUserDomain.getEMRStoreUrlUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+        Page<EMRUserObject> entityPage = emrUserService.getEMRStoreUrlUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
 
         return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
@@ -354,7 +348,7 @@ public class EMRUserController {
                                           HttpServletResponse response) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        Page<EMRUserObject> entityPage = emrUserDomain.getEMRCommentUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
+        Page<EMRUserObject> entityPage = emrUserService.getEMRCommentUserList(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, pageable);
 
         return PageUtils.response(response, entityPage.map(emr -> {
             EMRUser user = new EMRUser(emr);
@@ -368,7 +362,7 @@ public class EMRUserController {
 
             return user;
         }), pageable != null);
-    }
+    }*/
 
     @RequestMapping(value = "funnel", method = RequestMethod.GET)
     public EMRUserReport queryUserFunnel(@RequestParam(value = "org_id", required = false) String orgId,
@@ -382,12 +376,12 @@ public class EMRUserController {
                                          @RequestParam(value = "wx_user", required = false) Boolean wxUser) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        EMRUserReportObject userReportObject = emrUserService.getEMRUserFunnelCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd,wxUser);
+        EMRUserReportObject userReportObject = emrUserService.getEMRUserFunnelCount(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd, wxUser);
 
         return new EMRUserReport(userReportObject);
     }
 
-    @RequestMapping(value = "action", method = RequestMethod.GET)
+   /* @RequestMapping(value = "action", method = RequestMethod.GET)
     public EMRActionReport queryUserActionReport(@RequestParam(value = "org_id", required = false) String orgId,
                                                  @RequestParam(value = "product_base_id", required = false) String productBaseId,
                                                  @RequestParam(value = "province", required = false) String province,
@@ -398,9 +392,9 @@ public class EMRUserController {
                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) org.joda.time.LocalDate createdDateTimeEnd) {
 
         orgId = AuthUtils.fixOrgId(orgId);
-        EMRActionReportObject userActionReportObject = emrUserDomain.getEMRActionReport(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
+        EMRActionReportObject userActionReportObject = emrUserService.getEMRActionReport(orgId, productBaseId, province, city, createdDateTimeStart, createdDateTimeEnd);
 
         return new EMRActionReport(userActionReportObject);
-    }
+    }*/
 
 }
